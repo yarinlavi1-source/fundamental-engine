@@ -3,15 +3,396 @@
  "as_of": "2026-11-04",
  "price": 103.03,
  "price_time_utc": "2026-11-04 (time not recorded in the saved params)",
+ "verdict_he": "עוברת את מבחן הקנייה במחיר של 4.11 (103$): בסיסי 20.2% בשנה, עדשה שנייה 19.4%; הימור קטן בלבד, כי הכול תלוי במספר המשתמשים היומי",
+ "buy_test_price": 143.3,
+ "margin_of_safety_price": 141.64,
+ "values": {
+  "today": {
+   "bear": 56.92,
+   "base": 154.56,
+   "bull": 252.23
+  },
+  "end_2027": {
+   "bear": 64.06,
+   "base": 176.42,
+   "bull": 288.83
+  },
+  "end_2028": {
+   "bear": 70.35,
+   "base": 196.76,
+   "bull": 323.27
+  },
+  "end_2029": {
+   "bear": 76.97,
+   "base": 218.51,
+   "bull": 360.35
+  },
+  "end_2030": {
+   "bear": 83.91,
+   "base": 241.64,
+   "bull": 400.03
+  },
+  "end_2031": {
+   "bear": 91.17,
+   "base": 266.12,
+   "bull": 442.25
+  },
+  "weighted_today_35_45_20": 139.92,
+  "calibrated_today": 149.64,
+  "calibrated_end_2031": 257.16
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.35,
+   "he": "התנועה מגוגל נחלשת והמשתמשים המחוברים יורדים: צמיחה 5% ב-2027 ו-‎-8%‎ ב-2028, שיעור רווח תפעולי 21%-26%, מכפיל 12"
+  },
+  "base": {
+   "prob": 0.45,
+   "he": "צמיחה 22% ב-2027 שדועכת ל-8%, שיעור רווח תפעולי עולה מ-30% ל-36%, מכפיל 22"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "צמיחה 32% ב-2027 שדועכת ל-10%, שיעור רווח תפעולי עולה ל-42%, מכפיל 26"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -2.3,
+  "base": 20.2,
+  "bull": 32.6,
+  "calibrated": 19.4,
+  "weighted": 17.8,
+  "index": 9.1,
+  "to": "סוף 2031"
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-143$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
+   "משתמשים יומיים (DAUq) 115 מיליון ומעלה, והמשתמשים המחוברים לא יורדים מ-53.5 מיליון"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-197$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
+  ],
+  "proposed_exit": [
+   "משתמשים יומיים (DAUq) מתחת לכ-115 מיליון, או משתמשים מחוברים מתחת ל-53.5 מיליון",
+   "צמיחת ההכנסה למשתמש בארה\"ב מתחת לכ-30% בזמן שמספר המשתמשים בארה\"ב ממשיך לרדת",
+   "המחיר מעל כ-228$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
+  ]
+ },
+ "next_report": {
+  "date": "early February 2027",
+  "confirmed": false,
+  "check": "משתמשים יומיים (DAUq) ומשתמשים מחוברים, ההכנסה למשתמש בארה\"ב, התנועה מגוגל"
+ },
+ "thesis_link": "research/companies/RDDT/thesis_he.md",
+ "notes_he": [
+  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: תחילת פברואר 2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-5%-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/RDDT/2026-11-04/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 143.3,
+   "stated_price": 143.3,
+   "rerun_price": 148.29,
+   "base_12_price": 148.29,
+   "binding_leg": "base_calibrated",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 20.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 148.29
+    },
+    "base_calibrated": {
+     "return_pct": 19.4,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 143.3
+    },
+    "bull": {
+     "return_pct": 32.6,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 196.71
+    },
+    "bear": {
+     "return_pct": -2.3,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 157.02
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.16,
+   "rungs": [
+    {
+     "id": "company_hurdle",
+     "return_pct": 13.0,
+     "price": 141.64,
+     "price_second_lens": 136.87
+    },
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 141.64,
+     "price_second_lens": 136.87
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 148.29,
+     "price_second_lens": 143.3
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 169.47,
+     "price_second_lens": 163.76
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 197.01,
+     "price_second_lens": 190.38
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 228.47,
+     "price_second_lens": 220.78
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 141.64,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 169.47,
+  "hold_floor_price": 197.01,
+  "sell_line_price": 228.47,
+  "values_dated": {
+   "today": {
+    "bear": 56.92,
+    "base": 154.56,
+    "bull": 252.23,
+    "date": "2026-11-04",
+    "base_calibrated": 149.64
+   },
+   "year_ends": [
+    {
+     "bear": 64.06,
+     "base": 176.42,
+     "bull": 288.83,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 170.76
+    },
+    {
+     "bear": 70.35,
+     "base": 196.76,
+     "bull": 323.27,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 190.39
+    },
+    {
+     "bear": 76.97,
+     "base": 218.51,
+     "bull": 360.35,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 211.35
+    },
+    {
+     "bear": 83.91,
+     "base": 241.64,
+     "bull": 400.03,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 233.62
+    },
+    {
+     "bear": 91.17,
+     "base": 266.12,
+     "bull": 442.25,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 257.16
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 63.08,
+     "base": 173.33,
+     "bull": 283.62,
+     "date": "2027-11-04",
+     "base_calibrated": 167.77
+    },
+    "two_year": {
+     "bear": 69.33,
+     "base": 193.44,
+     "bull": 317.65,
+     "date": "2028-11-04",
+     "base_calibrated": 187.19
+    },
+    "five_year": {
+     "bear": 90.0,
+     "base": 262.14,
+     "bull": 435.37,
+     "date": "2031-11-04",
+     "base_calibrated": 253.33
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 64.06,
+     "base": 176.42,
+     "bull": 288.83,
+     "second_lens": 170.76
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 91.17,
+     "base": 266.12,
+     "bull": 442.25,
+     "second_lens": 257.16
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 149.64,
+   "annual_return_pct": 19.4,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-143$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "משתמשים יומיים (DAUq) 115 מיליון ומעלה, והמשתמשים המחוברים לא יורדים מ-53.5 מיליון",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-197$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "משתמשים יומיים (DAUq) מתחת לכ-115 מיליון, או משתמשים מחוברים מתחת ל-53.5 מיליון",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "צמיחת ההכנסה למשתמש בארה\"ב מתחת לכ-30% בזמן שמספר המשתמשים בארה\"ב ממשיך לרדת",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-228$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "עוברת את מבחן הקנייה במחיר של 4.11 (103$): בסיסי 20.2% בשנה, עדשה שנייה 19.4%; הימור קטן בלבד, כי הכול תלוי במספר המשתמשים היומי",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-01",
+    "to": "2027-02-28"
+   },
+   "confirmed": false
+  }
+ },
  "currency": "USD",
  "source": {
   "copy_of": "the saved valuation of 2026-11-04 (runs/tickers/RDDT_2026-11-04/deep/params.json, private run folder)",
   "fresh_pull": false,
   "note": "Copy of the valuation of 2026-11-04 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: early February 2027 (not confirmed)."
  },
- "verdict_he": "עוברת את מבחן הקנייה במחיר של 4.11 (103$): בסיסי 20.2% בשנה, עדשה שנייה 19.4%; הימור קטן בלבד, כי הכול תלוי במספר המשתמשים היומי",
- "buy_test_price": 143.3,
- "margin_of_safety_price": 141.64,
  "price_ladder": {
   "meaning": "price on the valuation date at which the base return to the end of 2031 equals each return; one return per rung",
   "years_to_horizon": 5.16,
@@ -55,80 +436,15 @@
   },
   "rerun_max_price": 148.29
  },
- "values": {
-  "today": {
-   "bear": 56.92,
-   "base": 154.56,
-   "bull": 252.23
-  },
-  "end_2027": {
-   "bear": 64.06,
-   "base": 176.42,
-   "bull": 288.83
-  },
-  "end_2028": {
-   "bear": 70.35,
-   "base": 196.76,
-   "bull": 323.27
-  },
-  "end_2031": {
-   "bear": 91.17,
-   "base": 266.12,
-   "bull": 442.25
-  },
-  "weighted_today_35_45_20": 139.92,
-  "calibrated_today": 149.64,
-  "calibrated_end_2031": 257.16
- },
- "scenarios": {
-  "bear": {
-   "prob": 0.35,
-   "he": "התנועה מגוגל נחלשת והמשתמשים המחוברים יורדים: צמיחה 5% ב-2027 ו-‎-8%‎ ב-2028, שיעור רווח תפעולי 21%-26%, מכפיל 12"
-  },
-  "base": {
-   "prob": 0.45,
-   "he": "צמיחה 22% ב-2027 שדועכת ל-8%, שיעור רווח תפעולי עולה מ-30% ל-36%, מכפיל 22"
-  },
-  "bull": {
-   "prob": 0.2,
-   "he": "צמיחה 32% ב-2027 שדועכת ל-10%, שיעור רווח תפעולי עולה ל-42%, מכפיל 26"
-  },
-  "label": "subjective"
- },
- "annual_return_pct": {
-  "to": "סוף 2031",
-  "bear": -2.3,
-  "base": 20.2,
-  "bull": 32.6,
-  "weighted": 17.8,
-  "calibrated": 19.4,
-  "index": 9.1
- },
- "conditions": {
-  "add": [
-   "המחיר מתחת לכ-143$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
-   "משתמשים יומיים (DAUq) 115 מיליון ומעלה, והמשתמשים המחוברים לא יורדים מ-53.5 מיליון"
-  ],
-  "proposed_trim": [
-   "המחיר מעל כ-197$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
-  ],
-  "proposed_exit": [
-   "משתמשים יומיים (DAUq) מתחת לכ-115 מיליון, או משתמשים מחוברים מתחת ל-53.5 מיליון",
-   "צמיחת ההכנסה למשתמש בארה\"ב מתחת לכ-30% בזמן שמספר המשתמשים בארה\"ב ממשיך לרדת",
-   "המחיר מעל כ-228$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
-  ]
- },
- "next_report": {
-  "date": "early February 2027",
-  "confirmed": false,
-  "check": "משתמשים יומיים (DAUq) ומשתמשים מחוברים, ההכנסה למשתמש בארה\"ב, התנועה מגוגל"
- },
- "thesis_link": null,
- "thesis_note": "no thesis_he.md yet for RDDT; the saved valuation is the lean model of 2026-11-04",
- "notes_he": [
-  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: תחילת פברואר 2027 (לא מאושר)",
-  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-5%-6%",
-  "המספר לשנה-שנתיים הוא הכי רועש"
- ],
- "model_warnings": []
+ "thesis_note": "the thesis is research/companies/RDDT/thesis_he.md",
+ "model_warnings": [],
+ "carried_from_previous": [
+  "annual_return_pct.to",
+  "buy_test",
+  "currency",
+  "model_warnings",
+  "price_ladder",
+  "source",
+  "values.calibrated_end_2031"
+ ]
 }

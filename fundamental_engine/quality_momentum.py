@@ -1,12 +1,25 @@
 """Quality + trend screen: decides where research time goes. Pure logic (no network); scripts/quality_momentum_screen.py
 fetches the data. It is not a valuation and not a buy signal, and it is not backtested.
 
-Quality gates come from SEC XBRL companyfacts (trailing twelve months, TTM, built from quarters; a fourth quarter is the
-full year minus nine months). Trend gates come from daily adjusted closes. Banks and insurers are read on their own
-measures; filers with annual XBRL only (20-F, 40-F) are read on annual gates.
+Data source, stated exactly: quality gates come from the SEC companyfacts API read per company
+(data.sec.gov/api/xbrl/companyfacts/CIK##########.json, one request per company above the market value floor, plus its
+submissions file for the SIC code), not from the XBRL frames API (one concept for every filer in one period). TTM
+(trailing twelve months) is built from quarters; a fourth quarter is the full year minus nine months. Trend gates come
+from daily adjusted closes. Banks and insurers are read on their own measures; filers with annual XBRL only (20-F, 40-F)
+are read on annual gates.
+
+Saved valuations (15.11.2026, the MSFT slip of 06.11.2026): saved_valuation() reads what the research folder remembers
+about a screened name (the newest dated valuation through valuation_record.latest_valuation, and research/rejected.jsonl
+for checks that ended 'not a buy') and runs the buy test at the screen's price: lean params are repriced and rerun with
+lean_model; a custom model is compared with its saved buy-test price. A name that fails is marked, never dropped: the
+screen's gates and ranking do not read it. This part reads files under research/; it fetches nothing and writes nothing.
 """
+import json
+import os
 import re
 from datetime import date, timedelta
+
+from . import lean_freeze, valuation_record
 
 GATES = {'rev_growth_ttm': 0.15, 'rev_growth_q': 0.15, 'margin_drop_pts': 1.0, 'share_growth': 0.03,
          'max_below_high': 0.25, 'roe': 0.15, 'rev_cagr_3y': 0.10}
@@ -649,6 +662,211 @@ def evaluate(row, series, sic, as_of):
     return out
 
 
+# ---------------------------------------------------------------- saved valuations (the MSFT slip, 06.11.2026)
+
+SAVED_STATES = ('pass', 'fail', 'unknown', 'none')
+PRICE_SCALE_LIMIT = 1.8      # a screen price this far from the valuation's: a split or a unit gap first (forecast_tracker's guard)
+BASIS = {
+    'lean_rerun': "the saved lean params rerun with lean_model at the screen's price",
+    'record_price': "the saved record's buy-test price (custom model, not rerun)",
+    'handoff_price': "the handoff's buy-test price (custom model, not rerun)",
+    'rejected_price': 'the buy-test price saved with the rejected check (not rerun at this price)',
+    'failed_lower': 'failed the buy test at a lower price; a higher price only lowers the returns',
+    'no_test_price': 'the saved model has no buy-test price and failed nowhere below this price: rerun it before proposing',
+    'engine': 'a heavy-engine valuation: no buy-test price to compare',
+    'no_price': 'no price in the screen',
+    'scale': f'the price moved more than {PRICE_SCALE_LIMIT}x since the valuation (a split or a unit gap?): check before comparing',
+    'error': 'the saved lean params did not run',
+}
+
+
+def lean_module():
+    """scripts/lean_model.py of this checkout (run, reprice), or None when the script is not there."""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts', 'lean_model.py')
+    if not os.path.isfile(path):
+        return None
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('lean_model', path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def saved_book(research_root):
+    """What the research folder remembers, by normalized symbol: {'root', 'folders': {symbol: folder name},
+    'rejected': {symbol: [rows of research/rejected.jsonl, oldest first]}}. Missing files are empty."""
+    folders, rejected = {}, {}
+    base = os.path.join(research_root, valuation_record.STORE)
+    if os.path.isdir(base):
+        for t in sorted(os.listdir(base)):
+            if os.path.isdir(os.path.join(base, t)):
+                folders[norm_symbol(t)] = t
+    path = os.path.join(research_root, 'rejected.jsonl')
+    if os.path.isfile(path):
+        with open(path, encoding='utf-8') as f:
+            for line in f:
+                if line.strip():
+                    row = json.loads(line)
+                    rejected.setdefault(norm_symbol(row.get('ticker')), []).append(row)
+    for rows in rejected.values():
+        rows.sort(key=lambda r: r.get('date') or '')
+    return {'root': research_root, 'folders': folders, 'rejected': rejected}
+
+
+def _is_num(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+
+def _valued(root, ticker, run):
+    """The resolver's newest folder; when it holds no lean or custom valuation (a heavy-engine or gather-only folder), the
+    newest older folder that does, with the newer folder named in the note."""
+    lv = valuation_record.latest_valuation(root, ticker, run=run)
+    if lv is None or lv['record'] is not None:
+        return lv
+    for d in reversed(lv['older_folders']):
+        folder = os.path.join(os.path.dirname(lv['folder']), d)
+        if lean_freeze.classify(folder)['kind'] is None:
+            continue
+        try:
+            rec, spec = valuation_record.record_for_folder(folder, root, run=run)
+        except (ValueError, KeyError):
+            continue
+        if rec is not None:
+            return dict(lv, as_of=d, folder=folder, kind=spec['kind'], model=spec.get('model'), record=rec,
+                        record_source='built in memory from the saved files',
+                        note=f"the newest folder {lv['as_of']} is {lv['kind']} (no buy test); the newest valuation is {d}")
+    return lv
+
+
+def _compare(out, price, test_price, basis):
+    out.update(buy_test_price=test_price, buy_test_pass=price <= test_price, basis=basis)
+
+
+def _from_rejected(out, rej, price, as_of):
+    out.update(date=rej.get('date'), kind='rejected', model=rej.get('model'), base_value=rej.get('base_value_today'),
+               price_then=rej.get('price'), buy_test_price_saved=rej.get('buy_test_price'), verdict=rej.get('verdict'),
+               source='research/rejected.jsonl')
+    if price is None or not _is_num(rej.get('price')):
+        out['basis'] = 'no_price'
+    elif not 1 / PRICE_SCALE_LIMIT < price / rej['price'] < PRICE_SCALE_LIMIT:
+        out['basis'] = 'scale'
+    elif _is_num(rej.get('buy_test_price')):
+        _compare(out, price, rej['buy_test_price'], 'rejected_price')
+    elif rej.get('buy_test_pass') is False and price >= rej['price']:
+        out.update(buy_test_pass=False, basis='failed_lower')
+    else:
+        out['basis'] = 'no_test_price'
+
+
+def _from_folder(out, lv, price, price_date, lean, root):
+    rec = lv['record'] or {}
+    out.update(date=lv['as_of'], kind=lv['kind'], model=lv.get('model'),
+               source=os.path.relpath(lv['folder'], os.path.dirname(os.path.abspath(root))))
+    if lv.get('note'):
+        out['note'] = lv['note']
+    if not rec:
+        out['basis'] = 'engine' if lv['kind'] == 'engine' else 'error'
+        return
+    price_then = (rec.get('price') or {}).get('value')
+    bt_saved = (rec.get('hurdles') or {}).get('buy_test_price')
+    out.update(base_value=((rec.get('scenarios') or {}).get('base') or {}).get('value_today'), price_then=price_then,
+               buy_test_price_saved=bt_saved, verdict=(rec.get('verdict') or {}).get('code'),
+               model=(rec.get('model') or {}).get('kind') or out['model'])
+    if price is None or not _is_num(price_then):
+        out['basis'] = 'no_price'
+        return
+    if not 1 / PRICE_SCALE_LIMIT < price / price_then < PRICE_SCALE_LIMIT:
+        out['basis'] = 'scale'
+        return
+    spec = lean_freeze.classify(lv['folder'])
+    if (spec['kind'] == 'lean' or spec.get('model') == 'remapped_lean') and lean is not None:
+        params = valuation_record.load(os.path.join(lv['folder'], spec['params']))
+        later = price_date if price_date and str(price_date) > str(params.get('as_of')) else None
+        # weighted worlds (worlds.json beside lean_params.json, or the params' own key): the published buy test is the
+        # weighted one (valuation_record), so the screen tests that one too
+        wspec, wdir = (valuation_record.worlds_spec(lv['folder'], params)
+                       if spec['params'] == 'lean_params.json' or params.get('worlds') is not None else (None, None))
+        try:
+            q = lean.reprice(params, price=price, as_of=later)
+            bt = (lean.run(q, worlds=wspec, base_dir=wdir)['worlds']['weighted']['buy_test'] if wspec is not None
+                  else lean.run(q)['buy_test'])
+        except Exception as e:                                      # noqa: BLE001 (a file that does not run is a recorded gap)
+            out.update(basis='error', note=f'{type(e).__name__}: {str(e)[:200]}')
+        else:
+            rerun = bt.get('rerun') or {}
+            warns = bool(rerun.get('lower_than_stated'))
+            out.update(buy_test_pass=bt.get('pass'), basis='lean_rerun',
+                       buy_test_price=rerun.get('max_price_passing') if warns else bt.get('max_price_passing'),
+                       binding_leg=rerun.get('binding_leg') if warns else bt.get('binding_leg'),
+                       repriced={'dates_moved': q['repriced'].get('dates_moved'), 'note': q['repriced'].get('note')})
+            if bt.get('no_price_passes'):
+                out['note'] = bt['no_price_passes']
+            return
+    if _is_num(bt_saved):
+        _compare(out, price, bt_saved, 'record_price')
+        return
+    hand = os.path.join(root, valuation_record.TECH, os.path.basename(os.path.dirname(lv['folder'])), lv['as_of'], 'fundamental.json')
+    hp = valuation_record.load(hand).get('buy_test_price') if os.path.isfile(hand) else None
+    if _is_num(hp):
+        _compare(out, price, hp, 'handoff_price')
+    elif (rec.get('model_reading') or {}).get('buy_test_pass') is False and price >= price_then:
+        out.update(buy_test_pass=False, basis='failed_lower')
+    elif out['basis'] != 'error':
+        out['basis'] = 'no_test_price'
+
+
+def saved_valuation(book, symbol, price, as_of, price_date=None, lean=None):
+    """The saved valuation of one screened name, tested at the screen's price. The search rule of 15.11.2026: never propose
+    a name whose saved valuation fails the buy test (the MSFT slip of 06.11.2026), names rejected earlier included.
+
+    book: saved_book(research_root). price: the screen's close (the listing price when no bars were read). as_of: the
+    screen's date (the age). price_date: the day of that close; the saved params' dates move to it only when it is later
+    than their as_of and the file has base_year_end (lean_model.reprice), else only the price changes. lean: the lean_model
+    module (run, reprice); default this checkout's script.
+    The newest of the research folder's valuation and the newest research/rejected.jsonl row is tested; the other is kept
+    as context. state: pass | fail (the buy test at the screen's price) | unknown (a valuation exists but no buy-test price
+    can be compared: see basis) | none (nothing saved). The buy-test price follows the record's rule: the rerun price when
+    lean_model warns that a rerun at the stated price fails."""
+    sym = norm_symbol(symbol)
+    rej_rows = book['rejected'].get(sym) or []
+    rej = rej_rows[-1] if rej_rows else None
+    out = {'state': 'none', 'date': None, 'kind': None, 'model': None, 'age_days': None, 'base_value': None, 'price_then': None,
+           'price': price, 'price_date': price_date, 'buy_test_pass': None, 'buy_test_price': None, 'buy_test_price_saved': None,
+           'binding_leg': None, 'basis': None, 'verdict': None, 'source': None, 'note': None,
+           'rejected': None if rej is None else {k: rej.get(k) for k in ('date', 'price', 'model', 'verdict', 'buy_test_price',
+                                                                          'margin_of_safety_price_13pct', 'source')}}
+    ticker = book['folders'].get(sym)
+    if lean is None:
+        lean = lean_module()
+    lv = _valued(book['root'], ticker, lean.run if lean else None) if ticker else None
+    if lv is not None and lv['kind'] == 'gather_only':
+        out['note'] = f"research folder {lv['as_of']} holds gathered data only, no valuation"
+        lv = None
+    if rej is not None and (lv is None or str(rej.get('date') or '') > str(lv['as_of'])):
+        if lv is not None:
+            out['note'] = f"an older research valuation exists ({lv['as_of']}); the newer rejected check is tested"
+        _from_rejected(out, rej, price, as_of)
+    elif lv is not None:
+        _from_folder(out, lv, price, price_date, lean, book['root'])
+    else:
+        return out
+    if out['date']:
+        out['age_days'] = _days(out['date'], as_of)
+    out['state'] = 'unknown' if out['buy_test_pass'] is None else 'pass' if out['buy_test_pass'] else 'fail'
+    out['basis_text'] = BASIS.get(out['basis'])
+    return out
+
+
+def attach_saved(rows, book, as_of, price_date=None, lean=None):
+    """rows get 'saved_valuation'; price_date applies to rows whose price is a close of that day (trend bars read)."""
+    if lean is None:
+        lean = lean_module()
+    for r in rows:
+        r['saved_valuation'] = saved_valuation(book, r['symbol'], r.get('price') or None, as_of,
+                                               price_date if r.get('trend_measures') else None, lean)
+    return rows
+
+
 # ---------------------------------------------------------------- Hebrew report
 
 GATE_HE = {'rev_growth_ttm': 'צמיחת הכנסות ב-12 חודשים', 'rev_growth_q': 'צמיחת הרבעון האחרון מול שנה קודם',
@@ -694,6 +912,43 @@ def _table(head, lines):
     return ['| ' + ' | '.join(head) + ' |', '|' + '---|' * len(head)] + ['| ' + ' | '.join(str(c) for c in ln) + ' |' for ln in lines]
 
 
+SAVED_HE = {'pass': 'עוברת', 'fail': 'לא עוברת', 'unknown': 'לא ידוע', 'none': 'אין'}
+BASIS_HE = {'lean_rerun': 'המודל השמור הורץ מחדש במחיר החיפוש',
+            'record_price': 'מחיר מבחן הקנייה השמור (מודל מותאם, לא הורץ מחדש)',
+            'handoff_price': 'מחיר מבחן הקנייה מקובץ ההעברה (מודל מותאם, לא הורץ מחדש)',
+            'rejected_price': 'מחיר מבחן הקנייה שנשמר עם הבדיקה שנדחתה (לא הורץ מחדש)',
+            'failed_lower': 'נכשלה במבחן במחיר נמוך יותר; מחיר גבוה יותר רק מוריד את התשואה',
+            'no_test_price': 'אין במודל מחיר מבחן להשוואה: להריץ מחדש לפני שמציעים',
+            'engine': 'הערכה של המנוע הכבד, בלי מחיר מבחן קנייה',
+            'no_price': 'אין מחיר בחיפוש',
+            'scale': f'המחיר זז יותר מפי {PRICE_SCALE_LIMIT} מאז ההערכה (פיצול או יחידה אחרת?): לבדוק לפני השוואה',
+            'error': 'המודל השמור לא רץ'}
+KIND_HE = {'lean': 'מודל רזה', 'custom': 'מודל מותאם', 'engine': 'מנוע כבד', 'rejected': 'בדיקה שנדחתה'}
+
+
+def _dmy(iso):
+    return '—' if not iso else f'{iso[8:10]}.{iso[5:7]}.{iso[:4]}'
+
+
+def _money(x):
+    return '—' if x is None else f'{x:,.2f}'
+
+
+def saved_he(sv):
+    """The column 'הערכה שמורה': עוברת / לא עוברת / לא ידוע / אין, with the date and the buy-test price."""
+    if not sv:
+        return '—'
+    if sv['state'] == 'none':
+        return 'אין'
+    word = SAVED_HE[sv['state']]
+    bits = [('נדחתה ' if sv['kind'] == 'rejected' else '') + _dmy(sv['date'])]
+    if sv.get('buy_test_price') is not None:
+        bits.append('מחיר מבחן ' + _money(sv['buy_test_price']))
+    elif sv['state'] == 'unknown':
+        bits.append(BASIS_HE.get(sv.get('basis'), '—'))
+    return ('**%s**' % word if sv['state'] == 'fail' else word) + ' (' + ', '.join(bits) + ')'
+
+
 def _std_line(r):
     t = r.get('trend_measures') or {}
     return [r['symbol'], r['name'][:28], r.get('sector') or '—', _cap(r['market_cap']), _pct(r.get('rev_growth_ttm')),
@@ -711,17 +966,56 @@ STD_HEAD = ['סימול', 'חברה', 'ענף', 'שווי שוק', 'צמיחה 1
             'שינוי מניות', 'תשואה 12-1', 'מרחק מהשיא', 'מכפיל רווח', 'מכפיל מכירות', 'תשואת תזרים']
 
 
+LIST_HE = (('passers', 'עברה'), ('near_misses', 'כמעט'), ('financials', 'פיננסים'), ('financial_near_misses', 'פיננסים, כמעט'),
+           ('commodity', 'סחורות'), ('annual_only', 'שנתי בלבד'), ('unread', 'חסר נתון'))
+
+
+def saved_rows(res):
+    """(list label, row) for every listed name that has a saved valuation, in the report's order, each name once."""
+    seen, out = set(), []
+    for key, label in LIST_HE:
+        for r in res.get(key) or []:
+            sv = r.get('saved_valuation')
+            if sv and sv['state'] != 'none' and r['symbol'] not in seen:
+                seen.add(r['symbol'])
+                out.append((label, r))
+    return out
+
+
+def _saved_warning(res):
+    """The lines under the headline: listed names whose saved valuation fails the buy test, or cannot be compared."""
+    L = []
+    for state, text in (('fail', '**הערכה שמורה שנכשלת במבחן הקנייה במחיר של היום** (לא מציעים אותן בלי הערכה חדשה אחרי דוח או '
+                                 'עובדה מהותית; הכלל מאז טעות MSFT, 06.11.2026)'),
+                        ('unknown', 'יש הערכה שמורה, אבל בלי מחיר מבחן קנייה שאפשר להשוות אליו (לבדוק לפני שמציעים)')):
+        parts = []
+        for key, label in (('passers', 'מהעוברות'), ('near_misses', 'מאלה שכמעט עברו')):
+            names = [r['symbol'] for r in res.get(key) or [] if (r.get('saved_valuation') or {}).get('state') == state]
+            if names:
+                parts.append(f"{label}: {', '.join(names)}")
+        if parts:
+            L.append(f"{text}: {'; '.join(parts)}.")
+    return L
+
+
 def render_he(res, top=40):
-    """screen_he.md: passers, near misses, commodity names, financials, annual-only filers, thesis-book names, and what the
-    screen is not."""
+    """screen_he.md: passers, near misses, commodity names, financials, annual-only filers, thesis-book names, the saved
+    valuations of the listed names, and what the screen is not."""
     c, spy = res['counts'], res.get('spy') or {}
+    warn = _saved_warning(res)
     L = [f"# חיפוש מניות: איכות + מגמה ({res['as_of']})", '',
          f"נסרקו {c['companies']} חברות בשווי שוק מעל {res['min_cap'] / 1e9:.0f} מיליארד דולר. "
          f"עברו את כל התנאים: **{c['passers']}**. כמעט עברו (נכשלו בתנאי אחד בלבד): {c['near_misses']}. "
-         f"תשואת ה-S&P 500 (SPY) ב-12 החודשים בלי החודש האחרון: {_pct(spy.get('ret_12_1'), True)}.", '',
-         '## מה החיפוש אומר ומה לא', '',
+         f"תשואת ה-S&P 500 (SPY) ב-12 החודשים בלי החודש האחרון: {_pct(spy.get('ret_12_1'), True)}.", '']
+    if warn:
+        L += sum(([w, ''] for w in warn), [])
+    L += ['## מה החיפוש אומר ומה לא', '',
          '- הוא מסמן חברות שצומחות מהר, מרוויחות, מייצרות מזומן, לא מדללות, והמניה שלהן במגמת עלייה. הוא רק מחליט לאן להפנות זמן מחקר.',
          '- הוא **לא הערכת שווי ולא המלצת קנייה**: חברה שעוברת אותו יכולה להיות יקרה מדי ולהיכשל במבחן הקנייה.',
+         '- לכל חברה ברשימות מוצגת ההערכה השמורה שלה (אם יש) מול המחיר של היום: חברה שההערכה השמורה שלה נכשלת במבחן הקנייה, '
+         'או שנדחתה בבדיקה קודמת, מסומנת ולא נמחקת. היא לא מוצעת בלי הערכה חדשה. התנאים והדירוג לא קוראים את הסימון.',
+         '- מקור הנתונים: קובץ ה-companyfacts של ה-SEC לכל חברה בנפרד (בקשה אחת לכל חברה מעל סף השווי, ועוד קובץ ההגשות '
+         'לקוד הענף), ולא ה-XBRL frames (מושג אחד לכל החברות בתקופה אחת).',
          '- הוא **לא נבדק על העבר** (לא נעשה מבחן היסטורי), ולכן אין לו שיעור הצלחה מוכח.',
          '- הנתונים מדוחות ה-SEC כפי שדווחו (בלי התאמות לאירועים חד-פעמיים); חברה שרכשה חברה אחרת תיראה צומחת מהר יותר ממה שהיא באמת.',
          '- חברות סחורות (נפט וזיקוק, מכרות, פלדה, דשנים, ספנות, צינורות גז) מוצגות בטבלה נפרדת ולא ברשימת העוברות: '
@@ -739,8 +1033,8 @@ def render_he(res, top=40):
          f"## חברות שעברו את כל התנאים ({c['passers']})", '',
          'הדירוג: סכום פשוט של ארבעה דירוגי אחוזון (צמיחה, שינוי שוליים, שולי תזרים חופשי, עוצמה מול המדד), בלי משקלות.', '']
     ps = res['passers']
-    L += _table(['#'] + STD_HEAD + ['רבעון אחרון עד', 'ציון דירוג'],
-                [[i + 1] + _std_line(r) + [_period(r), f"{r['rank_score']:.0f}"]
+    L += _table(['#'] + STD_HEAD + ['רבעון אחרון עד', 'ציון דירוג', 'הערכה שמורה'],
+                [[i + 1] + _std_line(r) + [_period(r), f"{r['rank_score']:.0f}", saved_he(r.get('saved_valuation'))]
                  for i, r in enumerate(ps[:top])])
     if any(r.get('margin_jump') for r in ps):
         L += ['', '* קפיצה חריגה בשולי הרווח (יותר מ-10 נקודות, או מעבר מהפסד לרווח): לרוב הוצאה חד-פעמית בשנה הקודמת ולא שיפור בעסק. לבדוק: '
@@ -759,10 +1053,11 @@ def render_he(res, top=40):
     L += _table(['סימול', 'צמיחה', 'שינוי שוליים', 'שולי תזרים', 'עוצמה מול המדד', 'סכום'],
                 [[r['symbol']] + [f"{r['rank_parts'][k]:.0f}" for k in RANK_KEYS] + [f"{r['rank_score']:.0f}"] for r in ps[:top]])
     L += ['', f"## כמעט עברו: נכשלו בתנאי אחד בלבד ({c['near_misses']})", '']
-    L += _table(['סימול', 'חברה', 'שווי שוק', 'התנאי שנכשל', 'המספר', 'צמיחה 12ח׳', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'תשואה 12-1', 'מרחק מהשיא'],
+    L += _table(['סימול', 'חברה', 'שווי שוק', 'התנאי שנכשל', 'המספר', 'צמיחה 12ח׳', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'תשואה 12-1', 'מרחק מהשיא',
+                 'הערכה שמורה'],
                 [[r['symbol'], r['name'][:28], _cap(r['market_cap']), GATE_HE[r['failed'][0]['gate']], gate_value_he(r['failed'][0]),
                   _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
-                  _pct((r.get('trend_measures') or {}).get('below_high'), True)] for r in res['near_misses']])
+                  _pct((r.get('trend_measures') or {}).get('below_high'), True), saved_he(r.get('saved_valuation'))] for r in res['near_misses']])
     cm = res.get('commodity') or []
     L += ['', f"## חברות סחורות מחזוריות: הצמיחה הולכת אחרי המחירים ({len(cm)} מתוך {c.get('route_commodity', len(cm))})", '',
           'נפט וגז, זיקוק, מכרות, פלדה, דשנים, ספנות וצינורות. הן לא נכנסות לרשימת העוברות גם כשהמספרים נראים טוב. '
@@ -803,7 +1098,7 @@ def render_he(res, top=40):
                  for r in res['annual_only']])
     L += ['', '## החברות שכבר בספר התזות', '', 'איפה עומדת כל חברה מוכרת מול אותם תנאים (✓ עבר, ✗ נכשל, ? אין נתון).', '']
     L += _table(['סימול', 'מסלול', 'מצב', 'צמיחה 12ח׳', 'צמיחת רבעון', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'שינוי מניות',
-                 'תשואה 12-1', 'מרחק מהשיא', 'מה נכשל או חסר'],
+                 'תשואה 12-1', 'מרחק מהשיא', 'מה נכשל או חסר', 'הערכה שמורה'],
                 [[r['symbol'], {'standard': 'רגיל', 'financial': 'פיננסים', 'annual_only': 'שנתי בלבד', 'commodity': 'סחורות'}.get(r.get('route'), '—'),
                   {'pass': 'עברה', 'near_miss': 'כמעט', 'fail': 'נכשלה', 'incomplete': 'חסר נתון', 'not_found': 'לא נמצאה'}[r['status']],
                   _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_growth_q')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')),
@@ -811,8 +1106,26 @@ def render_he(res, top=40):
                   _pct(r.get('share_change'), True), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
                   _pct((r.get('trend_measures') or {}).get('below_high'), True),
                   '; '.join([GATE_HE[g['gate']] + ' (' + gate_value_he(g) + ')' for g in r.get('failed', [])] +
-                            ['חסר: ' + GATE_HE[g['gate']] for g in r.get('missing', [])] + ([r['note']] if r.get('note') else [])) or '—']
+                            ['חסר: ' + GATE_HE[g['gate']] for g in r.get('missing', [])] + ([r['note']] if r.get('note') else [])) or '—',
+                  saved_he(r.get('saved_valuation'))]
                  for r in res['thesis_book']])
+    sr = saved_rows(res)
+    L += ['', f'## הערכות שמורות מול מחיר החיפוש ({len(sr)})', '',
+          'כל חברה ברשימות שלמעלה שיש לה הערכה שמורה (תיקייה מתוארכת ב-research/companies) או בדיקה שנדחתה (research/rejected.jsonl). '
+          'מבחן הקנייה: תשואה שנתית בתרחיש הבסיסי של 12% ומעלה בשתי העדשות, שורי 17% ומעלה, דובי לא נמוך ממינוס 10% בשנה, '
+          'מהמחיר של היום עד סוף שנת היעד. מודל רזה מורץ מחדש במחיר החיפוש; מודל מותאם מושווה למחיר מבחן הקנייה השמור שלו. '
+          '"מחיר מבחן הקנייה" הוא המחיר הגבוה ביותר שבו כל ארבעת התנאים עוברים (מחיר ההרצה החוזרת כשהמודל מזהיר). '
+          'ההערכה עצמה לא עודכנה: רק המחיר. ככל שההערכה ישנה יותר, כך המספר פחות אמין.', '']
+    if sr:
+        L += _table(['סימול', 'ברשימה', 'הערכה שמורה', 'תאריך', 'גיל (ימים)', 'סוג', 'שווי בסיסי אז', 'מחיר אז', 'מחיר בחיפוש',
+                     'מחיר מבחן הקנייה', 'איך נבדק', 'נדחתה קודם'],
+                    [[r['symbol'], label, SAVED_HE[sv['state']], _dmy(sv['date']), '—' if sv['age_days'] is None else sv['age_days'],
+                      KIND_HE.get(sv['kind'], sv['kind'] or '—'), _money(sv.get('base_value')), _money(sv.get('price_then')),
+                      _money(sv.get('price')), _money(sv.get('buy_test_price')), BASIS_HE.get(sv.get('basis'), '—'),
+                      '—' if not sv.get('rejected') else _dmy(sv['rejected'].get('date')) + ' במחיר ' + _money(sv['rejected'].get('price'))]
+                     for label, r in sr for sv in [r['saved_valuation']]])
+    else:
+        L += ['אין לאף חברה ברשימות הערכה שמורה.']
     un = res.get('unread') or []
     if un:
         L += ['', f'## לא נכשלו בשום תנאי, אבל חסר להן נתון ({len(un)})', '',
@@ -824,6 +1137,7 @@ def render_he(res, top=40):
     L += _table(['שלב', 'מספר'], [[k, v] for k, v in res['counts_he']])
     if res.get('gaps_he'):
         L += ['', '## פערי נתונים', ''] + ['- ' + g for g in res['gaps_he']]
-    L += ['', 'מקורות: [SEC XBRL companyfacts](https://data.sec.gov/api/xbrl/companyfacts/), [רשימת המניות של Nasdaq](https://www.nasdaq.com/market-activity/stocks/screener), '
+    L += ['', 'מקורות: [SEC XBRL companyfacts](https://data.sec.gov/api/xbrl/companyfacts/) לכל חברה בנפרד (לא XBRL frames) '
+          'וקובץ ההגשות שלה ([submissions](https://data.sec.gov/submissions/)), [רשימת המניות של Nasdaq](https://www.nasdaq.com/market-activity/stocks/screener), '
           'מחירים יומיים מ-Yahoo Finance (מתואמים לפיצולים; התשואה מתואמת גם לדיבידנדים).', '']
     return '\n'.join(L)

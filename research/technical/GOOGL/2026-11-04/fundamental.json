@@ -3,16 +3,375 @@
  "as_of": "2026-11-04",
  "price": 290.75,
  "price_time_utc": "2026-11-04T18:55Z (IBKR snapshot, from the saved params)",
+ "verdict_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-5.8% בשנה והעדשה השנייה 11.0% (העדשות לא מסכימות); מבחן הקנייה עובר רק מתחת לכ-217$",
+ "buy_test_price": 216.79,
+ "margin_of_safety_price": 207.07,
+ "values": {
+  "today": {
+   "bear": 110.32,
+   "base": 239.41,
+   "bull": 396.97
+  },
+  "end_2027": {
+   "bear": 122.53,
+   "base": 267.07,
+   "bull": 443.49
+  },
+  "end_2028": {
+   "bear": 134.67,
+   "base": 293.73,
+   "bull": 488.1
+  },
+  "end_2029": {
+   "bear": 147.9,
+   "base": 323.06,
+   "bull": 536.98
+  },
+  "end_2030": {
+   "bear": 161.96,
+   "base": 354.89,
+   "bull": 590.07
+  },
+  "end_2031": {
+   "bear": 176.74,
+   "base": 389.04,
+   "bull": 647.16
+  },
+  "weighted_today_25_50_25": 246.53,
+  "calibrated_today": 305.84,
+  "calibrated_end_2031": 497.86
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "החיפוש נשחק לטובת צ'אט AI והענן מאט אחרי 2027: צמיחה 15% ב-2027 שיורדת ל-2%, שיעור רווח תפעולי יורד ל-21.5%, מכפיל 14"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה 24% ב-2027 שדועכת ל-8.6%; גל הפחת מוריד את שיעור הרווח התפעולי מ-31.8% ל-26.8%; מכפיל 19"
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": "הענן ושבבי TPU ממשיכים לגדול והחיפוש צומח: צמיחה 29.5% ב-2027 שדועכת ל-12%, שיעור רווח תפעולי 31%-33%, מכפיל 22"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -9.2,
+  "base": 5.8,
+  "bull": 16.8,
+  "calibrated": 11.0,
+  "weighted": 6.4,
+  "index": 9.1,
+  "to": "סוף 2031"
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-217$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות, והתרחישים השורי והדובי עוברים"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-369$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
+  ],
+  "proposed_exit": [
+   "המחיר מעל כ-427$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
+  ],
+  "would_raise_value": [
+   "השקעות 2027 של עד 270 מיליארד $ יחד עם צבר הזמנות מעל 600 מיליארד $: סימן שהתחזית שלנו נמוכה מדי"
+  ]
+ },
+ "next_report": {
+  "date": "early February 2027",
+  "confirmed": false,
+  "check": "תחזית ההשקעות ל-2027, צבר ההזמנות של הענן, קצב הפחת וצמיחת החיפוש"
+ },
+ "thesis_link": "research/companies/GOOGL/thesis_he.md",
+ "notes_he": [
+  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: תחילת פברואר 2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/GOOGL/2026-11-04/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 216.79,
+   "stated_price": 216.79,
+   "rerun_price": 216.79,
+   "base_12_price": 216.79,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 5.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 216.79
+    },
+    "base_calibrated": {
+     "return_pct": 11.0,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 277.42
+    },
+    "bull": {
+     "return_pct": 16.8,
+     "threshold_pct": 17.0,
+     "pass": false,
+     "max_price": 287.85
+    },
+    "bear": {
+     "return_pct": -9.2,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 304.4
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.16,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 207.07,
+     "price_second_lens": 264.99
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 216.79,
+     "price_second_lens": 277.42
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 10.27,
+     "price": 234.92,
+     "price_second_lens": 300.63
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 247.74,
+     "price_second_lens": 317.04
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 288.02,
+     "price_second_lens": 368.58
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 334.01,
+     "price_second_lens": 427.43
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 207.07,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 247.74,
+  "hold_floor_price": 288.02,
+  "sell_line_price": 334.01,
+  "values_dated": {
+   "today": {
+    "bear": 110.32,
+    "base": 239.41,
+    "bull": 396.97,
+    "date": "2026-11-04",
+    "base_calibrated": 305.84
+   },
+   "year_ends": [
+    {
+     "bear": 122.53,
+     "base": 267.07,
+     "bull": 443.49,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 341.44
+    },
+    {
+     "bear": 134.67,
+     "base": 293.73,
+     "bull": 488.1,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 375.66
+    },
+    {
+     "bear": 147.9,
+     "base": 323.06,
+     "bull": 536.98,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 413.24
+    },
+    {
+     "bear": 161.96,
+     "base": 354.89,
+     "bull": 590.07,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 454.04
+    },
+    {
+     "bear": 176.74,
+     "base": 389.04,
+     "bull": 647.16,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 497.86
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 120.83,
+     "base": 263.18,
+     "bull": 436.92,
+     "date": "2027-11-04",
+     "base_calibrated": 336.42
+    },
+    "two_year": {
+     "bear": 132.7,
+     "base": 289.41,
+     "bull": 480.87,
+     "date": "2028-11-04",
+     "base_calibrated": 370.11
+    },
+    "five_year": {
+     "bear": 174.35,
+     "base": 383.5,
+     "bull": 637.89,
+     "date": "2031-11-04",
+     "base_calibrated": 490.75
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 122.53,
+     "base": 267.07,
+     "bull": 443.49,
+     "second_lens": 341.44
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 176.74,
+     "base": 389.04,
+     "bull": 647.16,
+     "second_lens": 497.86
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 305.84,
+   "annual_return_pct": 11.0,
+   "band": "hold",
+   "band_ours": "lagging",
+   "agree": false,
+   "inflated_multiple_warning": false,
+   "note": "the lenses differ by the exit multiple and by the margin"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-217$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות, והתרחישים השורי והדובי עוברים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "too_low",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "השקעות 2027 של עד 270 מיליארד $ יחד עם צבר הזמנות מעל 600 מיליארד $: סימן שהתחזית שלנו נמוכה מדי",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_raise_value; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-369$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-427$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-5.8% בשנה והעדשה השנייה 11.0% (העדשות לא מסכימות); מבחן הקנייה עובר רק מתחת לכ-217$",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-01",
+    "to": "2027-02-28"
+   },
+   "confirmed": false
+  }
+ },
  "currency": "USD",
  "source": {
   "copy_of": "the saved valuation of 2026-11-04 (runs/tickers/GOOGL_2026-11-04/deep/params_final.json, private run folder)",
   "fresh_pull": false,
   "note": "Copy of the valuation of 2026-11-04 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: early February 2027 (not confirmed)."
  },
- "verdict_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-5.8% בשנה והעדשה השנייה 11.0% (העדשות לא מסכימות); מבחן הקנייה עובר רק מתחת לכ-217$",
- "buy_test_price": 216.79,
- "margin_of_safety_price": null,
- "margin_of_safety_note": "null: the saved params carry buy_return 10.27% (the company's own cost of equity), not the 13% margin-of-safety return; the price at that return is in price_ladder.rungs.cost_of_equity_10_27pct",
+ "margin_of_safety_note": "the fixed 13% rung of the price ladder (one definition for every company since 15.11.2026); the company's own hurdle price stays in price_ladder.rungs",
  "price_ladder": {
   "meaning": "price on the valuation date at which the base return to the end of 2031 equals each return; one return per rung",
   "years_to_horizon": 5.16,
@@ -56,82 +415,18 @@
   },
   "rerun_max_price": 216.79
  },
- "values": {
-  "today": {
-   "bear": 110.32,
-   "base": 239.41,
-   "bull": 396.97
-  },
-  "end_2027": {
-   "bear": 122.53,
-   "base": 267.07,
-   "bull": 443.49
-  },
-  "end_2028": {
-   "bear": 134.67,
-   "base": 293.73,
-   "bull": 488.1
-  },
-  "end_2031": {
-   "bear": 176.74,
-   "base": 389.04,
-   "bull": 647.16
-  },
-  "weighted_today_25_50_25": 246.53,
-  "calibrated_today": 305.84,
-  "calibrated_end_2031": 497.86
- },
- "scenarios": {
-  "bear": {
-   "prob": 0.25,
-   "he": "החיפוש נשחק לטובת צ'אט AI והענן מאט אחרי 2027: צמיחה 15% ב-2027 שיורדת ל-2%, שיעור רווח תפעולי יורד ל-21.5%, מכפיל 14"
-  },
-  "base": {
-   "prob": 0.5,
-   "he": "צמיחה 24% ב-2027 שדועכת ל-8.6%; גל הפחת מוריד את שיעור הרווח התפעולי מ-31.8% ל-26.8%; מכפיל 19"
-  },
-  "bull": {
-   "prob": 0.25,
-   "he": "הענן ושבבי TPU ממשיכים לגדול והחיפוש צומח: צמיחה 29.5% ב-2027 שדועכת ל-12%, שיעור רווח תפעולי 31%-33%, מכפיל 22"
-  },
-  "label": "subjective"
- },
- "annual_return_pct": {
-  "to": "סוף 2031",
-  "bear": -9.2,
-  "base": 5.8,
-  "bull": 16.8,
-  "weighted": 6.4,
-  "calibrated": 11.0,
-  "index": 9.1
- },
- "conditions": {
-  "add": [
-   "המחיר מתחת לכ-217$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות, והתרחישים השורי והדובי עוברים"
-  ],
-  "would_raise_value": [
-   "השקעות 2027 של עד 270 מיליארד $ יחד עם צבר הזמנות מעל 600 מיליארד $: סימן שהתחזית שלנו נמוכה מדי"
-  ],
-  "proposed_trim": [
-   "המחיר מעל כ-369$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
-  ],
-  "proposed_exit": [
-   "המחיר מעל כ-427$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
-  ]
- },
- "next_report": {
-  "date": "early February 2027",
-  "confirmed": false,
-  "check": "תחזית ההשקעות ל-2027, צבר ההזמנות של הענן, קצב הפחת וצמיחת החיפוש"
- },
- "thesis_link": null,
- "thesis_note": "no thesis_he.md yet for GOOGL; the saved valuation is the lean model of 2026-11-04",
- "notes_he": [
-  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: תחילת פברואר 2027 (לא מאושר)",
-  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
-  "המספר לשנה-שנתיים הוא הכי רועש"
- ],
+ "thesis_note": "the thesis is research/companies/GOOGL/thesis_he.md",
  "model_warnings": [
   "lenses disagree (ours lagging, calibrated hold): hold, or stage the trade around the next report"
+ ],
+ "carried_from_previous": [
+  "annual_return_pct.to",
+  "buy_test",
+  "conditions.would_raise_value",
+  "currency",
+  "model_warnings",
+  "price_ladder",
+  "source",
+  "values.calibrated_end_2031"
  ]
 }

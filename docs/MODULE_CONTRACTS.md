@@ -556,19 +556,8 @@ thesis, else the thesis; a value in another currency or share unit, or a positio
 the source's own price, is not compared and the reason is printed instead. The expected return of a picture row is a proxy:
 (last year-end base value / price)^(1/years) - 1, distributions excluded. The filing check still runs on the ledger thesis.
 `newer_saved_run` names a dated valuation folder later than the value shown that this table does not read.
-`forecast_tracker` (pure logic, no network or file access; `scripts/forecast_tracker.py` reads
-`research/companies/<T>/<date>/lean_params*.json`, runs `scripts/lean_model.py`, fetches SEC companyfacts, results-release
-dates and daily closes, and writes `research/FORECAST_TRACKER_he.md` and `research/forecast_tracker.json`):
-`forecast_tracker.score(ticker, params, result, payload, today, price=None, release_dates=None, params_path=None) ->
-{"ticker","valuation_date","params_path","status": scored|no_report_since|custom_model|not_scorable,"reported","completed",
-"in_progress": {"fiscal_year","period","end","revenue_growth","margin","note"},"price","read": on_track|ahead|behind|mixed|
-no_report|custom|not_scorable,"in_sample_suspected","notes"}`: the base scenario against what was reported after the
-valuation's as_of (a completed fiscal year: revenue, operating margin, operating EPS; the year in progress: year-to-date
-growth and margin against the full-year path, labelled rough; price: the latest close against the base value path).
-`forecast_tracker.summarize(rows)` -> median error per item with its count, `too few to conclude` under `MIN_ROWS` (8) scored
-rows; `forecast_tracker.build(rows, custom, as_of, sources=None) -> {"forecast_tracker_version","as_of","rows","custom_model",
-"summary","sources","thresholds","meaning"}`; `forecast_tracker.render_he(doc)` is the Hebrew page. Measurement only: no model
-or rule is changed from it; a params file that is not in the lean format is a custom model, listed and scored by hand.
+`forecast_tracker`: replaced on 16.11.2026 by tracker version 2, which scores frozen ledger rows only (see "lean path"
+below; version 1 scored a rerun of the params file and no longer exists).
 `research_store.save(run, root='.', ledger_path=None)` copies a finished run's essentials (inputs, evidence pack, position
 parts, reviews, table_he/scenarios_he, identity.json, understand/business.json, the four gather fragments, the casefile summary
 with assumption ids and values, and `casefile_core.json`: `research_store.casefile_core(cf)`, the extract
@@ -613,3 +602,171 @@ econ.econ_review(case, options=None) -> {"company","period_end","as_of","selecti
 `quarter.quarter_review(case)` with `case['economics']` (the econ case subset; company, period_end, as_of and currency
 inherited, period quarter) adds `economics` (the review, `checks_run_by_quarter`, `quarter_link`), merges its flags as
 `econ.<key>` and feeds its falsifiers. Every function is pure and deterministic; nothing is fetched or filled in.
+
+## lean path (scripts/ and the modules they call; 15-16.11.2026)
+
+The daily valuation path (runbook: docs/LEAN_PATH.md). The scripts live in `scripts/` (not in the wheel) and import
+`fundamental_engine` from the checkout; the modules below are pure unless a line says otherwise. Company research only:
+nothing here reads or writes positions except `portfolio_health` / `due`, whose output goes only under `runs/`.
+
+`scripts/lean_model.py` (also imported as a module: `sys.path` + `import lean_model`). Params: the lean format
+(`REQUIRED`: price, rf, erp, beta, beta_mature, shares_m, net_cash_m, rev0_m, base_year, tax, cash_yield, roic_terminal,
+buy_return, probabilities {bear, base, bull}, scenarios {bear|base|bull: {g[6], m[6], conv[6], pe, shares_m?, charge?,
+funding?}}; also read: as_of, base_year_end (ISO), days_to_base_year_end, years_to_horizon, debt_rate, bands, calibrated,
+worlds; extra keys such as notes, guidance, judgement, tags, reconciliation are ignored by the model).
+```
+check_params(p) -> (errors, warnings, dates)          # six numbers per list, probabilities summing to 1 (1e-6), positive
+                                                      # price/shares/rev0, fractions where meant, charge keys 0-5
+prepare(p) -> (params with derived dates, inputs)     # raises ParamsError(errors); hand dates kept unless base_year_end
+                                                      # differs by more than DATE_TOLERANCE_YEARS (0.02)
+reprice(p, price=None, as_of=None) -> params copy + "repriced" {price_from, as_of_from, as_of, dates_moved, note, held}
+                                                      # dates move only with base_year_end; the saved file is never written
+run(p, worlds=None, base_dir=None, source=None) -> {"scenarios": {s: {value_today, year_end_values, annual_return_pct,
+        dcf_today, multiple_today, revenue_m, op_margin, eps_operating, eps_with_interest, ke0_pct}},"weighted_value_today","weighted_end_value","weighted_return_pct","index_return_pct","index_parity_price",
+        "buy_price","two_lens","calibrated_diagnostics","price_ladder": {method, horizon_year, years_to_horizon, price,
+        end_value, rungs: {margin_of_safety_13 (13%, MARGIN_OF_SAFETY_PCT) | buy_test (12%) | margin_of_safety (the file's
+        buy_return; meaning 'company hurdle') | index | hold_floor (6%) | sell_line (3%): {label, return_pct, ours,
+        calibrated, meaning?, note?, same_as?}}},"buy_test": {rule, price, legs {base_ours|base_calibrated|bull|bear: {return_pct,
+        threshold_pct, pass, max_price}}, complete, pass, binding_leg, max_price_passing, max_price_vs_price_pct,
+        rerun {calibrated_max_price, max_price_passing, binding_leg, lower_than_stated, note}},"ranges","funding",
+        "sensitivity","sensitivity_base","sensitivity_terminal","reverse_reading","market_implied_growth_pct",
+        "market_implied_end_revenue_m","inputs": {dates used, warnings, repriced},"dated_values": {year-ends with ISO
+        dates; at +1, +2, +5 years},"method_gap": {per scenario DCF alone / exit multiple alone, warnings},
+        "return_with_distributions","warnings","worlds"? }
+```
+Wiped scenarios: value 0 and return null in the 15.11 keys, the 0.01 floor in the older keys. `worlds`: per world the
+values, dated values, returns, buy test, 13% price and file sha256, plus the weighted values, lenses, ladder and buy test
+(its rerun price holds each world's own multiple); every world must share price, as_of, base_year and the two date keys.
+`funding` per scenario: {equity_raise_m {year index: $M}, issue_price (number | "model"), debt_raise_m, debt_rate, why}.
+CLI: `params [--summary] [--out F] [--price P] [--as-of D] [--params-out F] [--worlds F]`; exit 2 on a ParamsError.
+Every existing key keeps its value for every saved params file (tests/test_saved_valuations.py).
+
+`valuation_record` (research/companies/<T>/<date>/valuation.json, `SCHEMA` 'valuation_record/1'):
+```
+build_from_lean(params, result, inputs=None, files=None) -> record   # result must hold REPORTING_KEYS
+adapt_bank | adapt_segment(params, result, inputs=None, files=None); adapt_three_lane(ticker, as_of, model_result,
+        finish_result=None, inputs=None, files=None)                 # BNY, SPCX, META; NU = 'lean_remapped'
+record_for_folder(folder, root, inputs=None, result=None, run=None) -> (record | None, spec)
+latest_valuation(root, ticker, run=None) -> {ticker, as_of, folder, kind: lean|custom|engine|gather_only, model, record,
+        record_source, note, older_folders} | None       # root = the research folder; newest dated folder of any kind
+validate(record) -> [problems]                           # numbers are numbers or null (note fields carry the reason),
+                                                         # ISO dates, probabilities sum to 1, entry price is a ladder rung
+project_handoff(record, previous=None) -> fundamental.json  # every V1_KEYS key in its v1 meaning, schema_version 2, "v2",
+                                                         # "carried_from_previous"
+index_row(record, keep=None); numbers_block(record); replace_block(text, block); replace_index_row(text, ticker, row)
+check_tree(root, run=None) -> [(kind, ticker, text)]     # the --check problems; reads only
+```
+Record: {schema, ticker, company, as_of, price {value, time_utc, source}, currency, share_basis {basis, model_shares_m,
+known_split}, model {kind, params, result, code: {path, sha256}, reproducible}, scenarios {s: {probability, condition_he,
+value_today, dated_values, at, annual_return_pct, wiped}}, probability_label, weighted, second_lens,
+base_path, hurdles {horizon_date, years_to_horizon, rungs [{id, return_pct, price, price_second_lens, label}],
+buy_test {price, stated_price, rerun_price, rerun_used, binding_leg, pass_at_price, complete, legs, rule, note},
+buy_test_price (= buy_test.price: the rerun price when lean_model warns), base_12_price, margin_of_safety_price (the
+13% rung), index_parity_price, hold_floor_price, sell_line_price, labels_he, entry_price {value, rung, note}}, display,
+historical_multiple {label_he, company_type, basis, next_year_figure, median, p25, p75, months, value, low, high,
+computed}, conditions / falsifiers [{id, kind exit|trim|add|too_low, metric, op, threshold, by_date, text_he, state}],
+next_report {date | null, window {from, to}, confirmed, text, check_he}, last_fresh_pull, verdict {code, text_he, draft},
+worlds?, notes_he, thesis_link, warnings}. Judgement no model computes comes from a thesis-inputs dict
+(`THESIS_INPUTS_KEYS`) or `inputs_from_handoff(h)`. Nothing here fetches or writes.
+`scripts/publish_valuation.py <lean_params.json | custom folder> [--thesis-inputs F] [--root R]` writes lean_result.json
+(refused when a saved result is not reproduced), valuation.json, the handoff, the company's one index row and the thesis
+numbers block between its markers; `--check [research]` reads only, exit 1 on any problem.
+
+`lean_check.run_checks(lm, params, prev=None, facts=None, price=None, answers=None, lessons=None, market=None, today=None,
+facts_cutoff=None) -> {"check_version","ticker","as_of","price","base_value_today","base_return_pct","buy_test_pass",
+"buy_test_pass_at_quote","buy_test_price","counts","blocking","would_block_a_buy","exit_code": 0|1,"verdict",
+"model_warnings","answers_given","inputs_supplied","items": [{id, group, status: pass|fail|open|not_applicable, blocks_buy,
+detail, lessons, function, ...}]}`. lm = the lean_model module; facts = an SEC companyfacts payload; answers = {lesson id: one
+line}; lessons = research/lessons.jsonl rows {id, date, company, what_went_wrong, category, check, enforcement, blocks_buy,
+source, ask?}. Automatic items: inputs, lenses_agree, calibrated_lens, funding, equity_wiped, method_gap, on_the_line,
+rerun_price, reverse_reading, distributions_band, probabilities_label, reconcile_revenue / shares / net_cash, guidance,
+digestion_year, price, judgement, market_rates, prev_inputs, prev_levels; then the manual `ask.<id>` questions that apply.
+Thresholds are module constants (TOLERANCE 3%, NET_CASH_TOLERANCE, PRICE_MAX_TRADING_DAYS 3). Never edits params.
+`scripts/lean_check.py params [--prev] [--facts] [--price] [--answers] [--today] [--facts-cutoff] [--json] [--all]
+[--save]`: lean_check_answers.json beside the params is read by default; --save writes lean_check.json there; exit 0/1,
+2 when the params cannot run.
+
+`lean_freeze` (research/ledger.jsonl through `ledger.Ledger`, opened with the lag refusal off):
+`classify(folder) -> {kind: lean|custom|None, model?, params?, result?, reason?}`;
+`freeze_folder(folder, ledger, *, root=None, run=None, lean_model_path=None, next_report=None, falsifiers=None, ...) ->
+{status, thesis_id, rows_written, forecasts_written, rejected, made_at, on_time, late_recording, supersedes, not_forecast,
+notes}`; `freeze(params_path, result_path, falsifiers=None, *, ledger)`; `freeze_all(root, ledger, *, next_reports=None,
+skip=()) -> {frozen, left_out, ledger}`; `status(ledger) -> {verify, rows, theses, forecasts, outcomes, in_force}`.
+Thesis id 'lean:<T>:<as_of>:<12 hex>'; the thesis row holds the params / result / lean_model hashes, the values and
+dated values, the calibrated base, the buy test, the 13% and index prices, pre-review against post-review base, variants,
+next report and on_time; forecast rows: base revenue, operating margin after SBC and operating EPS per model year with
+the bear-bull envelope (numbers from the saved result, never a rerun). Unchanged inputs add nothing; changed inputs or a
+newer valuation add a superseding thesis. `scripts/lean_freeze.py <folder> | --all | --verify [--next-report D]
+[--next-reports F] [--falsifiers F] [--ledger L] [--root R]`.
+
+`locked_rules` (pure; constants BETA_WEIGHT 0.67, BETA_PRIOR 0.33, BETA_WEEKS 104, MULTIPLE_MONTHS 60):
+`beta_2y_weekly(prices, spy_prices, as_of=None, weeks=104) -> {raw, adjusted, weeks, window, correlation, short_history,
+rule}`; `multiple_history(prices, figures, basis='forward_pe'|'ev_sales'|'p_tbv', months=60, as_of=None) -> {basis,
+median, p25, p75, min, max, months, window, latest, skipped_nonpositive}`; `hist_multiple_value(company_type,
+next_year_figure, history, net_cash_per_share=0, peer_multiple=None) -> {company_type, basis, anchor, next_year_figure,
+multiple {median, p25, p75, months}, net_cash_per_share, value, low, high, peer_value, label_he, notes}` (types: stable_profitable, grower_growth_changed, low_profit, bank, cyclical,
+levered_complex = no value); `validate_judgement(block, params=None, market=None) -> {ok, errors, warnings, rule}`;
+`load_market(path=None)`, `market_in_force(market, as_of)`, `check_market(params, market)` over research/market.json
+({schema, in_force: [{from, rf {value, as_of, ...}, erp {...}, index_return}], convention, update_rule}).
+`scripts/locked_rules.py T [--as-of D] [--weeks N] [--save F]` fetches weekly closes (Yahoo chart API) and prints the
+`judgement.beta` block.
+
+`forecast_tracker` version 2 (pure; `scripts/forecast_tracker.py [--as-of] [--out research] [--ledger] [--offline]
+[--refresh] [--no-ledger]` reads the ledger, the saved files, SEC companyfacts and the filing index, and writes
+research/FORECAST_TRACKER_he.md, research/forecast_tracker.json and outcome rows):
+`frozen_theses(rows) -> {ticker: [{thesis_id, ticker, as_of, made_at, recorded_at, record, forecasts, outcomes}]}`;
+`file_check(record, now) -> same|rewritten|changed|missing`; `choose(candidates, reported_on) -> (candidate, 'test' |
+'descriptive', reason)`; `company_rows(ticker, candidates, payload, today, price=None, release_dates=None, filings=None,
+scorecards=())`; `score(ticker, params, result, payload, today, price=None, release_dates=None, params_path=None,
+path=None, since=None, until=None)`; `check_scorecard(sc)`, `score_scorecard(sc, theses=None, path=None)` over
+`SCORECARD_FORM` (research/companies/<T>/<date>/scorecard*.json: period, period_end, reported_on, sources, against,
+items [{metric, model_value, actual, unit, kind actual|partial|guidance, forecast_id?, note}], falsifiers [{id, text,
+state fired|not_fired|not_measurable, action_if_fired, acted_on, reason_not_acted, on_file}]);
+`outcome_candidates(rows, theses_by_id)`, `review_changes(theses)`, `filing_events(recent, after, today)`,
+`price_check(path, price, known_split=None)`; `summarize(rows)` (needs MIN_ROWS 8 scored rows from MIN_COMPANIES 3);
+`build(rows, custom, as_of, sources=None, review=None, outcomes=None, ledger=None) -> {"forecast_tracker_version": 2,
+"as_of","rows","custom_model","summary","falsifiers","review_bias","outcomes","ledger","sources","thresholds",
+"meaning"}`; `render_he(doc)`. One row per company and reported period, scored against the latest valuation frozen
+before the report day; anything else is 'descriptive only' and never counted. A partial year has numbers and no
+ahead/behind word. Measurement only.
+
+`portfolio_health` (private output; `write` refuses a folder outside runs/):
+`load_rules(path=None, obj=None)` (runs/portfolio_rules.json: bands, caps, index funds, study fund, role and tags per
+holding, `lagging_core_rule` hold_no_new_money | cap_6pct; drafted fields say 'draft: owner to confirm');
+`health(positions, rules, root='.', as_of=None, holdings_update=None, lm=None) -> {"portfolio_health_version": 1,
+"as_of","positions_as_of","positions_source","rules_source","lagging_core_reading","rules_drafts","rules_problems",
+"bands_pct","portfolio": {total, cash, study_fund, index_funds, index_share, index_target, index_position, stock_share,
+stock_part, stock_position, linked_exposure, ...},"rows": [{ticker, role, role_draft, tags, price, price_date,
+valuation {as_of, folder, kind, model, record_source, age_days, older_folders}, reprice, lenses {ours, second
+{.., not_second_opinion}, agree, decision_band, decision_basis, edge_distance_pts},
+buy_test, next_report, next_report_passed, valuation_older_than_last_report, conditions, verdict_he, gaps, reasons}],
+"meaning"}`; `write(doc, out_dir, root='.')` -> portfolio_health.json, portfolio_health_he.md;
+`due(root, today, days=30, held=(), filings=None, tickers=None) -> {"due_version": 1,"today","days","until","rows",
+"upcoming","passed_without_update","held_stale","no_date","held_6k_to_check","meaning"}`; `render_due_he(doc)`.
+A lean holding is rerun with `lean_model.reprice` at the position price and date (worlds weighted the same way); a custom
+model's saved horizon values are read at that price. Rule results, never orders. Scripts:
+`scripts/portfolio_health.py --positions F [--rules F] [--as-of D] [--out runs/...]` (reads holdings_update.json from the
+output folder when present) and `scripts/due.py [--days N] [--today D] [--positions F] [--out DIR] [--refresh] [--json]`.
+
+`quality_momentum` saved-valuation gate (15.11.2026; the gates and ranking do not read it):
+`saved_book(research_root) -> {root, folders, rejected}`; `saved_valuation(book, symbol, price, as_of, price_date=None,
+lean=None) -> {state, date, kind lean|custom|engine|rejected, model, age_days, base_value, price_then, price, price_date,
+buy_test_pass, buy_test_price, buy_test_price_saved, binding_leg, basis, basis_text, verdict, source, repriced, rejected,
+note}`;
+`attach_saved(rows, book, as_of, price_date=None, lean=None)`; `saved_he(sv)`, `saved_rows(res)`. A lean file is repriced
+to the screen's close and rerun; a custom model is compared with its record's buy-test price; a heavy-engine valuation
+or a price more than 1.8x away is 'unknown'. `scripts/quality_momentum_screen.py OUT --as-of D [--min-cap] [--reuse]
+[--research R]`: SEC companyfacts per company (not XBRL frames), the Nasdaq listing feed and Yahoo closes; screen.json
+gains `saved_valuations` and the counts `passers_saved_*`, `near_misses_saved_*`.
+
+`research_store.latest(ticker, root='.', full=False, run=None)` (CLI `research-latest T [--full]`): the newest dated
+folder of research/companies/<T>/ of any kind through `valuation_record.latest_valuation`, with {ticker, as_of, folder,
+kind, model, record_source, note, older_folders, saved, summary {price, currency, value_today, annual_return_pct,
+second_lens, buy_test_price, margin_of_safety_price, verdict_he, next_report, variants}, handoff, heavy_engine_save
+{as_of, folder, thesis_id, superseded, note}, next}; no dated folder gives the older `load` answer. `load` keeps its
+meaning (latest.json of research-save).
+`holdings_watch` (16.11.2026 additions): the value comparison reads the valuation record (`latest_valuation`) before the
+handoff when it is at least as new, with both lenses, dated values and typed conditions; the handoff is read under any
+dated key shape (end_YYYY, end_fy..., june_YYYY, calibrated_*); the filing check is labelled the old (heavy) engine's
+thesis check (`filing_check`); new status `cannot_tell` for a filer without quarterly XBRL facts (20-F / 6-K) whose
+companyfacts show no new period.

@@ -1,33 +1,59 @@
 {
  "ticker": "NVDA",
- "as_of": "2026-11-12 (after the CEO resignation)",
- "price": 155.39,
- "price_time_utc": "2026-11-12T14:07Z",
- "currency": "USD",
+ "as_of": "2026-11-12",
+ "price": 161.5,
+ "price_time_utc": "2026-11-12 (exact time of the 161.50 quote not recorded)",
  "verdict_he": "להחזיק; לא לקנות לפני הדוח של 17.11. אחרי הדוח, קנייה רק אם התנאים מתקיימים",
  "buy_test_price": {
-  "orderly_succession": 176,
-  "messy_succession": 157,
-  "export_finding": 144
+  "orderly_succession": 176.38,
+  "messy_succession": 157.05,
+  "export_finding": 144.03
  },
  "margin_of_safety_price": {
-  "orderly_succession": 168,
-  "messy_succession": 150,
-  "export_finding": 138
+  "orderly_succession": 168.41,
+  "messy_succession": 149.96,
+  "export_finding": 137.52
  },
  "values": {
   "today": {
-   "bear": 72,
-   "base": 169,
-   "bull": 303
+   "bear": 69.77,
+   "base": 169.02,
+   "bull": 284.23
   },
-  "today_note": "standard keys added 15.11.2026 from the numbers already published in this file, no revaluation: base = the scenario-weighted base value over the three succession worlds (45% / 35% / 20%), the same number as weighted_base_today; bear and bull = the published bear and bull of the central world (orderly succession), because no weighted bear or bull was published",
+  "end_2028": {
+   "bear": 80.46,
+   "base": 195.18,
+   "bull": 328.33
+  },
+  "end_2029": {
+   "bear": 89.57,
+   "base": 218.23,
+   "bull": 367.78
+  },
+  "end_2030": {
+   "bear": 99.22,
+   "base": 242.45,
+   "bull": 409.65
+  },
+  "end_2031": {
+   "bear": 109.4,
+   "base": 267.75,
+   "bull": 453.82
+  },
+  "end_2032": {
+   "bear": 120.05,
+   "base": 294.11,
+   "bull": 500.21
+  },
+  "weighted_today_25_50_25": 173.01,
+  "calibrated_today": 189.05,
   "today_base_by_world": {
-   "orderly_succession_45pct": 182,
-   "messy_succession_35pct": 163,
-   "export_finding_20pct": 150
+   "orderly_succession_45pct": 182.39,
+   "messy_succession_35pct": 162.89,
+   "export_finding_20pct": 149.67
   },
-  "weighted_base_today": 169,
+  "weighted_base_today": 169.02,
+  "today_note": "bear, base and bull = the weighted values over the worlds (weight x value, weights are judgement): see today_base_by_world and v2.worlds for each world",
   "central_world_bear_base_bull_today": [
    72,
    182,
@@ -45,6 +71,19 @@
   ]
  },
  "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": null
+  },
+  "base": {
+   "prob": 0.5,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": null
+  },
+  "label": "subjective",
   "orderly_succession": {
    "prob": 0.45,
    "he": "מחליף מסודר מבפנים, הדוח עומד בתנאים"
@@ -56,26 +95,35 @@
   "export_finding": {
    "prob": 0.2,
    "he": "ממצא על הברחת שבבים או כללי ייצוא חדשים"
-  },
-  "label": "subjective"
+  }
  },
  "annual_return_pct": {
-  "at_price": 155.39,
+  "bear": -5.5,
+  "base": 12.2,
+  "bull": 24.3,
+  "calibrated": 14.7,
+  "weighted": null,
+  "index": 9.1,
+  "at_price": 161.5,
+  "weighted_base": 12.2,
   "orderly": {
-   "bear": -4.3,
-   "base": 14.8,
-   "bull": 26.8,
-   "calibrated": 16.1
+   "bear": -5.0,
+   "base": 13.9,
+   "bull": 25.8,
+   "calibrated": 15.5
   },
   "messy": {
-   "base": 12.2,
-   "calibrated": 14.9
+   "bear": -5.5,
+   "base": 11.4,
+   "bull": 24.2,
+   "calibrated": 14.3
   },
   "export": {
-   "base": 10.4,
-   "calibrated": 14.4
-  },
-  "weighted_base": 13.0
+   "bear": -6.9,
+   "base": 9.6,
+   "bull": 20.7,
+   "calibrated": 13.8
+  }
  },
  "conditions": {
   "add": [
@@ -85,6 +133,8 @@
    "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
    "אין צעד פומבי של משרד המשפטים או של רשות הייצוא"
   ],
+  "proposed_trim": [],
+  "proposed_exit": [],
   "sell": [
    "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
    "תחזית נמוכה בבירור מ-115 מיליארד $ או רווח גולמי מתחת ל-70%"
@@ -92,12 +142,423 @@
  },
  "next_report": {
   "date": "2026-11-17",
-  "time": "after the close",
-  "confirmed": true
+  "confirmed": true,
+  "check": null,
+  "time": "after the close"
  },
  "thesis_link": "research/companies/NVDA/thesis_he.md",
  "notes_he": [
   "הואנג התפטר ב-11.11 (8-K); קרס מנכ\"לית זמנית",
   "השוק משלם כ-10-11 פעמים הרווח הצפוי לשנה הבאה"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/NVDA/2026-11-12/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 163.15,
+   "stated_price": 163.15,
+   "rerun_price": 163.15,
+   "base_12_price": 163.15,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 12.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 163.15
+    },
+    "base_calibrated": {
+     "return_pct": 14.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 183.1
+    },
+    "bull": {
+     "return_pct": 24.3,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 221.1
+    },
+    "bear": {
+     "return_pct": -5.5,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 207.64
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2032-01-29",
+   "years_to_horizon": 5.2,
+   "rungs": [
+    {
+     "id": "company_hurdle",
+     "return_pct": 13.0,
+     "price": 155.78,
+     "price_second_lens": 174.83
+    },
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 155.78,
+     "price_second_lens": 174.83
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 163.15,
+     "price_second_lens": 183.1
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 186.64,
+     "price_second_lens": 209.46
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 217.23,
+     "price_second_lens": 243.8
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 252.21,
+     "price_second_lens": 283.05
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 155.78,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 186.64,
+  "hold_floor_price": 217.23,
+  "sell_line_price": 252.21,
+  "values_dated": {
+   "today": {
+    "bear": 69.77,
+    "base": 169.02,
+    "bull": 284.23,
+    "date": "2026-11-12",
+    "base_calibrated": 189.05
+   },
+   "year_ends": [
+    {
+     "bear": 80.46,
+     "base": 195.18,
+     "bull": 328.33,
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "base_calibrated": 218.32
+    },
+    {
+     "bear": 89.57,
+     "base": 218.23,
+     "bull": 367.78,
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "base_calibrated": 244.24
+    },
+    {
+     "bear": 99.22,
+     "base": 242.45,
+     "bull": 409.65,
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "base_calibrated": 271.58
+    },
+    {
+     "bear": 109.4,
+     "base": 267.75,
+     "bull": 453.82,
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "base_calibrated": 300.21
+    },
+    {
+     "bear": 120.05,
+     "base": 294.11,
+     "bull": 500.21,
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "base_calibrated": 330.08
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 78.47,
+     "base": 190.3,
+     "bull": 320.1,
+     "date": "2027-11-12",
+     "base_calibrated": 212.86
+    },
+    "two_year": {
+     "bear": 87.55,
+     "base": 213.1,
+     "bull": 358.99,
+     "date": "2028-11-12",
+     "base_calibrated": 238.47
+    },
+    "five_year": {
+     "bear": 117.69,
+     "base": 288.26,
+     "bull": 489.92,
+     "date": "2031-11-12",
+     "base_calibrated": 323.45
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2028-01-29",
+     "source": "fiscal_year_end",
+     "bear": 80.46,
+     "base": 195.18,
+     "bull": 328.33,
+     "second_lens": 218.32
+    },
+    "five_year": {
+     "date": "2032-01-29",
+     "source": "horizon_year_end",
+     "bear": 120.05,
+     "base": 294.11,
+     "bull": 500.21,
+     "second_lens": 330.08
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 189.05,
+   "annual_return_pct": 14.7,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": null,
+   "note": "per world: the second lens of each world holds its own multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "רווח גולמי צפוי 72% ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c5",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "אין צעד פומבי של משרד המשפטים או של רשות הייצוא",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.sell; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית נמוכה בבירור מ-115 מיליארד $ או רווח גולמי מתחת ל-70%",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.sell; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "hold",
+   "text_he": "להחזיק; לא לקנות לפני הדוח של 17.11. אחרי הדוח, קנייה רק אם התנאים מתקיימים",
+   "draft": false
+  },
+  "next_report": {
+   "date": "2026-11-17",
+   "window": null,
+   "confirmed": true
+  },
+  "worlds": {
+   "weights_label": "subjective (judgement, not engine odds)",
+   "source": null,
+   "weighted": {
+    "value_today": 169.02,
+    "annual_return_pct": 12.2,
+    "buy_test_price": 163.15,
+    "margin_of_safety_price": 155.78
+   },
+   "worlds": [
+    {
+     "name": "orderly_succession",
+     "label_he": "הואנג עוזב, מחליף מבפנים, מסודר",
+     "weight": 0.45,
+     "params": {
+      "path": "lean_params.json",
+      "sha256": "706e6e9bf54aed90f65cf4aabbd801f9036e3048681311c80761bb4614ca99f3"
+     },
+     "value_today": {
+      "bear": 71.85,
+      "base": 182.39,
+      "bull": 302.65,
+      "base_calibrated": 195.46
+     },
+     "annual_return_pct": {
+      "bear": -5.0,
+      "base": 13.9,
+      "bull": 25.8,
+      "base_calibrated": 15.5
+     },
+     "buy_test_price": 176.38,
+     "buy_test_pass": true,
+     "margin_of_safety_price": 168.41,
+     "margin_of_safety_price_second_lens": 180.76,
+     "base_band": "buy",
+     "two_lens_agree": true
+    },
+    {
+     "name": "messy_succession",
+     "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ",
+     "weight": 0.35,
+     "params": {
+      "path": "lean_params_B2_messy_succession.json",
+      "sha256": "32c08ed09f78921d279212b52f44870596195a053027384776fc4dfc9777c7a0"
+     },
+     "value_today": {
+      "bear": 70.02,
+      "base": 162.89,
+      "bull": 283.05,
+      "base_calibrated": 185.35
+     },
+     "annual_return_pct": {
+      "bear": -5.5,
+      "base": 11.4,
+      "bull": 24.2,
+      "base_calibrated": 14.3
+     },
+     "buy_test_price": 157.05,
+     "buy_test_pass": false,
+     "margin_of_safety_price": 149.96,
+     "margin_of_safety_price_second_lens": 171.35,
+     "base_band": "hold",
+     "two_lens_agree": false
+    },
+    {
+     "name": "export_finding",
+     "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה",
+     "weight": 0.2,
+     "params": {
+      "path": "lean_params_C_export_hit.json",
+      "sha256": "5c09439075ad413d5a0c76bdf14754c98c3253b313795ef1f308802016f89292"
+     },
+     "value_today": {
+      "bear": 64.63,
+      "base": 149.67,
+      "bull": 244.85,
+      "base_calibrated": 181.09
+     },
+     "annual_return_pct": {
+      "bear": -6.9,
+      "base": 9.6,
+      "bull": 20.7,
+      "base_calibrated": 13.8
+     },
+     "buy_test_price": 144.03,
+     "buy_test_pass": false,
+     "margin_of_safety_price": 137.52,
+     "margin_of_safety_price_second_lens": 167.56,
+     "base_band": "hold",
+     "two_lens_agree": false
+    }
+   ]
+  }
+ },
+ "currency": "USD",
+ "carried_from_previous": [
+  "conditions.sell",
+  "currency",
+  "next_report.time",
+  "scenarios.export_finding",
+  "scenarios.messy_succession",
+  "scenarios.orderly_succession",
+  "values.central_world_bear_base_bull_today",
+  "values.central_world_jan_2028",
+  "values.central_world_jan_2032"
  ]
 }

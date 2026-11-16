@@ -1,0 +1,521 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "MSFT",
+ "company": null,
+ "as_of": "2026-11-04",
+ "price": {
+  "value": 554.51,
+  "time_utc": "2026-11-04T18:55Z (IBKR snapshot, from the saved params)",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 7446,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/MSFT/2026-11-04/lean_params.json",
+   "sha256": "178cd786ee1b3c1995b9bb68168fe03c7c5817560584d613a46aa1292345217d"
+  },
+  "result": {
+   "path": "research/companies/MSFT/2026-11-04/lean_result.json",
+   "sha256": "fd2e5eb49273c90d6ed656f7bf48840139fb504861eab4ee194ca2747a068fb6"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": "אירוע ביקוש או אשראי אצל OpenAI ו-Azure מאט: צמיחה 12% שיורדת ל-5%, שיעור רווח תפעולי 36%-40%, מחיקות של כ-30 מיליארד $, מכפיל 18",
+   "value_today": 297.06,
+   "annual_return_pct": -2.0,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-06-30",
+     "value": 346.35
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-06-30",
+     "value": 380.01
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-06-30",
+     "value": 416.29
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-06-30",
+     "value": 454.8
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-06-30",
+     "value": 495.51
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-04",
+     "value": 325.83,
+     "return_pct": -41.2
+    },
+    "two_year": {
+     "date": "2028-11-04",
+     "value": 357.71,
+     "return_pct": -19.7
+    },
+    "five_year": {
+     "date": "2031-11-04",
+     "value": 468.53,
+     "return_pct": -3.3
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה 18% בשנת הכספים 2028 שדועכת ל-7%; גל הפחת מוריד את שיעור הרווח התפעולי מ-44.5% ל-42% ובחזרה ל-44%; מכפיל 20",
+   "value_today": 433.83,
+   "annual_return_pct": 4.8,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-06-30",
+     "value": 505.59
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-06-30",
+     "value": 554.34
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-06-30",
+     "value": 607.0
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-06-30",
+     "value": 663.55
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-06-30",
+     "value": 724.0
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-04",
+     "value": 475.78,
+     "return_pct": -14.2
+    },
+    "two_year": {
+     "date": "2028-11-04",
+     "value": 522.05,
+     "return_pct": -3.0
+    },
+    "five_year": {
+     "date": "2031-11-04",
+     "value": 683.93,
+     "return_pct": 4.3
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": "Azure צומח מעל 40% וסוכני AI מכניסים כסף: צמיחה 22% שדועכת ל-9%, שיעור רווח תפעולי עולה ל-49%, מכפיל 26",
+   "value_today": 669.79,
+   "annual_return_pct": 13.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-06-30",
+     "value": 780.32
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-06-30",
+     "value": 855.34
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-06-30",
+     "value": 936.46
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-06-30",
+     "value": 1023.76
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-06-30",
+     "value": 1117.3
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-04",
+     "value": 734.47,
+     "return_pct": 32.5
+    },
+    "two_year": {
+     "date": "2028-11-04",
+     "value": 805.65,
+     "return_pct": 20.5
+    },
+    "five_year": {
+     "date": "2031-11-04",
+     "value": 1055.3,
+     "return_pct": 13.7
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 458.63,
+  "end_value": 765.2,
+  "annual_return_pct": 5.9,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 491.46,
+  "annual_return_pct": 7.2,
+  "band": "hold",
+  "band_ours": "lagging",
+  "agree": false,
+  "pe_held": 24.8,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2028,
+    "date": "2028-06-30",
+    "value": 572.69
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-06-30",
+    "value": 627.88
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-06-30",
+    "value": 687.54
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-06-30",
+    "value": 751.67
+   },
+   {
+    "fiscal_year": 2032,
+    "date": "2032-06-30",
+    "value": 820.31
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-04",
+    "value": 538.96,
+    "return_pct": -2.8
+   },
+   "two_year": {
+    "date": "2028-11-04",
+    "value": 591.32,
+    "return_pct": 3.3
+   },
+   "five_year": {
+    "date": "2031-11-04",
+    "value": 774.81,
+    "return_pct": 6.9
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": true,
+   "differs_from_base_only_by_multiple": false,
+   "pe_held": 24.82,
+   "pe_base_exit": 20,
+   "pe_held_to_base_exit": 1.24,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the lenses differ by the exit multiple and by the margin"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2027,
+  "base_year_end": "2027-06-30",
+  "base_year_revenue_m": 396000,
+  "years": {
+   "2028": {
+    "fiscal_year_end": "2028-06-30",
+    "revenue_m": 467280,
+    "op_margin": 0.445,
+    "eps_operating": 22.34
+   },
+   "2029": {
+    "fiscal_year_end": "2029-06-30",
+    "revenue_m": 532699,
+    "op_margin": 0.43,
+    "eps_operating": 24.61
+   },
+   "2030": {
+    "fiscal_year_end": "2030-06-30",
+    "revenue_m": 591296,
+    "op_margin": 0.42,
+    "eps_operating": 26.68
+   },
+   "2031": {
+    "fiscal_year_end": "2031-06-30",
+    "revenue_m": 644513,
+    "op_margin": 0.42,
+    "eps_operating": 29.08
+   },
+   "2032": {
+    "fiscal_year_end": "2032-06-30",
+    "revenue_m": 696074,
+    "op_margin": 0.43,
+    "eps_operating": 32.16
+   },
+   "2033": {
+    "fiscal_year_end": "2033-06-30",
+    "revenue_m": 744799,
+    "op_margin": 0.44,
+    "eps_operating": 35.21
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2032-06-30",
+  "years_to_horizon": 5.65,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 362.95,
+    "price_second_lens": 411.23,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 381.64,
+    "price_second_lens": 432.41,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 9.64,
+    "price": 430.44,
+    "price_second_lens": 487.7,
+    "label": "entry with a margin of safety: buy_return 9.64% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 441.7,
+    "price_second_lens": 500.46,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 520.91,
+    "price_second_lens": 590.2,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 612.64,
+    "price_second_lens": 694.14,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 343.95,
+   "stated_price": 381.64,
+   "rerun_price": 343.95,
+   "rerun_used": true,
+   "binding_leg": "base_calibrated",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 4.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 381.64
+    },
+    "base_calibrated": {
+     "return_pct": 7.2,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 432.41
+    },
+    "bull": {
+     "return_pct": 13.2,
+     "threshold_pct": 17.0,
+     "pass": false,
+     "max_price": 460.17
+    },
+    "bear": {
+     "return_pct": -2.0,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 898.63
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used"
+  },
+  "buy_test_price": 343.95,
+  "base_12_price": 381.64,
+  "margin_of_safety_price": 362.95,
+  "index_parity_price": 441.7,
+  "hold_floor_price": 520.91,
+  "sell_line_price": 612.64,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 362.95,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-11-04",
+   "source": "as_of_plus_one_year"
+  },
+  "five_year": {
+   "date": "2032-06-30",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-382$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות (בהרצה חוזרת במחיר הזה העדשה השנייה עוברת רק מתחת לכ-344$)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "too_low",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "שיעור רווח תפעולי של 46% ומעלה שנשמר עד שנת הכספים 2028: סימן שהתחזית שלנו נמוכה מדי",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.would_raise_value; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-590$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-694$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-01-01",
+   "to": "2027-01-31"
+  },
+  "confirmed": false,
+  "text": "late January 2027",
+  "check_he": "צמיחת Azure, שיעור הרווח התפעולי, ההשקעות והפחת"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "not_buy",
+  "text_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-4.8% בשנה והעדשה השנייה 7.2%; מבחן הקנייה עובר רק מתחת לכ-382$ (בהרצה חוזרת במחיר הזה: כ-344$)",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "lagging",
+  "band_second_lens": "hold",
+  "lenses_agree": false,
+  "buy_test_pass": false,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 2
+ },
+ "notes_he": [
+  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: סוף ינואר 2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "thesis_link": "research/companies/MSFT/thesis_he.md",
+ "warnings": [
+  "lenses disagree (ours lagging, calibrated hold): hold, or stage the trade around the next report",
+  "buy test: at the stated highest passing price 381.64 a rerun would hold a lower multiple; with the multiple of its own price held the highest passing price is 343.95 (binding leg: base_calibrated)"
+ ],
+ "index_texts": {
+  "next_check_he": "דוח רבעון 2 של שנת הכספים 2027, סוף ינואר 2027 (לא אושר)",
+  "updated_note_he": "העתק, בלי בדיקה מחדש"
+ }
+}

@@ -22,6 +22,16 @@
    "base": 138.18,
    "bull": 219.37
   },
+  "end_2029": {
+   "bear": 59.31,
+   "base": 150.53,
+   "bull": 239.29
+  },
+  "end_2030": {
+   "bear": 64.11,
+   "base": 163.57,
+   "bull": 260.45
+  },
   "end_2031": {
    "bear": 69.1,
    "base": 177.31,
@@ -51,6 +61,8 @@
   "base": 20.1,
   "bull": 31.6,
   "calibrated": 21.0,
+  "weighted": 18.6,
+  "index": 9.1,
   "margin_flat_test": 16.1,
   "tail": -10.7
  },
@@ -81,5 +93,340 @@
   "המחיר מגלם צמיחה של כ-5-8% בשנה אחרי 2027, מול תחזית הזמנות של ‎+18-22%‎ לרבעון 4",
   "הסיכון המרכזי הוא מוניות בלי נהג (Waymo, Tesla); תרחיש קיצון כ-‎-11%‎ בשנה, בהסתברות כ-5% (שיקול דעת)",
   "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/UBER/2026-11-13/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 99.14,
+   "stated_price": 99.14,
+   "rerun_price": 99.14,
+   "base_12_price": 99.14,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 20.1,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 99.14
+    },
+    "base_calibrated": {
+     "return_pct": 21.0,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 103.12
+    },
+    "bull": {
+     "return_pct": 31.6,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 126.42
+    },
+    "bear": {
+     "return_pct": -0.0,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 118.64
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.13,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 94.72,
+     "price_second_lens": 98.52
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 99.14,
+     "price_second_lens": 103.12
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 99.14,
+     "price_second_lens": 103.12
+    },
+    {
+     "id": "index",
+     "return_pct": 9.1,
+     "price": 113.42,
+     "price_second_lens": 117.98
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 131.5,
+     "price_second_lens": 136.78
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 152.36,
+     "price_second_lens": 158.48
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 94.72,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 113.42,
+  "hold_floor_price": 131.5,
+  "sell_line_price": 152.36,
+  "values_dated": {
+   "today": {
+    "bear": 45.33,
+    "base": 114.14,
+    "bull": 181.04,
+    "date": "2026-11-13",
+    "base_calibrated": 118.61
+   },
+   "year_ends": [
+    {
+     "bear": 50.21,
+     "base": 126.51,
+     "bull": 200.69,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 131.47
+    },
+    {
+     "bear": 54.68,
+     "base": 138.18,
+     "bull": 219.37,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 143.61
+    },
+    {
+     "bear": 59.31,
+     "base": 150.53,
+     "bull": 239.29,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 156.47
+    },
+    {
+     "bear": 64.11,
+     "base": 163.57,
+     "bull": 260.45,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 170.07
+    },
+    {
+     "bear": 69.1,
+     "base": 177.31,
+     "bull": 282.88,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 184.43
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 49.62,
+     "base": 125.01,
+     "bull": 198.3,
+     "date": "2027-11-13",
+     "base_calibrated": 129.91
+    },
+    "two_year": {
+     "bear": 54.07,
+     "base": 136.59,
+     "bull": 216.82,
+     "date": "2028-11-13",
+     "base_calibrated": 141.96
+    },
+    "five_year": {
+     "bear": 68.42,
+     "base": 175.44,
+     "bull": 279.82,
+     "date": "2031-11-13",
+     "base_calibrated": 182.47
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 50.21,
+     "base": 126.51,
+     "bull": 200.69,
+     "second_lens": 131.47
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 69.1,
+     "base": 177.31,
+     "bull": 282.88,
+     "second_lens": 184.43
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 118.61,
+   "annual_return_pct": 21.0,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-99$ (התרחיש הבסיסי נותן 12% בשנה ומעלה)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "צמיחת ההזמנות לפחות באמצע טווח התחזית (רבעון 4: ‏63.25-65.25 מיליארד $)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "רווח פלח הנסיעות 8% מההזמנות שלו ומעלה (10-Q)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-113$ (התשואה הצפויה יורדת לרמת המדד, 9.1%)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   },
+   {
+    "id": "c5",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "צמיחת ההזמנות בנסיעות מתחת ל-10% בנטרול מטבע ברבעון אחד",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "צמיחת ההזמנות בנסיעות מתחת ל-10% בשני רבעונים ברצף",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "רווח פלח הנסיעות מתחת ל-7.0% מההזמנות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "Waymo בהיקף משמעותי באפליקציה שלה בניו יורק או בלונדון",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f4",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "Delivery Hero: הורדת תחזית הסינרגיות או מינוף מעל פי 2 בסגירה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "קנייה בגודל מוגבל: שתי העדשות כ-20% בשנה בתרחיש הבסיסי, אבל מוניות בלי נהג ו-Delivery Hero מגבילים את הגודל",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-01",
+    "to": "2027-02-07"
+   },
+   "confirmed": false
+  }
+ },
+ "carried_from_previous": [
+  "annual_return_pct.margin_flat_test",
+  "annual_return_pct.tail",
+  "values.tail_end_2031"
  ]
 }

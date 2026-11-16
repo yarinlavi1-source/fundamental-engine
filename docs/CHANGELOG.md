@@ -86,6 +86,250 @@ META thesis adds $12.3 of dividends to the 2031 value, so its 12% price is about
 them); "margin of safety" is `buy_return` in lean_model and in the theses but 13% in the handoff format
 (`research/technical/FUNDAMENTAL_HANDOFF_he.md`): one definition is still to be chosen.
 
+### Wave 3 of the end-to-end upgrade (16.11.2026)
+# P3b-worlds-and-funding (15.11.2026)
+
+Files: `scripts/lean_model.py`, `tests/test_lean_model.py` (18 new tests), new
+`research/companies/NVDA/2026-11-12/worlds.json`, new `research/companies/NBIS/2026-11-13/lean_params_funding_variant.json`.
+No saved params or result file changed. Both inputs are optional: without them the output is byte-identical to the
+script at git HEAD on all 297 params files under research/, runs/ and tests/fixtures (no added key, no changed value).
+
+## Added
+
+- Per-scenario `funding` = {equity_raise_m {year index: $M}, issue_price (number or "model"), debt_raise_m {year index: $M},
+  debt_rate, why}. Year index as for `charge` (0 = base year + 1); the money arrives at the start of that year (key 0 = the
+  base year-end, where net_cash_m is measured). Equity: proceeds into net cash, new shares = amount / issue_price; "model"
+  = the scenario's own value per share at that year-end after the money (closed form), so the raise moves no value from the
+  holders. Per-share values use the plan's full share count with a later raise's proceeds discounted at the cost of equity;
+  EPS uses the shares out in each year. Named debt leaves net cash unchanged at issue and pays debt_rate while its cash earns
+  cash_yield (the carry); funding.debt_rate replaces the file's debt_rate for that scenario. The scenario result gains
+  `funding` (shares before/after, issue prices, money by the year-end it lands, named debt path); the `funding` key gains
+  `funding_plan` and `outside_money_before_named_debt_m`, and flags only the outside money the plan does not name.
+  Input checks: unknown keys, year index 0-5 (a calendar year is rejected), amounts >= 0, issue_price required with equity,
+  debt_rate a fraction; a plan naming nothing is a warning.
+- `worlds`: a params key or `--worlds file` = {"worlds": [{name, file, weight, ...}]}, files relative to the file that names
+  them, weights summing to 1, every world sharing the main file's price, as_of, base year and dates (with --price/--as-of
+  each world is repriced the same way). New output key `worlds`: per world the bear/base/bull/calibrated value today, dated
+  year-end values, values at exactly 1, 2 and 5 years, 5-year returns, buy test, 13% price and file sha256; weighted values
+  (sum of weight x value), weighted 5-year returns from the weighted horizon value against the price, weighted lenses,
+  weighted price ladder and weighted buy test whose rerun price holds each world's own multiple at the trial price.
+  `--summary` prints a worlds block and one line per funding plan.
+- Internal: `_operating` (shared operating path), `_solve_rerun` (the line solve `_repriced` used), `buy_test(..., rerun=)`,
+  `run(p, worlds=None, base_dir=None, source=None)` with the single-file body in `_run_single`.
+
+## Real cases
+
+- NVDA `worlds.json` (orderly lean_params.json 45% / messy B2 35% / export C 20%): weighted base today 169.02 (published
+  169); at 155.39 world returns 14.8 / 12.2 / 10.4 and second lens 16.1 / 14.9 / 14.4 (as published), weighted base return
+  13.1% from the weighted year-5 value (the handoff's 13.0 averaged the three returns). 182 = the orderly world alone
+  (182.39). The superseded four-state weighting 30/35/20/15 with lean_params_A_huang_stays.json gives 185.39 (published
+  'about 185'), kept in worlds.json as data only.
+- NBIS `lean_params_funding_variant.json` (debt 8.5% + $6B at $95 in every scenario): base 68.44, 7.4%, second lens 12.2%,
+  12% prices 88.93 / 111.65 against the published 68.44 / 7.4% / 12.2% / 88.93 / 111.64; with checks13.py's share counts
+  rounded to 0.1M every published figure is reproduced exactly.
+
+## Not done here
+
+- valuation_record.py does not carry the weighted worlds (left to the backfill: a `worlds` block from result['worlds'] and
+  the variant weights from worlds.json).
+## P8-tracker: the forecast scoring test scores frozen forecasts (16.11.2026)
+
+- `fundamental_engine/forecast_tracker.py` (tracker version 2): the numbers come from the frozen ledger rows of
+  `research/ledger.jsonl` (`frozen_theses`, `ledger_path`), never from a rerun of an editable params file. The params and
+  result files are read only while their sha256 equals the frozen one (`file_check`: same / rewritten / changed /
+  missing); a changed file is reported and only the ledger rows are used (operating EPS is then not scored, the tax rate
+  lives in the params).
+- One row per company and reported period (`company_rows`, `choose`): the latest valuation frozen before the report day.
+  A valuation frozen after the report, or a lean folder never frozen, gives a row labelled 'descriptive only' that no
+  summary counts. Several revisions before one report are one row.
+- A year in progress is scored on the newly reported part only: the year to date minus what was reported before this
+  report, against the model year minus that, plus the step per remaining quarter the model year still needs. No
+  ahead/behind word on a partial year (read 'partial'); a completed year keeps on-track / ahead / behind.
+- Summaries need at least 8 scored rows from at least 3 companies (`MIN_COMPANIES`, research/RULE_CHANGES_he.md).
+- Manual scorecard `research/companies/<T>/<valuation date>/scorecard*.json` (`SCORECARD_FORM`, `check_scorecard`,
+  `score_scorecard`) for custom models, banks and foreign filers: period, reported date, sources, the thesis it is scored
+  against, items {metric, model value, actual, unit, kind actual | partial | guidance, optional forecast_id} and typed
+  falsifiers {id, text, state fired | not_fired | not_measurable, note, action_if_fired, acted_on, reason_not_acted}.
+  A fired exit or trim not acted on without a reason is flagged. Filled for NBIS Q3 2026 and NU Q3 2026 (both descriptive
+  only: no NBIS or NU valuation was frozen in research/ledger.jsonl before the 12.11 reports).
+- Outcomes: `outcome_candidates` + `scripts/forecast_tracker.py write_outcomes` write one outcome row per resolved forecast
+  through the Ledger API (completed fiscal years of test rows, scorecard items naming a forecast_id); an outcome on file is
+  never rewritten (`--no-ledger` writes none). The 16.11 run wrote none: no frozen forecast period has ended.
+- `review_changes`: the pre-review against the post-review base per frozen thesis (the engine's first-draft bias), a
+  warning row only.
+- New reports from the SEC filing index (`filing_events`): 8-K item 2.02, 6-K, 20-F and 40-F; a 6-K with no scorecard is
+  listed ('fill a scorecard.json'). A close beyond the scale guard is rescaled by a known split from the record
+  (`price_check`, `share_basis.known_split` of valuation.json) instead of being dropped.
+- The script no longer runs lean_model. `--refresh` also refetches the filing index.
+- No modelling rule changes from tracker output.
+## P10-screen-gate (15.11.2026)
+
+The quality + trend screen now shows, for every listed name and every thesis-book name, the saved valuation and
+whether it passes the buy test at the screen's price. The search rule "never propose a name whose saved valuation
+fails the buy test (the MSFT slip of 06.11.2026)" no longer depends on a manual lookup, and names rejected in earlier
+sessions (research/rejected.jsonl) are included. A failing or rejected name is marked, never dropped: the gates, the
+thresholds and the ranking do not read the mark (rerun on the 15.11 data: same passers, near misses, statuses and rank
+scores).
+
+Changed files
+- `fundamental_engine/quality_momentum.py`: `saved_book(research_root)`, `saved_valuation(book, symbol, price, as_of,
+  price_date=None, lean=None)`, `attach_saved(rows, ...)`, `lean_module()`, `saved_he(sv)`, `saved_rows(res)`; the
+  Hebrew report gains the column "הערכה שמורה" (עוברת / לא עוברת / לא ידוע / אין) in the passers, near-miss and
+  thesis-book tables, a warning line under the headline, and a section "הערכות שמורות מול מחיר החיפוש".
+  What is tested: the newest of (a) the newest dated research/companies/<T> valuation, through
+  `valuation_record.latest_valuation` (a heavy-engine or gather-only newest folder falls back to the newest older
+  lean/custom folder), and (b) the newest research/rejected.jsonl row. Lean params (and NU's remapped lean file) are
+  repriced to the screen's close with `lean_model.reprice` (dates move only forward, and only when the file has
+  base_year_end) and rerun; the saved files are not changed. A custom model (bank, segment, three-lane) is compared
+  with its record's buy-test price, else its handoff's. A rejected lean row is compared with its saved buy-test price;
+  a rejected custom row without one fails when the screen price is at or above the rejected price (a higher price only
+  lowers the returns) and is "unknown" below it. A heavy-engine valuation is "unknown". A screen price more than 1.8x
+  from the valuation's price is not compared ("unknown", split or unit gap). The buy-test price follows the record's
+  rule: the rerun price when lean_model warns.
+  Fields per row (`saved_valuation`): state, date, kind (lean / custom / engine / rejected), model, age_days,
+  base_value, price_then, price, price_date, buy_test_pass, buy_test_price (at the screen's price),
+  buy_test_price_saved (the record's or the rejected row's), binding_leg, basis (+ basis_text), verdict, source,
+  repriced {dates_moved, note}, rejected {date, price, model, verdict, buy_test_price, margin_of_safety_price_13pct,
+  source}, note.
+- `scripts/quality_momentum_screen.py`: attaches `saved_valuation`; screen.json gains `saved_valuations` (one row per
+  name with a saved valuation and the list it is in), counts `passers_saved_{fail,pass,unknown}` and
+  `near_misses_saved_{fail,pass,unknown}`, method keys `fundamentals_source` and `saved_valuation`; new option
+  `--research` (default research/). Docstrings state the data source exactly: the companyfacts API per company plus
+  its submissions file, not the XBRL frames API.
+- `tests/test_quality_momentum.py`: 8 new tests (54 in the file): a fixture research tree with a passing and a failing
+  lean valuation, two rejected checks (lean and custom), a heavy-engine folder and a folder with a newer rejected
+  check; the saved params stay byte-identical; and the script end to end offline (--reuse over saved raw files) with
+  one passing, one failing and one rejected passer, all three listed and the two marked.
+
+For the lead (P11): CLAUDE.md's search paragraph says "SEC XBRL frames"; the screen reads the companyfacts API per
+company (one request each) plus the submissions file. Wording to use: "SEC companyfacts per company (not XBRL frames)".
+# P6-book-backfill (15.11.2026)
+
+The thesis book is in one state: `python scripts/publish_valuation.py --check` exits 0 on research/ (56 problems before).
+
+- Published with `scripts/publish_valuation.py` (23 companies): `valuation.json` in every newest valuation folder;
+  `lean_result.json` rewritten with the reporting keys (no earlier key or value changed); one row per company in
+  research/THESES_he.md (UBER 6.11 and NBIS 11.11 / 12.11 rows moved to the thesis history); the numbers block added to
+  all 18 theses (prose untouched, history lines appended for every corrected number); new handoffs for APH, APP, AVGO,
+  BNY, CRDO, DELL, MELI, ORCL, V, WSM; existing handoffs regenerated additively (v1 keys kept, `schema_version` 2, `v2`).
+- New short theses GOOGL, MSFT, NOW, RDDT, TSM from their saved handoff and SOURCE.md, marked as a copy without a fresh pull.
+- NBIS: `lean_result_funding_variant.json` saved for the financing-realistic variant (listed in the record and block).
+- `fundamental_engine/valuation_record.py`: weighted worlds (`worlds.json` beside lean_params.json or a `worlds` key):
+  the record's values, ladder and buy test are the weighted worlds of `lean_model.run(..., worlds=)`, with a `worlds`
+  block per world; never saved into lean_result.json. The handoff keeps a v1 entry price as a dict per world and puts
+  the weighted number under v2 (`v2.worlds`, `v2.buy_test`); per-world returns are written at the record's price.
+  A stale `margin_of_safety_note` / `thesis_note` that explained a null is replaced once the value exists. A wiped
+  scenario reads "0$ (ההון נמחק)" in the index row. The numbers block lists the worlds, or the named variants.
+- tests/test_thesis_book.py (new, 9 tests): publish --check over research/ passes; every thesis has the block and a
+  history; one index row per company; NVDA weighted record and handoff shape; the projection fixes.
+- The owner's list of changed numbers: runs/engine_upgrade_2026-11-15/book_backfill_changes.md.
+## P9 holdings and health (15.11.2026)
+
+- **portfolio_health (new: fundamental_engine/portfolio_health.py, scripts/portfolio_health.py).** The owner's portfolio
+  rules computed from the saved valuations: each holding with lean params is rerun with lean_model at the position's price
+  and date (lean_model.reprice; base_year_end derived in memory from as_of + days_to_base_year_end when the file has none;
+  worlds.json variants weighted the same way); a custom model's saved returns are read at the position price (the end
+  value with distributions recovered from the model's own return, so META's three lanes reproduce 6.54 / 10.43 at its own
+  price). Per holding: band per lens, agreement, calibrated_diagnostics deciding when the second lens is not a second
+  opinion, the four buy-test legs with the highest passing and rerun prices, sizes against 15% / 20% / 5% and the core
+  minimum, linked exposure by role tag, valuation age, next report and typed-condition state. Portfolio: index share
+  (index funds plus the study fund) against 60-70%, stock part against 30-40%. Rule results in simple Hebrew, never
+  orders. Output only under runs/ (write() refuses any other folder). Private rules file runs/portfolio_rules.json
+  (gitignored): bands, caps, index funds, study fund, role and tags per holding; drafted fields say "draft: owner to
+  confirm". The lagging-core conflict of the two 05.11 rules is a switch (lagging_core_rule: hold_no_new_money default,
+  or cap_6pct) and the output names the reading used.
+- **due (new: scripts/due.py, portfolio_health.due).** Reports in the next N days, reports that passed without a valuation
+  update, held names whose valuation is older than their last report, and open conditions. Next report from the saved
+  record, else the handoff (the valuation's own date first), else research/ledger.jsonl. No network: the tracker's cached
+  SEC filing index is read when present; --refresh refetches it (SEC_USER_AGENT). A 6-K alone is listed to check, not
+  counted as a results report.
+- **holdings-update (fundamental_engine/holdings_watch.py).** Reads the valuation record (valuation_record.latest_valuation)
+  before the handoff when at least as new, with both lenses, dated values and typed conditions (judgement the record lacks
+  comes from the same-date handoff; a record of the main file of unweighted variants gives way to the handoff); the
+  handoff is read under any dated key shape (end_2031, end_fy2031_jan_2032, june_2032, calibrated_*). The filing check is
+  labelled as the old (heavy) engine's thesis check (filing_check, "המנוע הישן"); lean-ledger rows are skipped by
+  latest_theses. New status cannot_tell for a filer without quarterly XBRL facts (20-F / 6-K) whose companyfacts show no
+  new period (TSM and NU were "no new report" before).
+- **research-latest (fundamental_engine/research_store.py latest(), cli.py).** Returns the newest dated folder of any kind
+  through latest_valuation (META 13.11 three-lane instead of the heavy 01.11 save; APP's lean folder instead of "none"),
+  with a summary, the handoff path and the superseded heavy-engine save; --full adds the record. research_store.load keeps
+  its meaning (latest.json).
+- Tests: tests/test_portfolio_health.py (16, fixture tree only); tests/test_holdings_watch.py unchanged and passing.
+## P11-runbook (16.11.2026): the daily runbook, the resume section and the module contracts of the lean path
+
+Documentation only. No code, test, saved params, result or research file was changed, and CLAUDE.md was not edited.
+
+- **`docs/LEAN_PATH.md` (new): the daily runbook.**
+  - It covers four situations, each step with its command and its output files:
+    - (a) a ticker question: baseline, fresh pull, a new dated folder from the baseline, the model, locked rules,
+      lean_check, the buy verification pass, publish, freeze and the answer order;
+    - (b) results day;
+    - (c) the portfolio check;
+    - (d) the stock search.
+  - One definition per price label:
+    - "מחיר מבחן הקנייה" is the all-legs buy-test price, or the rerun price when the model warns;
+    - "מחיר כניסה עם מרווח ביטחון" is the fixed 13% price.
+    - The file says where each number is in lean_result, valuation.json and fundamental.json.
+    - It warns that the legacy `margin_of_safety` / `company_hurdle` rung is not the margin-of-safety price.
+  - A closing section lists what the tools do not do.
+  - Every command named was run on 16.11 with `--help` or as a dry run on real files.
+  - The scratch outputs went to a temp folder or a ledger copy; nothing was written into research/.
+- **`START_HERE.md`:**
+  - "Resuming in a fresh session" is rewritten. It now lists:
+    - the first commands of a new session (version, SEC_USER_AGENT, golden test, `lean_freeze.py --verify`,
+      `publish_valuation.py --check`, `due.py`, `research-latest`);
+    - what is in Git: the thesis book, dated valuation folders with records, the handoffs, research/ledger.jsonl,
+      lessons, market.json, rejected.jsonl and the tracker;
+    - what is regenerated, and the private files (runs/portfolio_<D>/ and runs/portfolio_rules.json);
+    - the latest-state documents.
+  - "Saved research and the portfolio check" now matches research-latest, which resolves the newest folder of any
+    kind, and the holdings-update -> portfolio_health -> due chain.
+  - A new heading "Heavy pipeline and older workflows (cross-check, on the owner's request)" holds:
+    - the regenerate commands of the heavy engine;
+    - the tracked runs/ files (nine, not four);
+    - the heavy-engine state up to 02.11, moved there verbatim.
+  - Small marks on stale pointers:
+    - the 25.10 fast procedure is "then the default, now a cross-check";
+    - "the whole cycle" is an older search path;
+    - "v0.11 one decision path" is retitled "(heavy pipeline)" instead of "(use this first)".
+  - All other text is unchanged.
+- **`docs/MODULE_CONTRACTS.md`:**
+  - New section "lean path", in the file's style, with signatures and output shapes read from the code for:
+    - `scripts/lean_model.py`;
+    - `valuation_record` and `scripts/publish_valuation.py`;
+    - `lean_check` and `lean_freeze`;
+    - `locked_rules`;
+    - `forecast_tracker` version 2;
+    - `portfolio_health` and `due`;
+    - the `quality_momentum` saved-valuation gate;
+    - `research_store.latest`;
+    - the 16.11 `holdings_watch` additions.
+  - The version-1 `forecast_tracker` paragraph, which described scoring a rerun of the params file, is replaced by a
+    pointer to the new contract.
+- **Proposal, not applied:** `runs/engine_upgrade_2026-11-15/claude_md_proposal.md` holds the exact CLAUDE.md edits for
+  the lead and the owner:
+  - a 14-line "Daily path (lean)" section;
+  - 19 dead pointers with their replacements;
+  - 13 pairs of contradicting rules, each with the rule in force by date;
+  - what moves to docs/CLAUDE_HISTORY.md;
+  - related fixes outside CLAUDE.md: the template's L38 margin-of-safety definition, the v1 `buy_test_price` row of the
+    handoff spec, the legacy rung label, and master_process.md L3-6.
+# W3-review (16.11.2026): one review round over wave 3
+
+Fixed directly:
+- **Screen and weighted worlds** (`fundamental_engine/quality_momentum.py`, `_from_folder`): a lean folder with a
+  `worlds.json` beside `lean_params.json` (or a `worlds` key in the params) is now tested on the weighted buy test, the
+  one the record publishes. NVDA's screen price was 176.38 (the orderly-succession world alone); it is now 163.15, the
+  published "מחיר מבחן הקנייה". Test: `test_weighted_worlds_are_tested_when_the_folder_has_them`. The 15.11 screen
+  was rerun with `--reuse`: only the NVDA thesis-book row changed (pass at 162.85, price 176.38 -> 163.15).
+- **NVDA handoff `price_time_utc`** was set to null by the backfill (a v1 type change, string -> null). Restored as the
+  string "2026-11-12 (exact time of the 161.50 quote not recorded)" in fundamental.json and valuation.json
+  (`price.time_utc`); `publish_valuation.py --check` stays at 0 problems.
+- **book_backfill_changes.md**: the handoff v1 keys that changed without a row (margin_of_safety_note, thesis_link,
+  thesis_note for GOOGL/MSFT/NOW/RDDT/TSM; NVDA values.today_note and price_time_utc) are listed.
+- `tests/test_portfolio_health.py`: two comments carried wrong hand figures (63.4% and 30.7%; the fixture gives 64.0%
+  and 31.0%). Assertions unchanged.
+
 ### Wave 2 of the end-to-end upgrade (15.11.2026)
 # P3-lean-model-core (15.11.2026)
 

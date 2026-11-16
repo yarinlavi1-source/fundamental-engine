@@ -38,6 +38,7 @@ STORE = os.path.join('companies')
 TECH = os.path.join('technical')
 INDEX = 'THESES_he.md'
 RECORD_NAME = 'valuation.json'
+WORLDS_NAME = 'worlds.json'   # weighted worlds beside lean_params.json (scripts/lean_model.py --worlds)
 DATED = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 SCEN = ('bear', 'base', 'bull')
 KINDS = ('exit', 'trim', 'add', 'too_low')
@@ -541,6 +542,9 @@ def build_from_lean(params, result, inputs=None, files=None):
     missing = [k for k in REPORTING_KEYS if k not in result]
     if missing:
         raise ValueError('the lean result has no ' + ', '.join(missing) + ': rerun the params with the current lean_model')
+    worlds = result.get('worlds')
+    if worlds:
+        result = _weighted_view(result)
     dv, fund = result['dated_values'], (result.get('funding') or {}).get('scenarios') or {}
     if not dv.get('available'):
         raise ValueError('the lean result carries no dates (as_of missing or not an ISO date): a record needs them')
@@ -613,7 +617,66 @@ def build_from_lean(params, result, inputs=None, files=None):
                           'method_gap_warnings': len((result.get('method_gap') or {}).get('warnings') or [])},
         'warnings': result.get('warnings') or [],
     }
-    return _assemble(core, inputs)
+    rec = _assemble(core, inputs)
+    if worlds:
+        rec['worlds'] = _worlds_block(worlds)
+        main = rec['worlds']['worlds'][0] if rec['worlds']['worlds'] else {}
+        rec['base_path']['note'] = (f'the yearly path of the main file ({main.get("name")}, weight {main.get("weight")}): the weighted '
+                                    'values have no single path')
+        rec['model_reading']['worlds'] = len(rec['worlds']['worlds'])
+    return rec
+
+
+def worlds_spec(folder, params):
+    """(worlds spec, folder its files are relative to) of a lean valuation: the params' own "worlds" key, else a
+    worlds.json beside them; (None, None) when the valuation has no weighted worlds."""
+    if isinstance(params, dict) and params.get('worlds') is not None:
+        return params['worlds'], folder
+    fp = os.path.join(folder, WORLDS_NAME)
+    return (load(fp), folder) if os.path.isfile(fp) else (None, None)
+
+
+def _weighted_view(result):
+    """The lean result reshaped to its weighted worlds (result['worlds']['weighted']): the keys build_from_lean reads.
+    The yearly path, sensitivity and funding stay the main file's (the weighted values have no single path)."""
+    w, dv = result['worlds']['weighted'], result['dated_values']
+    names = [k for k in w['value_today'] if k != 'base_calibrated']
+    scen = {k: dict(result['scenarios'].get(k) or {}, value_today=w['value_today'][k], annual_return_pct=w['annual_return_pct'][k])
+            for k in names}
+    view_dv = dict(dv, today=dict({'date': dv['today'].get('date')}, **w['value_today']),
+                   year_ends={y: dict({'date': dv['year_ends'][y]['date']}, **vals) for y, vals in w['year_end_values'].items()},
+                   at={k: dict(v) for k, v in w['at'].items()})
+    tl = w.get('two_lens') or {}
+    lens = {'ours': {'value_today': w['value_today'].get('base'), 'annual_return_pct': w['annual_return_pct'].get('base'),
+                     'band': tl.get('ours')},
+            'calibrated': {'value_today': w['value_today'].get('base_calibrated'),
+                           'annual_return_pct': w['annual_return_pct'].get('base_calibrated'), 'band': tl.get('calibrated'),
+                           'pe_used': None, 'margin_overridden': None},
+            'agree': tl.get('agree')}
+    out = dict(result, scenarios=scen, dated_values=view_dv, two_lens=lens, price_ladder=w['price_ladder'], buy_test=w['buy_test'],
+               weighted_value_today=w.get('probability_weighted_value_today'), weighted_end_value=None, weighted_return_pct=None,
+               calibrated_diagnostics={'reading': 'per world: the second lens of each world holds its own multiple'},
+               funding={'scenarios': {}},
+               warnings=list(result.get('warnings') or []) + list(result['worlds'].get('warnings') or []))
+    return out
+
+
+def _worlds_block(worlds):
+    """The record's worlds part: the weights (judgement, not engine odds) and each world's own numbers."""
+    rows = []
+    for x in worlds.get('worlds') or []:
+        bt, m13 = x.get('buy_test') or {}, x.get('margin_of_safety_13') or {}
+        rows.append({'name': x['name'], 'label_he': x.get('label_he'), 'weight': x.get('weight'),
+                     'params': {'path': x.get('file'), 'sha256': x.get('sha256')},
+                     'value_today': x.get('value_today'), 'annual_return_pct': x.get('annual_return_pct'),
+                     'buy_test_price': bt.get('rerun_max_price_passing', bt.get('max_price_passing')),
+                     'buy_test_pass': bt.get('pass'), 'margin_of_safety_price': m13.get('ours'),
+                     'margin_of_safety_price_second_lens': m13.get('calibrated'), 'base_band': x.get('base_band'),
+                     'two_lens_agree': x.get('two_lens_agree')})
+    return {'source': worlds.get('source'), 'weights_label': 'subjective (judgement, not engine odds)',
+            'note': worlds.get('note'), 'worlds': rows,
+            'weighted_value_today': (worlds.get('weighted') or {}).get('value_today'),
+            'weighted_annual_return_pct': (worlds.get('weighted') or {}).get('annual_return_pct')}
 
 
 def _custom_dates(as_of, days, base_year):
@@ -809,12 +872,29 @@ def record_for_folder(folder, root, inputs=None, result=None, run=None):
                                                    or 'rerun' not in res['buy_test'] and 'no_price_passes' not in res['buy_test']):
             # a result saved before today's reporting keys: the rerun supplies them, the saved model values stay
             res = dict(json.loads(json.dumps(run(params))), **{k: res[k] for k in SAVED_VALUE_KEYS if k in res})
-        rec = build_from_lean(params, res, inputs, _files(folder, root, spec['params'], spec['result'], 'scripts/lean_model.py'))
+        wspec, wdir = worlds_spec(folder, params) if spec['kind'] == 'lean' else (None, None)
+        if wspec is not None and 'worlds' not in res:
+            # the weighted worlds are computed, never saved into lean_result.json (its keys are the single file's)
+            res = dict(res, worlds=json.loads(json.dumps((run or default_run())(params, worlds=wspec, base_dir=wdir)))['worlds'])
+        files = _files(folder, root, spec['params'], spec['result'], 'scripts/lean_model.py')
+        if wspec is not None and 'worlds' not in params:
+            files['worlds'] = file_ref(os.path.join(folder, WORLDS_NAME), os.path.dirname(root))
+        rec = build_from_lean(params, res, inputs, files)
         var = _variants(folder, os.path.dirname(root))
         if var:
             rec['variants'] = var
-            rec['warnings'].append(f'{len(var)} named variant file(s) next to the main file: the record holds the main file only, '
-                                   'no weighted value over the variants is computed')
+            if wspec is not None:
+                weights = {os.path.basename(x['params']['path'] or ''): x['weight'] for x in rec['worlds']['worlds']}
+                for v in var:
+                    name = os.path.basename(v['params']['path'])
+                    v['weight'] = weights.get(name, 0.0)
+                    v['note'] = ('a world of the weighted value (worlds.json)' if name in weights else
+                                 'saved next to the main file, not one of the worlds in force (weight 0)')
+                rec['warnings'].append(f'the values are the weighted worlds of {WORLDS_NAME} ({len(rec["worlds"]["worlds"])} worlds); '
+                                       'the yearly path is the main file\'s')
+            else:
+                rec['warnings'].append(f'{len(var)} named variant file(s) next to the main file: the record holds the main file only, '
+                                       'no weighted value over the variants is computed')
     elif spec['model'] == 'bank':
         rec = adapt_bank(load(os.path.join(folder, spec['params'])), load(os.path.join(folder, spec['result'])), inputs,
                          _files(folder, root, spec['params'], spec['result'], 'bank_model.py'))
@@ -1005,6 +1085,29 @@ def project_handoff(record, previous=None):
         'verdict': record['verdict'],
         'next_report': {'date': nr.get('date'), 'window': nr.get('window'), 'confirmed': nr['confirmed']},
     }
+    wd = record.get('worlds')
+    if wd:
+        # weighted worlds: the v1 entry prices stay a dict per world (the v1 shape of a multi-world handoff); the one
+        # weighted number of each is under v2.buy_test / v2.entry_price and v2.worlds
+        rows = wd.get('worlds') or []
+        out['buy_test_price'] = {x['name']: x.get('buy_test_price') for x in rows}
+        out['margin_of_safety_price'] = {x['name']: x.get('margin_of_safety_price') for x in rows}
+        values['today_base_by_world'] = {f'{x["name"]}_{round((x.get("weight") or 0) * 100):g}pct': (x.get('value_today') or {}).get('base')
+                                         for x in rows}
+        values['weighted_base_today'] = sc['base']['value_today']
+        values['today_note'] = ('bear, base and bull = the weighted values over the worlds (weight x value, weights are judgement): '
+                                'see today_base_by_world and v2.worlds for each world')
+        ar = out['annual_return_pct']
+        ar['at_price'], ar['weighted_base'] = record['price']['value'], sc['base']['annual_return_pct']
+        prev_ar = (previous or {}).get('annual_return_pct') if isinstance((previous or {}).get('annual_return_pct'), dict) else {}
+        for x in rows:
+            r = x.get('annual_return_pct') or {}
+            key = next((k for k, v in prev_ar.items() if isinstance(v, dict) and x['name'].startswith(k)), x['name'])
+            ar[key] = {'bear': r.get('bear'), 'base': r.get('base'), 'bull': r.get('bull'), 'calibrated': r.get('base_calibrated')}
+        out['v2']['worlds'] = {'weights_label': wd.get('weights_label'), 'source': wd.get('source'),
+                               'weighted': {'value_today': sc['base']['value_today'], 'annual_return_pct': sc['base']['annual_return_pct'],
+                                            'buy_test_price': h.get('buy_test_price'), 'margin_of_safety_price': h.get('margin_of_safety_price')},
+                               'worlds': rows}
     if previous:
         carried = []
         for k, v in previous.items():
@@ -1016,6 +1119,15 @@ def project_handoff(record, previous=None):
             elif k in V1_KEYS and isinstance(v, (dict, list)) and not isinstance(out[k], (dict, list)):
                 out[k + '_carried'] = v           # the old file held another shape under a v1 key: kept beside it
                 carried.append(k + '_carried')
+        if isinstance(previous.get('thesis_note'), str) and previous.get('thesis_link') is None and out.get('thesis_link'):
+            out['thesis_note'] = f'the thesis is {out["thesis_link"]}'   # the old note said there was none
+            carried = [k for k in carried if k != 'thesis_note']
+        if (isinstance(previous.get('margin_of_safety_note'), str) and previous.get('margin_of_safety_price') is None
+                and out.get('margin_of_safety_price') is not None):
+            # the old note explained a null that is now filled: it would contradict the number beside it
+            out['margin_of_safety_note'] = ('the fixed 13% rung of the price ladder (one definition for every company since '
+                                            '15.11.2026); the company\'s own hurdle price stays in price_ladder.rungs')
+            carried = [k for k in carried if k != 'margin_of_safety_note']
         if carried:
             out['carried_from_previous'] = sorted(carried)
     return out
@@ -1050,6 +1162,8 @@ def index_row(record, keep=None):
         entry = 'אין מחיר ל-13% במודל הזה'
     else:
         entry = f'{_money(ep["value"], 2)} ({ep.get("rung")})'
+    if record.get('worlds'):
+        entry += ' (ממוצע משוקלל של העולמות)'
     if h.get('buy_test_price') is not None:
         entry += f'; {LABELS_HE["buy_test"]}: {_money(h["buy_test_price"], 2)}'
     else:
@@ -1062,7 +1176,8 @@ def index_row(record, keep=None):
         (keep[1] if len(keep) > 1 and not txt.get('updated_note_he') and keep[1].startswith(_dmy(record['as_of']))
          else _dmy(record['as_of']) + (f' ({txt["updated_note_he"]})' if txt.get('updated_note_he') else '')),
         _money(record['price']['value'], 2),
-        ' / '.join((f'**{_money(sc[k]["value_today"], like=base)}**' if k == 'base' else _money(sc[k]['value_today'], like=base))
+        ' / '.join((f'**{_money(sc[k]["value_today"], like=base)}**' if k == 'base' else
+                    '0$ (ההון נמחק)' if sc[k].get('wiped') else _money(sc[k]['value_today'], like=base))
                    for k in SCEN if k in sc),
         'אין' if not dv.get('one_year') else f'{_money(dv["one_year"].get("base"), like=base)} ({_dmy(dv["one_year"]["date"])})',
         'אין' if not dv.get('five_year') else f'{_money(dv["five_year"].get("base"), like=base)} ({_dmy(dv["five_year"]["date"])})',
@@ -1116,6 +1231,17 @@ def numbers_block(record):
             if h.get(k) is not None]
     if rest:
         lines.append('- **שאר המדרגות:** ' + '; '.join(f'{n}: {_money(v, 2)}' for n, v in rest) + '.')
+    wd = record.get('worlds')
+    if wd:
+        lines.append('- **עולמות** (שיקול דעת; השווי למעלה הוא הממוצע המשוקלל שלהם): ' + '; '.join(
+            f'{x.get("label_he") or x["name"]} ({round((x.get("weight") or 0) * 100):g}%): בסיסי '
+            f'{_money((x.get("value_today") or {}).get("base"), like=base)} היום, {_pct((x.get("annual_return_pct") or {}).get("base"))} בשנה, '
+            f'{LABELS_HE["buy_test"]} ' + (_money(x.get('buy_test_price'), 2) if x.get('buy_test_price') is not None else 'אין')
+            for x in wd.get('worlds') or []) + '.')
+    elif record.get('variants'):
+        lines.append('- **גרסאות שמורות לצד הקובץ הראשי** (לא בתוך השווי למעלה): ' + '; '.join(
+            f'{v["name"]}: בסיסי {_money(v.get("base_value_today"), like=base)} היום, {_pct(v.get("base_annual_return_pct"))} בשנה'
+            for v in record['variants']) + '.')
     if all(is_number(x) for x in probs):
         w = record.get('weighted') or {}
         lines.append('- **הסתברויות** (שיקול דעת): ' + ' / '.join(f'{he[k]} {round(sc[k]["probability"] * 100):g}%' for k in order)

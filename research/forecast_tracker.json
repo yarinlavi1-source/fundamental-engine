@@ -1,11 +1,13 @@
 {
- "forecast_tracker_version": 1,
- "as_of": "2026-11-15",
+ "forecast_tracker_version": 2,
+ "as_of": "2026-11-16",
  "rows": [
   {
    "ticker": "APH",
    "valuation_date": "2026-11-06",
    "params_path": "research/companies/APH/2026-11-06/lean_params.json",
+   "thesis_id": "lean:APH:2026-11-06:71166d005945",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -13,23 +15,34 @@
    "price": {
     "price": 78.23,
     "date": "2026-11-13",
-    "value_path": 70.09,
-    "vs_value_path": 0.1160629386427312,
+    "value_path": 70.1,
+    "vs_value_path": 0.11597803545596452,
     "price_at_valuation": 74.09,
     "gap_at_valuation": 0.05918513223731248,
-    "age_days": 7
+    "age_days": 7,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 820313,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "APP",
    "valuation_date": "2026-11-06",
    "params_path": "research/companies/APP/2026-11-06/lean_params.json",
+   "thesis_id": "lean:APP:2026-11-06:94291099b6e3",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -37,23 +50,34 @@
    "price": {
     "price": 409.1,
     "date": "2026-11-13",
-    "value_path": 416.15,
-    "vs_value_path": -0.016936726254468737,
+    "value_path": 416.14,
+    "vs_value_path": -0.016926000665318575,
     "price_at_valuation": 348.0,
     "gap_at_valuation": -0.16174876550644346,
-    "age_days": 7
+    "age_days": 7,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1751008,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "AVGO",
    "valuation_date": "2026-11-07",
    "params_path": "research/companies/AVGO/2026-11-07/lean_params.json",
+   "thesis_id": "lean:AVGO:2026-11-07:840d6878d7b1",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -65,34 +89,63 @@
     "vs_value_path": 0.16964070445605328,
     "price_at_valuation": 293.69,
     "gap_at_valuation": -0.008105643554324637,
-    "age_days": 6
+    "age_days": 6,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1730168,
-   "variants_not_scored": [
-    "research/companies/AVGO/2026-11-07/lean_params_no_slowdown.json"
-   ],
    "data_note": "cached copy"
   },
   {
    "ticker": "BNY",
    "valuation_date": "2026-11-11",
-   "params_path": "research/companies/BNY/2026-11-11/lean_params.json",
-   "status": "custom_model",
+   "thesis_id": "lean:BNY:2026-11-11:f076d47ce001",
+   "status": "no_report_since",
+   "read": "no_report",
    "reported": [],
    "completed": null,
    "in_progress": null,
-   "price": null,
-   "read": "custom",
    "notes": [],
-   "reason": "custom model: scored by hand (not the lean_model format (base_year, rev0_m, tax))"
+   "price": {
+    "price": 153.41,
+    "date": "2026-11-13",
+    "value_path": 157.86,
+    "vs_value_path": -0.02816418419589184,
+    "price_at_valuation": 152.7,
+    "gap_at_valuation": -0.0323193916349811,
+    "age_days": 2,
+    "split_adjusted": null
+   },
+   "custom": true,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1390777,
+   "data_note": "cached copy"
   },
   {
    "ticker": "CRDO",
    "valuation_date": "2026-11-09",
    "params_path": "research/companies/CRDO/2026-11-09/lean_params.json",
+   "thesis_id": "lean:CRDO:2026-11-09:1a728e87b9de",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -101,24 +154,33 @@
     "price": 131.51,
     "date": "2026-11-13",
     "value_path": 108.55,
-    "vs_value_path": 0.2115040994785884,
+    "vs_value_path": 0.21155122804151616,
     "price_at_valuation": 132.83,
     "gap_at_valuation": 0.22570822183261052,
-    "age_days": 4
+    "age_days": 4,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1807794,
-   "variants_not_scored": [
-    "research/companies/CRDO/2026-11-09/lean_params_no_digestion.json"
-   ],
    "data_note": "cached copy"
   },
   {
    "ticker": "DELL",
    "valuation_date": "2026-11-11",
    "params_path": "research/companies/DELL/2026-11-11/lean_params.json",
+   "thesis_id": "lean:DELL:2026-11-11:d0a6359e8c8b",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -127,22 +189,120 @@
     "price": 344.53,
     "date": "2026-11-13",
     "value_path": 367.06,
-    "vs_value_path": -0.061371471764618546,
+    "vs_value_path": -0.061367195827027654,
     "price_at_valuation": 361.78,
     "gap_at_valuation": -0.013739708849026866,
-    "age_days": 2
+    "age_days": 2,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1571996,
-   "variants_not_scored": [],
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "FIVE",
+   "valuation_date": "2026-11-15",
+   "params_path": "research/companies/FIVE/2026-11-15/lean_params.json",
+   "thesis_id": "lean:FIVE:2026-11-15:e59ede6d469e",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": null,
+   "read": "no_report",
+   "notes": [],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1177609,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "GOOGL",
+   "valuation_date": "2026-11-04",
+   "params_path": "research/companies/GOOGL/2026-11-04/lean_params.json",
+   "thesis_id": "lean:GOOGL:2026-11-04:4e992dcb724e",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": {
+    "price": 295.77,
+    "date": "2026-11-13",
+    "value_path": 239.97,
+    "vs_value_path": 0.2325347367275008,
+    "price_at_valuation": 290.75,
+    "gap_at_valuation": 0.21444384110939385,
+    "age_days": 9,
+    "split_adjusted": null
+   },
+   "read": "no_report",
+   "notes": [],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1652044,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "LLY",
+   "valuation_date": "2026-11-15",
+   "params_path": "research/companies/LLY/2026-11-15/lean_params.json",
+   "thesis_id": "lean:LLY:2026-11-15:3b3a54b66ba8",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": null,
+   "read": "no_report",
+   "notes": [],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 59478,
    "data_note": "cached copy"
   },
   {
    "ticker": "MELI",
    "valuation_date": "2026-11-06",
    "params_path": "research/companies/MELI/2026-11-06/lean_params.json",
+   "thesis_id": "lean:MELI:2026-11-06:fe3f301a77ac",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -150,75 +310,269 @@
    "price": {
     "price": 1491.49,
     "date": "2026-11-13",
-    "value_path": 2180.83,
-    "vs_value_path": -0.31609063512477253,
+    "value_path": 2180.81,
+    "vs_value_path": -0.31608465187361745,
     "price_at_valuation": 1532.29,
     "gap_at_valuation": -0.2961816352871468,
-    "age_days": 7
+    "age_days": 7,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1099590,
-   "variants_not_scored": [],
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "META",
+   "valuation_date": "2026-11-13",
+   "thesis_id": "lean:META:2026-11-13:c9fdf004e6fc",
+   "status": "no_report_since",
+   "read": "no_report",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "notes": [],
+   "price": {
+    "price": 641.69,
+    "date": "2026-11-13",
+    "value_path": 513.2,
+    "vs_value_path": 0.25037022603273607,
+    "price_at_valuation": 634.68,
+    "gap_at_valuation": 0.23671083398285253,
+    "age_days": 0,
+    "split_adjusted": null
+   },
+   "custom": true,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": null,
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1326801,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "MSFT",
+   "valuation_date": "2026-11-04",
+   "params_path": "research/companies/MSFT/2026-11-04/lean_params.json",
+   "thesis_id": "lean:MSFT:2026-11-04:3edd856f106f",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": {
+    "price": 523.88,
+    "date": "2026-11-13",
+    "value_path": 434.82,
+    "vs_value_path": 0.20481858584973045,
+    "price_at_valuation": 554.51,
+    "gap_at_valuation": 0.2781734780904963,
+    "age_days": 9,
+    "split_adjusted": null
+   },
+   "read": "no_report",
+   "notes": [],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 789019,
    "data_note": "cached copy"
   },
   {
    "ticker": "NBIS",
    "valuation_date": "2026-11-11",
-   "params_path": "research/companies/NBIS/2026-11-11/lean_params.json",
-   "status": "no_report_since",
+   "thesis_id": "lean:NBIS:2026-11-11:ac070b8fdf64",
+   "status": "scorecard",
+   "read": "scorecard",
+   "mode": "descriptive",
+   "descriptive_reason": "descriptive only: the valuation of 2026-11-11 was frozen on 2026-11-15, after the report of 2026-11-12",
+   "reported_on": "2026-11-12",
+   "period": "Q3 2026",
+   "period_end": "2026-09-30",
+   "sources": [
+    {
+     "title": "Q3 2026 results release (6-K exhibit 99.1, 12.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126008/tm2629571d1_ex99-1.htm"
+    },
+    {
+     "title": "Q3 2026 letter to shareholders with 2026 guidance and 2027 outlook (6-K exhibit 99.2, 12.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126008/tm2629571d1_ex99-2.htm"
+    },
+    {
+     "title": "Q3 2026 financial statements and notes (6-K, 12.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126238/"
+    }
+   ],
+   "scorecard_path": "research/companies/NBIS/2026-11-11/scorecard.json",
+   "items": [
+    {
+     "metric": "revenue Q3 2026 against the model year 2026 minus H1 (reported before the valuation)",
+     "kind": "partial",
+     "unit": "USD",
+     "model_value": 2318700000.0,
+     "actual": 980800000.0,
+     "note": "Model FY2026 revenue 3,300M (frozen forecast row) minus H1 981.3M (Q2 6-K, in the valuation) = 2,318.7M for H2. Q3 delivered 980.8M = 42.3% of it with half of the time; Q4 now needs 1,337.9M, 36% above Q3. Q3 includes about 325M of non-recurring partnership revenue (letter): without it Q3 is about 656M (28.3%). No ahead/behind word on a partial year.",
+     "error": null,
+     "diff_pts": null,
+     "share": 0.4229956441109242
+    },
+    {
+     "metric": "revenue nine months 2026",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 1962100000.0,
+     "note": "release table; the model has no nine-month figure",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "non-recurring partnership revenue in Q3 2026",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 325000000.0,
+     "note": "letter: 'approximately $325 million of non-recurring revenue as part of our asset-light model'",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "operating income Q3 2026 (GAAP)",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 50400000.0,
+     "note": "release statement of operations: 50.4M (5.1% of revenue); nine months -253.5M. The model has no 2026 margin (the base year); its 2027 margin is 3.09%.",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "revenue FY2026 guidance (low end of 3.0-3.4B)",
+     "kind": "guidance",
+     "unit": "USD",
+     "model_value": 3300000000.0,
+     "actual": 3000000000.0,
+     "note": "letter: 'we now expect 2026 revenue at the low end of our $3.0-3.4 billion range'; guidance, not a reported number",
+     "error": -0.09090909090909094,
+     "diff_pts": null
+    },
+    {
+     "metric": "revenue FY2027 outlook (midpoint of 12-13B)",
+     "kind": "guidance",
+     "unit": "USD",
+     "model_value": 11500000000.0,
+     "actual": 12500000000.0,
+     "note": "letter: initial 2027 outlook 'revenue of $12-13 billion'; the model's 2027 base is 11,500M (frozen forecast row)",
+     "error": 0.08695652173913038,
+     "diff_pts": null
+    },
+    {
+     "metric": "capex FY2026 guidance",
+     "kind": "guidance",
+     "unit": "USD",
+     "model_value": 22000000000.0,
+     "actual": 27000000000.0,
+     "note": "letter: 'approximately $27 billion, above our $20-25 billion range'; model 22,000M (frozen params notes, net_cash)",
+     "error": 0.2272727272727273,
+     "diff_pts": null
+    },
+    {
+     "metric": "ARR at the end of September 2026",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 6400000000.0,
+     "note": "letter: $6.4B, up 113% from $3.0B at the end of June; the company no longer guides on ARR",
+     "error": null,
+     "diff_pts": null
+    }
+   ],
+   "falsifiers": [
+    {
+     "id": "msft_delay",
+     "text": "Cancellation or delay of part of the Microsoft contract",
+     "state": "fired",
+     "note": "letter: in New Jersey more than half of the capacity contracted with Microsoft by year-end, the remaining tranches now scheduled for 2Q27; the contracts remain in place (a delay, not a cancellation)",
+     "action_if_fired": "review",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "research/companies/NBIS/thesis_he.md as committed on 2026-11-11 07:04 UTC (Git 1343e80), text only; not typed in the frozen record",
+     "needs_reason": false
+    },
+    {
+     "id": "gpu_price_fall",
+     "text": "GPU rental prices fall",
+     "state": "not_fired",
+     "note": "letter: prices in Q3 rose on average more than 20% per GPU-hour versus Q2",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only",
+     "needs_reason": false
+    },
+    {
+     "id": "citi_refinancing",
+     "text": "Expensive financing when the Citi facility needs refinancing",
+     "state": "not_measurable",
+     "note": "the $3.5B Citi facility of October 2026 runs 364 days; its refinancing falls due about October 2027",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only",
+     "needs_reason": false
+    },
+    {
+     "id": "arr_guide",
+     "text": "The end-2026 ARR guide of $7-9B (the base of the model's 2027 revenue) is cut or moved",
+     "state": "fired",
+     "note": "letter: ARR now expected to exceed $7B for the month of February, a shift of about two months",
+     "action_if_fired": "review",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "frozen params notes (growth), sha256 in the ledger thesis row",
+     "needs_reason": false
+    }
+   ],
+   "problems": [],
    "reported": [],
    "completed": null,
    "in_progress": null,
-   "price": {
-    "price": 115.88,
-    "date": "2026-11-13",
-    "value_path": 81.48,
-    "vs_value_path": 0.42215546623932343,
-    "price_at_valuation": 149.65,
-    "gap_at_valuation": 0.8380004912797838,
-    "age_days": 2
-   },
-   "read": "no_report",
+   "price": null,
    "notes": [
-    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
+    "Scored by hand from the company's 6-K filings on SEC EDGAR, read on 2026-11-16. NBIS is a foreign filer: its quarters are not in SEC XBRL.",
+    "The two later valuations (12.11 and 13.11) were made after this report and are not scored against it."
    ],
-   "annual_filer": true,
    "cik": 1513845,
-   "variants_not_scored": [],
-   "data_note": "cached copy"
-  },
-  {
-   "ticker": "NBIS",
-   "valuation_date": "2026-11-12",
-   "params_path": "research/companies/NBIS/2026-11-12/lean_params.json",
-   "status": "no_report_since",
-   "reported": [],
-   "completed": null,
-   "in_progress": null,
-   "price": {
-    "price": 115.88,
-    "date": "2026-11-13",
-    "value_path": 66.94,
-    "vs_value_path": 0.7312201562484679,
-    "price_at_valuation": 130.5,
-    "gap_at_valuation": 0.9503811089523242,
-    "age_days": 1
-   },
-   "read": "no_report",
-   "notes": [
-    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
-   ],
-   "annual_filer": true,
-   "cik": 1513845,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "NBIS",
    "valuation_date": "2026-11-13",
    "params_path": "research/companies/NBIS/2026-11-13/lean_params.json",
+   "thesis_id": "lean:NBIS:2026-11-13:9c8a3d4999c0",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -230,21 +584,32 @@
     "vs_value_path": 0.8220125786163524,
     "price_at_valuation": 110.46,
     "gap_at_valuation": 0.7367924528301886,
-    "age_days": 0
+    "age_days": 0,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [
-    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
+    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one; fill a scorecard.json for the quarter"
    ],
    "annual_filer": true,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1513845,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "NET",
    "valuation_date": "2026-11-06",
    "params_path": "research/companies/NET/2026-11-06/lean_params.json",
+   "thesis_id": "lean:NET:2026-11-06:22b836120039",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -252,36 +617,351 @@
    "price": {
     "price": 305.81,
     "date": "2026-11-13",
-    "value_path": 95.09,
-    "vs_value_path": 2.2161017462787385,
+    "value_path": 95.08,
+    "vs_value_path": 2.2162519865017027,
     "price_at_valuation": 275.7,
     "gap_at_valuation": 1.905163329820864,
-    "age_days": 7
+    "age_days": 7,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1477333,
-   "variants_not_scored": [],
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "NOW",
+   "valuation_date": "2026-11-04",
+   "params_path": "research/companies/NOW/2026-11-04/lean_params.json",
+   "thesis_id": "lean:NOW:2026-11-04:a5966ee47bf1",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": {
+    "price": 102.25,
+    "date": "2026-11-13",
+    "value_path": 87.45,
+    "vs_value_path": 0.16923084245042497,
+    "price_at_valuation": 108.35,
+    "gap_at_valuation": 0.24211853720050436,
+    "age_days": 9,
+    "split_adjusted": null
+   },
+   "read": "no_report",
+   "notes": [],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1373715,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "NU",
+   "valuation_date": "2026-11-01",
+   "thesis_id": "NU:2026-11-01:4df4d5616ef7",
+   "status": "scorecard",
+   "read": "scorecard",
+   "mode": "descriptive",
+   "descriptive_reason": "descriptive only: the valuation it is scored against (NU:2026-11-01:4df4d5616ef7, research/forecast_ledger.jsonl (legacy heavy-engine ledger, recorded 2026-11-01T22:46 UTC; its chain cannot be verified)) is not a thesis frozen in research/ledger.jsonl",
+   "reported_on": "2026-11-12",
+   "period": "Q3 2026",
+   "period_end": "2026-09-30",
+   "sources": [
+    {
+     "title": "Q3 2026 results release (6-K, 12.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005273/nupr3q26_6k.htm"
+    },
+    {
+     "title": "Q3 2026 IFRS financial statements and notes (6-K, 12.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005272/nufs3q26_6k.htm"
+    }
+   ],
+   "scorecard_path": "research/companies/NU/2026-11-01/scorecard.json",
+   "items": [
+    {
+     "metric": "total revenue Q3 2026 (managerial)",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 6258500000.0,
+     "note": "release; +37% FX-neutral, +45% in USD against 4,317.2M",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "net income Q3 2026",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 1091600000.0,
+     "note": "release",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "NPL 90+ ratio",
+     "kind": "actual",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.073,
+     "note": "release; 6.9% in Q2 2026, 6.7% in Q3 2025",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "NPL 15-90 ratio",
+     "kind": "actual",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.049,
+     "note": "release; 4.8% in Q2 2026",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "risk-adjusted NIM",
+     "kind": "actual",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.121,
+     "note": "release; 12.7% excluding non-recurring items, 12.4% in Q2 2026",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "ROE (quarter)",
+     "kind": "actual",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.32,
+     "note": "release",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "CET1 ratio, Brazil prudential conglomerate",
+     "kind": "actual",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.121,
+     "note": "IFRS statements, capital note; 13.0% at 2025-12-31",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "cost of credit Q3 2026 (managerial)",
+     "kind": "actual",
+     "unit": "USD",
+     "model_value": null,
+     "actual": 1788700000.0,
+     "note": "release; 1,035.8M in Q3 2025 (+73%)",
+     "error": null,
+     "diff_pts": null
+    },
+    {
+     "metric": "efficiency ratio FY2026 guidance",
+     "kind": "guidance",
+     "unit": "ratio",
+     "model_value": null,
+     "actual": 0.1925,
+     "note": "release: now 19% to 19.5% (midpoint shown), previously around 20%",
+     "error": null,
+     "diff_pts": null
+    }
+   ],
+   "falsifiers": [
+    {
+     "id": "fx_npl90",
+     "text": "NPL 90+ ratio above 7.5% (by 2027-08-31)",
+     "state": "not_fired",
+     "note": "7.3%, rising from 6.9% in Q2",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (typed trigger falsifier:fx_npl90)",
+     "needs_reason": false
+    },
+    {
+     "id": "fx_cet1",
+     "text": "CET1 ratio of the Brazilian prudential conglomerate below 11% (by 2027-08-31)",
+     "state": "not_fired",
+     "note": "12.1% (13.0% at end-2025)",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_cet1)",
+     "needs_reason": false
+    },
+    {
+     "id": "fx_roe_base",
+     "text": "quarterly ROE below 22% (by 2027-08-31)",
+     "state": "not_fired",
+     "note": "32%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_roe_base)",
+     "needs_reason": false
+    },
+    {
+     "id": "fx_tax",
+     "text": "FY2026 IFRS effective income tax rate above 30% (20-F)",
+     "state": "not_measurable",
+     "note": "the FY2026 20-F is not filed; Q3 accounting tax 258.7M on 1,350.3M pre-tax = 19.2%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_tax)",
+     "needs_reason": false
+    },
+    {
+     "id": "fx_bull_growth",
+     "text": "credit portfolio growth y/y at Q2 2027 below 25% (bull case)",
+     "state": "not_measurable",
+     "note": "dated Q2 2027; Q3 2026 portfolio +33% FX-neutral",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bull_growth)",
+     "needs_reason": false
+    },
+    {
+     "id": "fx_bear_roe",
+     "text": "quarterly ROE above 30% in Q2 2027 (breaks the bear case)",
+     "state": "not_measurable",
+     "note": "dated Q2 2027; Q3 2026 ROE 32%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bear_roe)",
+     "needs_reason": false
+    },
+    {
+     "id": "q3_npl",
+     "text": "Q3 report: NPL 15-90 above 5.0% or NPL 90+ above 7.2%",
+     "state": "fired",
+     "note": "NPL 90+ 7.3% (15-90 at 4.9% stayed under 5.0%); the 13.11 update holds and does not add",
+     "action_if_fired": "add_blocked",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+     "needs_reason": false
+    },
+    {
+     "id": "q3_credit_cost",
+     "text": "Q3 report: risk-adjusted NIM below about 10.5%, or cost of credit above about $1.9B or rising faster than revenue",
+     "state": "fired",
+     "note": "risk-adjusted NIM 12.1% and cost of credit 1,788.7M stay inside, but cost of credit rose 73% against revenue +45% in USD",
+     "action_if_fired": "review",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+     "needs_reason": false
+    },
+    {
+     "id": "q3_profit",
+     "text": "Q3 report: net income below about $1.09B or ROE below about 30%",
+     "state": "not_fired",
+     "note": "net income 1,091.6M, ROE 32%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+     "needs_reason": false
+    },
+    {
+     "id": "q3_customers",
+     "text": "Q3 report: customer additions below about 3M or Brazil activity rate below 86%",
+     "state": "not_fired",
+     "note": "3.7M added; Brazil activity rate 86.3%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+     "needs_reason": false
+    },
+    {
+     "id": "q3_provisioning",
+     "text": "Q3 report: stage-3 share above about 9.5% on cards, or card coverage below about 17% while NPLs rise",
+     "state": "not_measurable",
+     "note": "not read in this pass (the IFRS credit-quality note)",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+     "needs_reason": false
+    }
+   ],
+   "problems": [],
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": null,
+   "notes": [
+    "Scored by hand from the company's 6-K filings on SEC EDGAR, read on 2026-11-16. NU is a foreign filer (IFRS): its quarters are not in SEC XBRL.",
+    "No item has a model value: the 01.11 heavy-engine thesis froze share-count and return forecasts only, and the 13.11 valuation came after the report."
+   ],
+   "cik": 1691493,
    "data_note": "cached copy"
   },
   {
    "ticker": "NU",
    "valuation_date": "2026-11-13",
-   "params_path": "research/companies/NU/2026-11-13/lean_params.json",
-   "status": "custom_model",
+   "thesis_id": "lean:NU:2026-11-13:6c3699945f06",
+   "status": "no_report_since",
+   "read": "no_report",
    "reported": [],
    "completed": null,
    "in_progress": null,
-   "price": null,
-   "read": "custom",
    "notes": [],
-   "reason": "custom model: scored by hand (the model's revenue line is not sales (operating margin of 95% or more): a remapped model)"
+   "price": {
+    "price": 13.22,
+    "date": "2026-11-13",
+    "value_path": 13.38,
+    "vs_value_path": -0.01195814648729443,
+    "price_at_valuation": 12.08,
+    "gap_at_valuation": -0.09715994020926766,
+    "age_days": 0,
+    "split_adjusted": null
+   },
+   "custom": true,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1691493,
+   "data_note": "cached copy"
   },
   {
    "ticker": "NVDA",
    "valuation_date": "2026-11-12",
    "params_path": "research/companies/NVDA/2026-11-12/lean_params.json",
+   "thesis_id": "lean:NVDA:2026-11-12:8f0762821d89",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -290,26 +970,33 @@
     "price": 162.85,
     "date": "2026-11-13",
     "value_path": 182.45,
-    "vs_value_path": -0.10742483466124808,
+    "vs_value_path": -0.10742316240081928,
     "price_at_valuation": 161.5,
     "gap_at_valuation": -0.11453478809145234,
-    "age_days": 1
+    "age_days": 1,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1045810,
-   "variants_not_scored": [
-    "research/companies/NVDA/2026-11-12/lean_params_A_huang_stays.json",
-    "research/companies/NVDA/2026-11-12/lean_params_B2_messy_succession.json",
-    "research/companies/NVDA/2026-11-12/lean_params_C_export_hit.json"
-   ],
    "data_note": "cached copy"
   },
   {
    "ticker": "ORCL",
    "valuation_date": "2026-11-06",
    "params_path": "research/companies/ORCL/2026-11-06/lean_params.json",
+   "thesis_id": "lean:ORCL:2026-11-06:cc6d1a590da1",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -321,19 +1008,30 @@
     "vs_value_path": -0.19824400029022315,
     "price_at_valuation": 116.4,
     "gap_at_valuation": -0.25370263512213886,
-    "age_days": 7
+    "age_days": 7,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1341439,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "PANW",
    "valuation_date": "2026-11-05",
    "params_path": "research/companies/PANW/2026-11-05/lean_params.json",
+   "thesis_id": "lean:PANW:2026-11-05:40d6712aa543",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -345,43 +1043,153 @@
     "vs_value_path": 0.8558903976060865,
     "price_at_valuation": 315.74,
     "gap_at_valuation": 0.8222427425405436,
-    "age_days": 8
+    "age_days": 8,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1327567,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
-   "ticker": "UBER",
-   "valuation_date": "2026-11-06",
-   "params_path": "research/companies/UBER/2026-11-06/lean_params.json",
+   "ticker": "RDDT",
+   "valuation_date": "2026-11-04",
+   "params_path": "research/companies/RDDT/2026-11-04/lean_params.json",
+   "thesis_id": "lean:RDDT:2026-11-04:caff1aeffb9d",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 69.69,
+    "price": 98.45,
     "date": "2026-11-13",
-    "value_path": 114.55,
-    "vs_value_path": -0.39162151673169987,
-    "price_at_valuation": 67.8,
-    "gap_at_valuation": -0.40708351552251854,
-    "age_days": 7
+    "value_path": 155.0,
+    "vs_value_path": -0.3648250540208502,
+    "price_at_valuation": 103.03,
+    "gap_at_valuation": -0.333398033126294,
+    "age_days": 9,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
-   "cik": 1543151,
-   "variants_not_scored": [],
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1713445,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "SPCX",
+   "valuation_date": "2026-11-13",
+   "thesis_id": "lean:SPCX:2026-11-13:3f10c50e68e4",
+   "status": "no_report_since",
+   "read": "no_report",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "notes": [],
+   "price": {
+    "price": 139.11,
+    "date": "2026-11-13",
+    "value_path": 70.06,
+    "vs_value_path": 0.9855837853268632,
+    "price_at_valuation": 140.66,
+    "gap_at_valuation": 1.0077076791321722,
+    "age_days": 0,
+    "split_adjusted": null
+   },
+   "custom": true,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1181412,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "TSM",
+   "valuation_date": "2026-11-05",
+   "thesis_id": "lean:TSM:2026-11-05:bf5688d475be",
+   "status": "report_not_scored",
+   "read": "report_not_scored",
+   "reported_on": "2026-11-10",
+   "form": "6-K",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": null,
+   "mode": null,
+   "descriptive_reason": null,
+   "notes": [
+    "6-K filed 2026-11-10 (foreign filer current report (results or other news)): no XBRL period and no scorecard.json yet; if it is a results report, fill a scorecard.json"
+   ],
+   "cik": 1046179,
+   "data_note": "cached copy"
+  },
+  {
+   "ticker": "TSM",
+   "valuation_date": "2026-11-05",
+   "params_path": "research/companies/TSM/2026-11-05/lean_params.json",
+   "thesis_id": "lean:TSM:2026-11-05:bf5688d475be",
+   "path_source": "ledger",
+   "status": "not_scorable",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": {
+    "price": 398.73,
+    "date": "2026-11-13",
+    "value_path": 428.54,
+    "vs_value_path": -0.06955931851584563,
+    "price_at_valuation": 362.13,
+    "gap_at_valuation": -0.15316979631924799,
+    "age_days": 8,
+    "split_adjusted": null
+   },
+   "read": "not_scorable",
+   "notes": [],
+   "reason": "SEC facts are in TWD, the model in USD: scored by hand",
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
+   "cik": 1046179,
    "data_note": "cached copy"
   },
   {
    "ticker": "UBER",
    "valuation_date": "2026-11-13",
    "params_path": "research/companies/UBER/2026-11-13/lean_params.json",
+   "thesis_id": "lean:UBER:2026-11-13:5ea124fe14b0",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -393,19 +1201,30 @@
     "vs_value_path": -0.38943402838619257,
     "price_at_valuation": 69.27,
     "gap_at_valuation": -0.39311371999299105,
-    "age_days": 0
+    "age_days": 0,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1543151,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "V",
    "valuation_date": "2026-11-09",
    "params_path": "research/companies/V/2026-11-09/lean_params.json",
+   "thesis_id": "lean:V:2026-11-09:286fc30352b4",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -417,19 +1236,30 @@
     "vs_value_path": -0.07601031822895798,
     "price_at_valuation": 425.52,
     "gap_at_valuation": -0.07572005734393328,
-    "age_days": 4
+    "age_days": 4,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 1403161,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   },
   {
    "ticker": "WSM",
    "valuation_date": "2026-11-11",
    "params_path": "research/companies/WSM/2026-11-11/lean_params.json",
+   "thesis_id": "lean:WSM:2026-11-11:26a38b5277b3",
+   "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
@@ -437,96 +1267,82 @@
    "price": {
     "price": 254.05,
     "date": "2026-11-13",
-    "value_path": 187.41,
-    "vs_value_path": 0.35560093234838064,
+    "value_path": 187.4,
+    "vs_value_path": 0.355628112887012,
     "price_at_valuation": 262.2,
     "gap_at_valuation": 0.39981848272916554,
-    "age_days": 2
+    "age_days": 2,
+    "split_adjusted": null
    },
    "read": "no_report",
    "notes": [],
    "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "same",
+    "holds": true,
+    "note": null
+   },
+   "current": true,
    "cik": 719955,
-   "variants_not_scored": [],
    "data_note": "cached copy"
   }
  ],
  "custom_model": [
   {
    "ticker": "ASTS",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "GOOGL",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "MA",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "META",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "MSFT",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "NOW",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "ONDS",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "PLTR",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "PYPL",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "RDDT",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "SOFI",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "SPCX",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "TSLA",
-   "reason": "custom model: scored by hand (no lean params file)"
-  },
-  {
-   "ticker": "TSM",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   },
   {
    "ticker": "VRT",
-   "reason": "custom model: scored by hand (no lean params file)"
+   "reason": "no frozen thesis and no lean valuation files (heavy-engine or gather-only folders)"
   }
  ],
  "summary": {
-  "rows": 19,
+  "rows": 28,
   "scored_rows": 0,
   "scored_companies": 0,
-  "no_report_since": 17,
-  "custom_model": 2,
-  "not_scorable": 0,
+  "scorecard_tests": 0,
+  "descriptive_only": 2,
+  "no_report_since": 24,
+  "custom_model": 0,
+  "report_not_scored": 1,
+  "not_scorable": 1,
   "in_sample_suspected": 0,
   "min_rows": 8,
+  "min_companies": 3,
   "items": {
    "revenue_completed_year": {
     "label_he": "הכנסות, שנה שהסתיימה (בפועל חלקי תחזית פחות 1)",
     "unit": "pct",
     "n": 0,
+    "companies": 0,
     "median": null,
     "conclusion": "too few to conclude"
    },
@@ -534,6 +1350,7 @@
     "label_he": "שיעור רווח תפעולי, שנה שהסתיימה (נקודות)",
     "unit": "pts",
     "n": 0,
+    "companies": 0,
     "median": null,
     "conclusion": "too few to conclude"
    },
@@ -541,47 +1358,484 @@
     "label_he": "רווח תפעולי למניה, שנה שהסתיימה",
     "unit": "pct",
     "n": 0,
+    "companies": 0,
     "median": null,
     "conclusion": "too few to conclude"
    },
-   "revenue_growth_year_in_progress": {
-    "label_he": "צמיחת הכנסות מתחילת השנה מול הצמיחה השנתית במודל (נקודות)",
-    "unit": "pts",
+   "rest_of_year_step": {
+    "label_he": "שנה חלקית: הקפיצה לרבעון שהמודל עוד צריך, מול הרבעון החדש",
+    "unit": "pct",
     "n": 0,
+    "companies": 0,
     "median": null,
     "conclusion": "too few to conclude"
    },
-   "margin_year_in_progress": {
-    "label_he": "שיעור רווח תפעולי מתחילת השנה מול המודל (נקודות)",
+   "margin_new_part": {
+    "label_he": "שנה חלקית: שיעור הרווח של החלק החדש מול שנת המודל (נקודות)",
     "unit": "pts",
     "n": 0,
+    "companies": 0,
     "median": null,
     "conclusion": "too few to conclude"
    },
    "price_vs_value_path": {
     "label_he": "מחיר מול מסלול השווי הבסיסי",
     "unit": "pct",
-    "n": 17,
-    "companies": 14,
-    "median": 0.1160629386427312,
+    "n": 23,
+    "companies": 23,
+    "median": 0.11597803545596452,
     "median_gap_at_valuation": -0.008105643554324637,
-    "median_age_days": 4,
+    "median_age_days": 6,
     "conclusion": "too few to conclude",
     "note": "a gap in level between price and value, mostly the gap that existed on the valuation day; it tests the path only as the valuations age (median age under 90 days: too early)"
    }
   },
   "conclusion": "too few to conclude"
  },
+ "falsifiers": [
+  {
+   "ticker": "NBIS",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "msft_delay",
+   "text": "Cancellation or delay of part of the Microsoft contract",
+   "state": "fired",
+   "note": "letter: in New Jersey more than half of the capacity contracted with Microsoft by year-end, the remaining tranches now scheduled for 2Q27; the contracts remain in place (a delay, not a cancellation)",
+   "action_if_fired": "review",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md as committed on 2026-11-11 07:04 UTC (Git 1343e80), text only; not typed in the frozen record",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NBIS",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "gpu_price_fall",
+   "text": "GPU rental prices fall",
+   "state": "not_fired",
+   "note": "letter: prices in Q3 rose on average more than 20% per GPU-hour versus Q2",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NBIS",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "citi_refinancing",
+   "text": "Expensive financing when the Citi facility needs refinancing",
+   "state": "not_measurable",
+   "note": "the $3.5B Citi facility of October 2026 runs 364 days; its refinancing falls due about October 2027",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NBIS",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "arr_guide",
+   "text": "The end-2026 ARR guide of $7-9B (the base of the model's 2027 revenue) is cut or moved",
+   "state": "fired",
+   "note": "letter: ARR now expected to exceed $7B for the month of February, a shift of about two months",
+   "action_if_fired": "review",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "frozen params notes (growth), sha256 in the ledger thesis row",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_npl90",
+   "text": "NPL 90+ ratio above 7.5% (by 2027-08-31)",
+   "state": "not_fired",
+   "note": "7.3%, rising from 6.9% in Q2",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (typed trigger falsifier:fx_npl90)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_cet1",
+   "text": "CET1 ratio of the Brazilian prudential conglomerate below 11% (by 2027-08-31)",
+   "state": "not_fired",
+   "note": "12.1% (13.0% at end-2025)",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_cet1)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_roe_base",
+   "text": "quarterly ROE below 22% (by 2027-08-31)",
+   "state": "not_fired",
+   "note": "32%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_roe_base)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_tax",
+   "text": "FY2026 IFRS effective income tax rate above 30% (20-F)",
+   "state": "not_measurable",
+   "note": "the FY2026 20-F is not filed; Q3 accounting tax 258.7M on 1,350.3M pre-tax = 19.2%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_tax)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_bull_growth",
+   "text": "credit portfolio growth y/y at Q2 2027 below 25% (bull case)",
+   "state": "not_measurable",
+   "note": "dated Q2 2027; Q3 2026 portfolio +33% FX-neutral",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bull_growth)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "fx_bear_roe",
+   "text": "quarterly ROE above 30% in Q2 2027 (breaks the bear case)",
+   "state": "not_measurable",
+   "note": "dated Q2 2027; Q3 2026 ROE 32%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bear_roe)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "q3_npl",
+   "text": "Q3 report: NPL 15-90 above 5.0% or NPL 90+ above 7.2%",
+   "state": "fired",
+   "note": "NPL 90+ 7.3% (15-90 at 4.9% stayed under 5.0%); the 13.11 update holds and does not add",
+   "action_if_fired": "add_blocked",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "q3_credit_cost",
+   "text": "Q3 report: risk-adjusted NIM below about 10.5%, or cost of credit above about $1.9B or rising faster than revenue",
+   "state": "fired",
+   "note": "risk-adjusted NIM 12.1% and cost of credit 1,788.7M stay inside, but cost of credit rose 73% against revenue +45% in USD",
+   "action_if_fired": "review",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "q3_profit",
+   "text": "Q3 report: net income below about $1.09B or ROE below about 30%",
+   "state": "not_fired",
+   "note": "net income 1,091.6M, ROE 32%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "q3_customers",
+   "text": "Q3 report: customer additions below about 3M or Brazil activity rate below 86%",
+   "state": "not_fired",
+   "note": "3.7M added; Brazil activity rate 86.3%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NU",
+   "period": "Q3 2026",
+   "reported_on": "2026-11-12",
+   "mode": "descriptive",
+   "id": "q3_provisioning",
+   "text": "Q3 report: stage-3 share above about 9.5% on cards, or card coverage below about 17% while NPLs rise",
+   "state": "not_measurable",
+   "note": "not read in this pass (the IFRS credit-quality note)",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
+   "needs_reason": false
+  }
+ ],
+ "review_bias": {
+  "rows": [
+   {
+    "ticker": "AVGO",
+    "as_of": "2026-11-07",
+    "thesis_id": "lean:AVGO:2026-11-07:840d6878d7b1",
+    "pre": 409.39,
+    "post": 296.09,
+    "change": -113.3,
+    "change_pct": -0.27675321820269183,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "CRDO",
+    "as_of": "2026-11-09",
+    "thesis_id": "lean:CRDO:2026-11-09:1a728e87b9de",
+    "pre": 139.5,
+    "post": 108.37,
+    "change": -31.13,
+    "change_pct": -0.22315412186379924,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "FIVE",
+    "as_of": "2026-11-15",
+    "thesis_id": "lean:FIVE:2026-11-15:e59ede6d469e",
+    "pre": 267.92,
+    "post": 263.05,
+    "change": -4.87,
+    "change_pct": -0.01817706778142736,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "GOOGL",
+    "as_of": "2026-11-04",
+    "thesis_id": "lean:GOOGL:2026-11-04:4e992dcb724e",
+    "pre": 228.64,
+    "post": 239.41,
+    "change": 10.77,
+    "change_pct": 0.04710461861441573,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "LLY",
+    "as_of": "2026-11-15",
+    "thesis_id": "lean:LLY:2026-11-15:3b3a54b66ba8",
+    "pre": 845.54,
+    "post": 818.1,
+    "change": -27.44,
+    "change_pct": -0.03245263381980734,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "MELI",
+    "as_of": "2026-11-06",
+    "thesis_id": "lean:MELI:2026-11-06:fe3f301a77ac",
+    "pre": 2607.99,
+    "post": 2177.11,
+    "change": -430.88,
+    "change_pct": -0.16521535742084892,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "META",
+    "as_of": "2026-11-13",
+    "thesis_id": "lean:META:2026-11-13:c9fdf004e6fc",
+    "pre": 513.2,
+    "post": 513.2,
+    "change": 0.0,
+    "change_pct": 0.0,
+    "source": "review_findings.json"
+   },
+   {
+    "ticker": "MSFT",
+    "as_of": "2026-11-04",
+    "thesis_id": "lean:MSFT:2026-11-04:3edd856f106f",
+    "pre": 445.44,
+    "post": 433.83,
+    "change": -11.61,
+    "change_pct": -0.026064116379310387,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "NBIS",
+    "as_of": "2026-11-12",
+    "thesis_id": "lean:NBIS:2026-11-12:24388b1944cf",
+    "pre": 75.5,
+    "post": 66.91,
+    "change": -8.59,
+    "change_pct": -0.11377483443708614,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "NBIS",
+    "as_of": "2026-11-13",
+    "thesis_id": "lean:NBIS:2026-11-13:9c8a3d4999c0",
+    "pre": 63.6,
+    "post": 63.6,
+    "change": 0.0,
+    "change_pct": 0.0,
+    "source": "review_findings.json"
+   },
+   {
+    "ticker": "NET",
+    "as_of": "2026-11-06",
+    "thesis_id": "lean:NET:2026-11-06:22b836120039",
+    "pre": 89.91,
+    "post": 94.9,
+    "change": 4.99,
+    "change_pct": 0.05549994438883332,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "NOW",
+    "as_of": "2026-11-04",
+    "thesis_id": "lean:NOW:2026-11-04:a5966ee47bf1",
+    "pre": 103.74,
+    "post": 87.23,
+    "change": -16.51,
+    "change_pct": -0.15914786967418537,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "NU",
+    "as_of": "2026-11-13",
+    "thesis_id": "lean:NU:2026-11-13:6c3699945f06",
+    "pre": 13.06,
+    "post": 13.38,
+    "change": 0.32,
+    "change_pct": 0.024502297090352343,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "ORCL",
+    "as_of": "2026-11-06",
+    "thesis_id": "lean:ORCL:2026-11-06:cc6d1a590da1",
+    "pre": 169.01,
+    "post": 155.97,
+    "change": -13.04,
+    "change_pct": -0.07715519791728298,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "PANW",
+    "as_of": "2026-11-05",
+    "thesis_id": "lean:PANW:2026-11-05:40d6712aa543",
+    "pre": 134.32,
+    "post": 173.27,
+    "change": 38.95,
+    "change_pct": 0.2899791542584873,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "SPCX",
+    "as_of": "2026-11-13",
+    "thesis_id": "lean:SPCX:2026-11-13:3f10c50e68e4",
+    "pre": 27.61,
+    "post": 70.06,
+    "change": 42.45,
+    "change_pct": 1.5374864179645056,
+    "source": "review_findings.json"
+   },
+   {
+    "ticker": "UBER",
+    "as_of": "2026-11-06",
+    "thesis_id": "lean:UBER:2026-11-06:6e3ac0a58e5f",
+    "pre": 150.04,
+    "post": 114.35,
+    "change": -35.69,
+    "change_pct": -0.23786990135963748,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "UBER",
+    "as_of": "2026-11-13",
+    "thesis_id": "lean:UBER:2026-11-13:5ea124fe14b0",
+    "pre": 114.55,
+    "post": 114.14,
+    "change": -0.41,
+    "change_pct": -0.0035792230467044384,
+    "source": "pre-review params rerun at freeze"
+   }
+  ],
+  "median_change_pct": -0.022120592080368873,
+  "n": 18,
+  "companies": 16,
+  "conclusion": "median over the theses",
+  "meaning": "the reviewed base minus the first draft: a positive median means the first drafts ran low. Warning row only."
+ },
+ "outcomes": {
+  "candidates": 0,
+  "written": [],
+  "existing": [],
+  "refused": []
+ },
+ "ledger": {
+  "path": "research/ledger.jsonl",
+  "verify": {
+   "ok": true,
+   "entries": 507,
+   "legacy_entries": 0
+  },
+  "theses": 28,
+  "outcomes_on_file": 0
+ },
  "sources": {
-  "actuals": "SEC companyfacts (data.sec.gov), results release dates from the SEC filing index (8-K item 2.02)",
-  "prices": "Yahoo daily close",
-  "model": "scripts/lean_model.py run() on each lean_params.json (base scenario)"
+  "model": "research/ledger.jsonl thesis and forecast rows (lean_freeze); params read only while their sha256 equals the frozen one; unfrozen folders from their saved lean_result.json (no rerun)",
+  "actuals": "SEC companyfacts (data.sec.gov); reports from the SEC filing index (8-K item 2.02, 6-K, 20-F, 40-F)",
+  "scorecards": "research/companies/<T>/<date>/scorecard*.json (manual, primary sources linked)",
+  "prices": "Yahoo daily close"
  },
  "thresholds": {
   "revenue": 0.02,
   "margin_pts": 0.01,
-  "min_rows": 8
+  "min_rows": 8,
+  "min_companies": 3
  },
- "meaning": "Measurement only: published lean base cases against SEC-reported results and the latest close. No model or rule is changed from this file.",
+ "meaning": "Measurement only: frozen base cases (research/ledger.jsonl) against SEC-reported results, manual scorecards and the latest close. No model or rule is changed from this file.",
  "gaps": []
 }

@@ -1,7 +1,19 @@
-"""Quality + trend screen: TTM and the derived fourth quarter, each gate at its boundary, routing, trend, ranking (no network)."""
+"""Quality + trend screen: TTM and the derived fourth quarter, each gate at its boundary, routing, trend, ranking, and the
+saved-valuation mark (no network)."""
+import copy
+import importlib.util
+import json
+import os
+import tempfile
 import unittest
+from contextlib import redirect_stdout
+from datetime import date, timedelta
+from io import StringIO
+from unittest import mock
 
 from fundamental_engine import quality_momentum as qm
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 AS_OF = '2026-11-15'
 # fiscal year = calendar year; the fourth quarter is reported only inside the full year
@@ -479,6 +491,180 @@ class Report(unittest.TestCase):
             self.assertIn(needle, text)
         passers = text.split('## כמעט עברו')[0]
         self.assertNotIn('| O |', passers)
+
+
+# ---------------------------------------------------------------- saved valuations (the MSFT slip)
+
+LEAN = qm.lean_module()
+FIXTURE = os.path.join(REPO, 'tests', 'fixtures', 'lean_model_dated.json')     # ANET 04.11: price 182.95, buy-test price 150.99
+
+
+def _write(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(obj, f)
+
+
+def lean_folder(root, ticker, day):
+    with open(FIXTURE, encoding='utf-8') as f:
+        p = json.load(f)
+    p['ticker'] = ticker
+    _write(os.path.join(root, 'companies', ticker, day, 'lean_params.json'), p)
+    _write(os.path.join(root, 'companies', ticker, day, 'lean_result.json'), LEAN.run(copy.deepcopy(p)))
+
+
+def research_tree(root):
+    """PASSCO and FAILCO hold the same lean valuation (04.11); REJCO and CUST exist only as rejected checks; ENG holds a
+    heavy-engine folder; LATE holds a lean valuation and a newer rejected check."""
+    for t in ('PASSCO', 'FAILCO', 'LATE'):
+        lean_folder(root, t, '2026-11-04')
+    _write(os.path.join(root, 'companies', 'ENG', '2026-11-01', 'casefile_summary.json'), {})
+    rows = [{'ticker': 'REJCO', 'date': '2026-11-05', 'model': 'lean', 'price': 150.0, 'base_value_today': 120.0,
+             'buy_test_pass': False, 'buy_test_price': 100.0, 'verdict': 'not a buy'},
+            {'ticker': 'CUST', 'date': '2026-11-03', 'model': 'custom', 'price': 100.0, 'buy_test_pass': False, 'buy_test_price': None,
+             'margin_of_safety_price_13pct': 70.0, 'verdict': 'not a buy'},
+            {'ticker': 'LATE', 'date': '2026-11-10', 'model': 'lean', 'price': 180.0, 'buy_test_pass': False, 'buy_test_price': 100.0,
+             'verdict': 'not a buy'}]
+    with open(os.path.join(root, 'rejected.jsonl'), 'w', encoding='utf-8') as f:
+        f.write(''.join(json.dumps(r) + '\n' for r in rows))
+
+
+class SavedValuation(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = self.tmp.name
+        research_tree(self.root)
+        self.book = qm.saved_book(self.root)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def sv(self, sym, price, price_date='2026-11-13'):
+        return qm.saved_valuation(self.book, sym, price, AS_OF, price_date, LEAN)
+
+    def test_lean_valuation_is_rerun_at_the_screen_price(self):
+        params = os.path.join(self.root, 'companies', 'FAILCO', '2026-11-04', 'lean_params.json')
+        with open(params, 'rb') as f:
+            before = f.read()
+        ok, bad = self.sv('PASSCO', 120.0), self.sv('FAILCO', 182.95)
+        self.assertEqual((ok['state'], ok['kind'], ok['basis'], ok['date'], ok['age_days']), ('pass', 'lean', 'lean_rerun', '2026-11-04', 11))
+        self.assertTrue(ok['buy_test_pass'])
+        self.assertGreater(ok['buy_test_price'], 120.0)
+        self.assertEqual((bad['state'], bad['buy_test_pass']), ('fail', False))
+        self.assertEqual(bad['buy_test_price_saved'], 150.99)
+        self.assertAlmostEqual(bad['buy_test_price'], 150.99, delta=1.0)     # dates moved to the close: a little later
+        self.assertEqual(self.sv('FAILCO', 182.95, price_date=None)['buy_test_price'], 150.99)
+        self.assertIsNone(bad['rejected'])
+        with open(params, 'rb') as f:
+            self.assertEqual(f.read(), before)                      # the saved inputs are never changed
+
+    def test_dates_move_only_forward(self):
+        self.assertTrue(self.sv('PASSCO', 120.0)['repriced']['dates_moved'])
+        self.assertFalse(self.sv('PASSCO', 120.0, price_date='2026-11-01')['repriced']['dates_moved'])
+
+    def test_rejected_name_is_tested_and_marked(self):
+        r = self.sv('REJCO', 140.0)
+        self.assertEqual((r['state'], r['kind'], r['basis'], r['buy_test_price']), ('fail', 'rejected', 'rejected_price', 100.0))
+        self.assertEqual(r['rejected']['date'], '2026-11-05')
+        self.assertIn('נדחתה 05.11.2026', qm.saved_he(r))
+        self.assertIn('**לא עוברת**', qm.saved_he(r))
+        low = self.sv('REJCO', 90.0)
+        self.assertEqual(low['state'], 'pass')                      # below the saved buy-test price: still marked as rejected
+        self.assertIn('נדחתה', qm.saved_he(low))
+
+    def test_custom_rejected_without_a_buy_test_price(self):
+        self.assertEqual((self.sv('CUST', 110.0)['state'], self.sv('CUST', 110.0)['basis']), ('fail', 'failed_lower'))
+        self.assertEqual((self.sv('CUST', 90.0)['state'], self.sv('CUST', 90.0)['basis']), ('unknown', 'no_test_price'))
+
+    def test_newer_rejected_check_wins_over_an_older_folder(self):
+        r = self.sv('LATE', 120.0)          # the folder's own buy test passes at 120; the newer rejected check does not
+        self.assertEqual((r['state'], r['kind'], r['date']), ('fail', 'rejected', '2026-11-10'))
+        self.assertIn('older research valuation', r['note'])
+
+    def test_engine_folder_unknown_nothing_saved_none(self):
+        e = self.sv('ENG', 50.0)
+        self.assertEqual((e['state'], e['kind'], e['basis']), ('unknown', 'engine', 'engine'))
+        n = self.sv('NOPE', 50.0)
+        self.assertEqual(n['state'], 'none')
+        self.assertEqual(qm.saved_he(n), 'אין')
+        self.assertEqual(qm.saved_he(None), '—')
+
+    def test_weighted_worlds_are_tested_when_the_folder_has_them(self):
+        folder = os.path.join(self.root, 'companies', 'WRLD', '2026-11-04')
+        lean_folder(self.root, 'WRLD', '2026-11-04')
+        with open(os.path.join(folder, 'lean_params.json'), encoding='utf-8') as f:
+            p = json.load(f)
+        low = copy.deepcopy(p)
+        low['scenarios']['base']['pe'] = round(p['scenarios']['base']['pe'] * 0.7, 1)
+        _write(os.path.join(folder, 'lean_params_low.json'), low)
+        spec = {'worlds': [{'name': 'main', 'file': 'lean_params.json', 'weight': 0.5},
+                           {'name': 'low', 'file': 'lean_params_low.json', 'weight': 0.5}]}
+        _write(os.path.join(folder, 'worlds.json'), spec)
+        r = qm.saved_valuation(qm.saved_book(self.root), 'WRLD', 140.0, AS_OF, None, LEAN)
+        bt = LEAN.run(LEAN.reprice(copy.deepcopy(p), price=140.0), worlds=spec, base_dir=folder)['worlds']['weighted']['buy_test']
+        rerun = bt.get('rerun') or {}
+        want = rerun.get('max_price_passing') if rerun.get('lower_than_stated') else bt.get('max_price_passing')
+        main_only = LEAN.run(LEAN.reprice(copy.deepcopy(p), price=140.0))['buy_test']['max_price_passing']
+        self.assertEqual((r['basis'], r['buy_test_price'], r['buy_test_pass']), ('lean_rerun', want, bt.get('pass')))
+        self.assertNotEqual(want, main_only)                        # the weighted price, not the main file's alone
+
+    def test_price_far_from_the_valuation_or_missing_is_not_compared(self):
+        self.assertEqual((self.sv('FAILCO', 182.95 * 2)['state'], self.sv('FAILCO', 182.95 * 2)['basis']), ('unknown', 'scale'))
+        self.assertEqual(self.sv('PASSCO', None)['basis'], 'no_price')
+
+
+def _dates(n, last='2026-11-13'):
+    end = date.fromisoformat(last)
+    return [(end - timedelta(days=n - 1 - i)).isoformat() for i in range(n)]
+
+
+class ScreenMarksSavedValuations(unittest.TestCase):
+    """The script end to end, offline (--reuse over saved raw files): one passing, one failing and one rejected passer are
+    all listed, and the failing and rejected ones are marked."""
+
+    def test_failing_and_rejected_passers_are_marked_not_dropped(self):
+        spec = importlib.util.spec_from_file_location('quality_momentum_screen', os.path.join(REPO, 'scripts', 'quality_momentum_screen.py'))
+        screen = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(screen)
+        names = {'PASSCO': (1, 0.0007), 'FAILCO': (2, 0.002), 'REJCO': (3, 0.002)}     # cik, daily drift (closes about 120, 168)
+        with tempfile.TemporaryDirectory() as tmp:
+            research, out = os.path.join(tmp, 'research'), os.path.join(tmp, 'screen')
+            research_tree(research)
+            _write(os.path.join(out, 'raw', 'nasdaq__screener_stocks.json'), {'data': {'rows': [
+                {'symbol': s, 'name': f'{s} Inc. Common Stock', 'marketCap': '9000000000', 'lastsale': '$%.2f' % (100 * (1 + d) ** 259),
+                 'volume': '1000', 'sector': 'Technology'} for s, (c, d) in names.items()]}})
+            _write(os.path.join(out, 'raw', 'sec__company_tickers_exchange.json'),
+                   {'fields': ['cik', 'name', 'ticker', 'exchange'], 'data': [[c, s, s, 'Nasdaq'] for s, (c, d) in names.items()]})
+            for s, (c, d) in names.items():
+                _write(os.path.join(out, 'facts', f'CIK{c:010d}.json'), {
+                    'cik': c, 'v': screen.FACTS_V, 'as_of': AS_OF, 'series': series(REV, OP, CFO, CAPEX), 'errors': [],
+                    'sub': {'sic': '7372', 'sic_description': 'services-prepackaged software', 'fiscal_year_end': '1231', 'name': s,
+                            'latest_periodic': {'form': '10-Q', 'filed': '2026-10-30', 'period': '2026-09-30'}}})
+            for s, d in list((s, d) for s, (c, d) in names.items()) + [('SPY', 0.0005)]:
+                b = [round(x, 4) for x in bars(d)]
+                _write(os.path.join(out, 'prices', s + '.json'),
+                       {'symbol': s, 'dates': _dates(len(b)), 'adjclose': b, 'close': b, 'high': b, 'error': None, 'currency': 'USD'})
+            with mock.patch.dict(os.environ, {'SEC_USER_AGENT': 'unit-test test@example.invalid'}), redirect_stdout(StringIO()):
+                screen.main([out, '--as-of', AS_OF, '--reuse', '--research', research])
+            with open(os.path.join(out, 'screen.json'), encoding='utf-8') as f:
+                res = json.load(f)
+            with open(os.path.join(out, 'screen_he.md'), encoding='utf-8') as f:
+                text = f.read()
+        states = {r['symbol']: (r['saved_valuation']['state'], r['saved_valuation']['kind']) for r in res['passers']}
+        self.assertEqual(states, {'PASSCO': ('pass', 'lean'), 'FAILCO': ('fail', 'lean'), 'REJCO': ('fail', 'rejected')})
+        self.assertEqual((res['counts']['passers_saved_fail'], res['counts']['passers_saved_pass']), (2, 1))
+        self.assertEqual({r['symbol'] for r in res['saved_valuations'] if r['list'] == 'passers'}, {'PASSCO', 'FAILCO', 'REJCO'})
+        book = {r['symbol']: r['saved_valuation']['state'] for r in res['thesis_book']}
+        self.assertEqual(book['ENG'], 'unknown')                    # not listed by the feed: still shown with its saved valuation
+        passers = text.split('## כמעט עברו')[0]
+        for s in ('| PASSCO |', '| FAILCO |', '| REJCO |', 'הערכה שמורה', 'נדחתה 05.11.2026', '**לא עוברת**'):
+            self.assertIn(s, passers)
+        self.assertIn('ולא ה-XBRL frames', text)
+        warn = next(ln for ln in text.splitlines() if ln.startswith('**הערכה שמורה שנכשלת'))
+        self.assertIn('FAILCO', warn)
+        self.assertIn('REJCO', warn)
+        self.assertNotIn('PASSCO', warn)
+        self.assertIn('## הערכות שמורות מול מחיר החיפוש (3)', text)
 
 
 if __name__ == '__main__':

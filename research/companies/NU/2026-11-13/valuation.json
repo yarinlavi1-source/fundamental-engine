@@ -1,0 +1,525 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "NU",
+ "company": null,
+ "as_of": "2026-11-13",
+ "price": {
+  "value": 12.08,
+  "time_utc": "2026-11-13T05:50Z",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 4892.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean_remapped",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/NU/2026-11-13/lean_params.json",
+   "sha256": "aeada57d99c46d974751f5bb4429a7a348c40202d63db307a372c72f1a646657"
+  },
+  "result": {
+   "path": "research/companies/NU/2026-11-13/lean_result.json",
+   "sha256": "7bee0511bf8582913decc747adb92d40ce1ee2effa8b3485a59ad74e1a9f5789"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": "מחזור אשראי בברזיל ומטבע חלש",
+   "value_today": 5.0,
+   "annual_return_pct": -5.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 5.76
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 6.5
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 7.34
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 8.23
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 9.19
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 5.67,
+     "return_pct": -53.1
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 6.4,
+     "return_pct": -27.2
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 9.06,
+     "return_pct": -5.6
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה ממשיכה, תשואה על ההון כ-30%",
+   "value_today": 13.38,
+   "annual_return_pct": 14.7,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 15.42
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 17.4
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 19.56
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 21.89
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 24.39
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 15.17,
+     "return_pct": 25.6
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 17.13,
+     "return_pct": 19.1
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 24.05,
+     "return_pct": 14.8
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": "מקסיקו וקולומביה מצליחות, אשראי יציב",
+   "value_today": 20.37,
+   "annual_return_pct": 24.8,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 23.47
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 26.56
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 29.96
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 33.67
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 37.68
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 23.09,
+     "return_pct": 91.1
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 26.13,
+     "return_pct": 47.1
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 37.13,
+     "return_pct": 25.2
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 12.26,
+  "end_value": 22.49,
+  "annual_return_pct": 12.9,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 13.71,
+  "annual_return_pct": 15.2,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": 12.7,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 15.8
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 17.83
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 20.05
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 22.44
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 25.01
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-13",
+    "value": 15.54,
+    "return_pct": 28.7
+   },
+   "two_year": {
+    "date": "2028-11-13",
+    "value": 17.55,
+    "return_pct": 20.5
+   },
+   "five_year": {
+    "date": "2031-11-13",
+    "value": 24.66,
+    "return_pct": 15.3
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": false,
+   "differs_from_base_only_by_multiple": true,
+   "pe_held": 12.72,
+   "pe_base_exit": 12.0,
+   "pe_held_to_base_exit": 1.06,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "net income (remapped file)",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 4094.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 4654,
+    "op_margin": 1.0,
+    "eps_operating": 0.95
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 5376,
+    "op_margin": 1.0,
+    "eps_operating": 1.1
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 6236,
+    "op_margin": 1.0,
+    "eps_operating": 1.27
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 7047,
+    "op_margin": 1.0,
+    "eps_operating": 1.44
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 7822,
+    "op_margin": 1.0,
+    "eps_operating": 1.6
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 8526,
+    "op_margin": 1.0,
+    "eps_operating": 1.74
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.13,
+  "rungs": [
+   {
+    "id": "company_hurdle",
+    "return_pct": 13.0,
+    "price": 13.03,
+    "price_second_lens": 13.36,
+    "label": "entry with a margin of safety: buy_return 13% a year"
+   },
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 13.03,
+    "price_second_lens": 13.36,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 13.64,
+    "price_second_lens": 13.98,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 15.57,
+    "price_second_lens": 15.97,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 18.09,
+    "price_second_lens": 18.55,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 20.96,
+    "price_second_lens": 21.49,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 13.64,
+   "stated_price": 13.64,
+   "rerun_price": 13.64,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 14.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 13.64
+    },
+    "base_calibrated": {
+     "return_pct": 15.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 13.98
+    },
+    "bull": {
+     "return_pct": 24.8,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 16.84
+    },
+    "bear": {
+     "return_pct": -5.2,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 15.78
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 13.64,
+  "base_12_price": 13.64,
+  "margin_of_safety_price": 13.03,
+  "index_parity_price": 15.57,
+  "hold_floor_price": 18.09,
+  "sell_line_price": 20.96,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 13.03,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "פיגורים של 90 יום ומעלה 7.2% ומטה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "פיגורים של 15-90 יום לא עולים",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מרווח ריבית מותאם לסיכון 10.5% ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c4",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "פיגורים של 90 יום ומעלה מעל 8%, או פיגורים של 15-90 יום מעל 5.5%",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מרווח מותאם לסיכון מתחת ל-10%",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-19",
+   "to": "2027-02-25"
+  },
+  "confirmed": false,
+  "text": "~2027-02-22",
+  "check_he": "פיגורים 90+ ו-15-90, מרווח מותאם לסיכון"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "להחזיק, לא להוסיף: פיגורים של 90 יום ומעלה 7.3% (התנאי היה עד 7.2%) ובמגמת עלייה",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": true,
+  "moves_most": "exit P/E",
+  "method_gap_warnings": 0
+ },
+ "notes_he": [
+  "המודל אומר זול; מה שעוצר הוא מגמת האשראי",
+  "מבחן לחץ של מחזור אשראי בברזיל: ‎-11%‎ בשנה, מתחת לרצפה"
+ ],
+ "thesis_link": "research/companies/NU/thesis_he.md",
+ "warnings": [],
+ "judgement_source": "imported from the v1 handoff of the same valuation (texts only)"
+}

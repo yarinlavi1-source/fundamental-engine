@@ -17,12 +17,28 @@
    "base": 15.42,
    "bull": 23.47
   },
+  "end_2028": {
+   "bear": 6.5,
+   "base": 17.4,
+   "bull": 26.56
+  },
+  "end_2029": {
+   "bear": 7.34,
+   "base": 19.56,
+   "bull": 29.96
+  },
+  "end_2030": {
+   "bear": 8.23,
+   "base": 21.89,
+   "bull": 33.67
+  },
   "end_2031": {
    "bear": 9.19,
    "base": 24.39,
    "bull": 37.68
   },
   "weighted_today_30_50_20": 12.26,
+  "calibrated_today": 13.71,
   "weighted_today_35_50_15": 11.5
  },
  "scenarios": {
@@ -44,7 +60,9 @@
   "bear": -5.2,
   "base": 14.7,
   "bull": 24.8,
-  "calibrated": 15.2
+  "calibrated": 15.2,
+  "weighted": 12.9,
+  "index": 9.1
  },
  "conditions": {
   "add": [
@@ -68,5 +86,294 @@
  "notes_he": [
   "המודל אומר זול; מה שעוצר הוא מגמת האשראי",
   "מבחן לחץ של מחזור אשראי בברזיל: ‎-11%‎ בשנה, מתחת לרצפה"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean_remapped",
+  "record": {
+   "path": "research/companies/NU/2026-11-13/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 13.64,
+   "stated_price": 13.64,
+   "rerun_price": 13.64,
+   "base_12_price": 13.64,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 14.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 13.64
+    },
+    "base_calibrated": {
+     "return_pct": 15.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 13.98
+    },
+    "bull": {
+     "return_pct": 24.8,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 16.84
+    },
+    "bear": {
+     "return_pct": -5.2,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 15.78
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.13,
+   "rungs": [
+    {
+     "id": "company_hurdle",
+     "return_pct": 13.0,
+     "price": 13.03,
+     "price_second_lens": 13.36
+    },
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 13.03,
+     "price_second_lens": 13.36
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 13.64,
+     "price_second_lens": 13.98
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 15.57,
+     "price_second_lens": 15.97
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 18.09,
+     "price_second_lens": 18.55
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 20.96,
+     "price_second_lens": 21.49
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 13.03,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 15.57,
+  "hold_floor_price": 18.09,
+  "sell_line_price": 20.96,
+  "values_dated": {
+   "today": {
+    "bear": 5.0,
+    "base": 13.38,
+    "bull": 20.37,
+    "date": "2026-11-13",
+    "base_calibrated": 13.71
+   },
+   "year_ends": [
+    {
+     "bear": 5.76,
+     "base": 15.42,
+     "bull": 23.47,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 15.8
+    },
+    {
+     "bear": 6.5,
+     "base": 17.4,
+     "bull": 26.56,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 17.83
+    },
+    {
+     "bear": 7.34,
+     "base": 19.56,
+     "bull": 29.96,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 20.05
+    },
+    {
+     "bear": 8.23,
+     "base": 21.89,
+     "bull": 33.67,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 22.44
+    },
+    {
+     "bear": 9.19,
+     "base": 24.39,
+     "bull": 37.68,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 25.01
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 5.67,
+     "base": 15.17,
+     "bull": 23.09,
+     "date": "2027-11-13",
+     "base_calibrated": 15.54
+    },
+    "two_year": {
+     "bear": 6.4,
+     "base": 17.13,
+     "bull": 26.13,
+     "date": "2028-11-13",
+     "base_calibrated": 17.55
+    },
+    "five_year": {
+     "bear": 9.06,
+     "base": 24.05,
+     "bull": 37.13,
+     "date": "2031-11-13",
+     "base_calibrated": 24.66
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 5.76,
+     "base": 15.42,
+     "bull": 23.47,
+     "second_lens": 15.8
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 9.19,
+     "base": 24.39,
+     "bull": 37.68,
+     "second_lens": 25.01
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 13.71,
+   "annual_return_pct": 15.2,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "פיגורים של 90 יום ומעלה 7.2% ומטה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "פיגורים של 15-90 יום לא עולים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מרווח ריבית מותאם לסיכון 10.5% ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "פיגורים של 90 יום ומעלה מעל 8%, או פיגורים של 15-90 יום מעל 5.5%",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מרווח מותאם לסיכון מתחת ל-10%",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "להחזיק, לא להוסיף: פיגורים של 90 יום ומעלה 7.3% (התנאי היה עד 7.2%) ובמגמת עלייה",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-19",
+    "to": "2027-02-25"
+   },
+   "confirmed": false
+  }
+ },
+ "carried_from_previous": [
+  "values.weighted_today_35_50_15"
  ]
 }

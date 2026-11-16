@@ -1,0 +1,417 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "BNY",
+ "company": "The Bank of New York Mellon",
+ "as_of": "2026-11-11",
+ "price": {
+  "value": 152.7,
+  "time_utc": null,
+  "source": "IBKR last 152.70, conid 44986804, ts 2026-11-11 21:00 UTC (REALTIME)"
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 672.898,
+  "known_split": null
+ },
+ "model": {
+  "kind": "bank",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/BNY/2026-11-11/lean_params.json",
+   "sha256": "0740d5d38662404286f3a6caaa7ef04ac7313ef8fcde59c1483ca2756dd9f0e3"
+  },
+  "result": {
+   "path": "research/companies/BNY/2026-11-11/lean_result.json",
+   "sha256": "dd1390722452bd8e6f86df9cc3aaa7cb8dcbeefdc7718905796782b1410ff7bf"
+  },
+  "code": {
+   "path": "research/companies/BNY/2026-11-11/bank_model.py",
+   "sha256": "cc126512c9c7fda2ada58fc7178af75f65217a71debd985da93fc7fb7be51094"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": null,
+   "value_today": 108.79,
+   "annual_return_pct": 1.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 116.19
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 122.94
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 130.4
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 138.75
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 148.28
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 115.27,
+     "return_pct": -24.5
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 122.0,
+     "return_pct": -10.6
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 146.94,
+     "return_pct": -0.8
+    }
+   }
+  },
+  "base": {
+   "probability": 0.55,
+   "condition_he": null,
+   "value_today": 157.8,
+   "annual_return_pct": 9.1,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 169.83
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 180.66
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 192.24
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 204.69
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 218.15
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 168.33,
+     "return_pct": 10.2
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 179.14,
+     "return_pct": 8.3
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 216.26,
+     "return_pct": 7.2
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": null,
+   "value_today": 193.99,
+   "annual_return_pct": 13.7,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 210.3
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 224.88
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 240.04
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 255.79
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 272.1
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 208.26,
+     "return_pct": 36.4
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 222.83,
+     "return_pct": 20.8
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 269.81,
+     "return_pct": 12.1
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 152.79,
+  "end_value": null,
+  "annual_return_pct": null,
+  "index_return_pct": 9.1,
+  "note": "the bank model saves the weighted value today only"
+ },
+ "second_lens": {
+  "value_today": 167.83,
+  "annual_return_pct": 10.3,
+  "band": "hold",
+  "band_ours": "hold",
+  "agree": true,
+  "pe_held": 14.6,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 181.0
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 192.73
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 205.03
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 217.98
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 231.59
+   }
+  ],
+  "diagnostics_note": "base path, today's forward P/E (price / base 2027 EPS) held as exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "eps": "EPS to common",
+   "tbvps": "tangible book value per share",
+   "rotce": "return on tangible common equity"
+  },
+  "base_year": 2026,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "eps": 10.45,
+    "tbvps": 35.15,
+    "rotce": 0.309,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "eps": 11.48,
+    "tbvps": 37.72,
+    "rotce": 0.317,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "eps": 12.58,
+    "tbvps": 40.57,
+    "rotce": 0.323,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "eps": 13.74,
+    "tbvps": 43.74,
+    "rotce": 0.328,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "eps": 14.97,
+    "tbvps": 47.27,
+    "rotce": 0.331,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "eps": 16.32,
+    "tbvps": 51.08,
+    "rotce": 0.334,
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null
+   }
+  },
+  "note": "a bank has no revenue / operating-margin path: EPS, TBVPS and ROTCE instead"
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.14,
+  "rungs": [
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 133.59,
+    "price_second_lens": 141.01,
+    "label": null
+   }
+  ],
+  "buy_test": {
+   "price": 131.58,
+   "stated_price": 131.58,
+   "rerun_price": null,
+   "rerun_used": false,
+   "binding_leg": "bull_17",
+   "pass_at_price": null,
+   "complete": true,
+   "legs": {
+    "base_12": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 133.59
+    },
+    "calibrated_12": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 141.01
+    },
+    "bull_17": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 131.58
+    },
+    "bear_-10": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 283.5
+    }
+   },
+   "rule": "the bank model's entry_prices: the lowest of the four leg prices",
+   "note": "returns include dividends; the bank model saves no 13%, index, 6% or 3% rung"
+  },
+  "buy_test_price": 131.58,
+  "base_12_price": 133.59,
+  "margin_of_safety_price": null,
+  "index_parity_price": null,
+  "hold_floor_price": null,
+  "sell_line_price": null,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "note": "margin_of_safety, index, hold-floor and sell-line prices are null: the bank model does not compute them",
+  "entry_price": {
+   "value": 131.58,
+   "rung": "buy_test.price",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [],
+ "falsifiers": [],
+ "next_report": {
+  "date": null,
+  "window": null,
+  "confirmed": false,
+  "text": "תחזית 2027, אמצע ינואר 2027",
+  "check_he": null,
+  "note": "no date could be read"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "not_buy",
+  "text_he": "לא לקנות במחיר הזה (חברה חזקה, המחיר כבר מגלם את השיפור)",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "hold",
+  "lenses_agree": true
+ },
+ "notes_he": [],
+ "thesis_link": "research/companies/BNY/thesis_he.md",
+ "warnings": []
+}

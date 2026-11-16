@@ -3,7 +3,8 @@
 Why: runs/ is gitignored and a cloud container is ephemeral, so a finished run and the forecast ledger in
 runs/tickers/ vanish between sessions and the next research on the company starts from nothing. `save` copies the
 compact essentials of a finished fast-ticker run into research/companies/<T>/<as_of>/ and the frozen thesis rows into
-research/forecast_ledger.jsonl; `load` returns the newest saved valuation, the starting point for the next update.
+research/forecast_ledger.jsonl; `load` returns the newest heavy-engine save (latest.json); `latest` (research-latest)
+returns the valuation in force: the newest dated folder of any kind (lean, custom or heavy engine).
 
 Company research only: never portfolio positions, balances or anything private (the copy list below is explicit).
 The tracked ledger is a COPY of the runs/ ledger's rows for each saved thesis (thesis row plus its forecasts, verbatim
@@ -188,6 +189,54 @@ def load(ticker, root='.'):
             'saved': sorted(n for n in os.listdir(os.path.join(root, STORE, t)) if n != 'latest.json'),
             'next': f'start from this valuation: python scripts/ticker_prefetch.py {t} <as_of> --reuse {entry["folder"]}; update only '
                     'what happened since its as_of'}
+
+
+def latest(ticker, root='.', full=False, run=None):
+    """The valuation in force for a ticker: the newest dated folder of research/companies/<T>/ of ANY kind (lean, custom
+    or heavy engine), through valuation_record.latest_valuation; latest.json (written by save, heavy-engine runs only)
+    no longer decides, so a later lean or custom valuation is not hidden behind an older heavy one (META 13.11 over
+    01.11, APP's lean-only folder). The heavy-engine save is named beside it, marked superseded when older. No dated
+    folder: the old answer (load: an unsaved runs/ folder, else None). full: include the whole record."""
+    from . import valuation_record as VR
+    t = str(ticker).upper().strip()
+    lv = VR.latest_valuation(os.path.join(root, 'research'), t, run=run)
+    heavy = load(t, root) if os.path.isfile(os.path.join(root, STORE, t, 'latest.json')) else None
+    if lv is None:
+        return load(t, root)
+    rel = os.path.relpath(lv['folder'], root)
+    out = {'ticker': t, 'as_of': lv['as_of'], 'folder': rel, 'kind': lv['kind'], 'model': lv['model'],
+           'record_source': lv['record_source'], 'note': lv['note'], 'older_folders': lv['older_folders'], 'saved': True}
+    rec = lv.get('record')
+    if rec:
+        sc, lens, hur = rec.get('scenarios') or {}, rec.get('second_lens') or {}, rec.get('hurdles') or {}
+        out['summary'] = {
+            'price': (rec.get('price') or {}).get('value'), 'currency': rec.get('currency'),
+            'value_today': {k: (sc.get(k) or {}).get('value_today') for k in ('bear', 'base', 'bull')},
+            'annual_return_pct': {k: (sc.get(k) or {}).get('annual_return_pct') for k in ('bear', 'base', 'bull')},
+            'second_lens': {k: lens.get(k) for k in ('annual_return_pct', 'band', 'agree')} if lens else None,
+            'buy_test_price': hur.get('buy_test_price'), 'margin_of_safety_price': hur.get('margin_of_safety_price'),
+            'verdict_he': (rec.get('verdict') or {}).get('text_he') or None, 'next_report': rec.get('next_report'),
+            'variants': [v.get('file') for v in rec.get('variants') or []] or None}
+        if full:
+            out['record'] = rec
+    hand = os.path.join(root, 'research', 'technical', t, lv['as_of'], 'fundamental.json')
+    out['handoff'] = os.path.relpath(hand, root) if os.path.isfile(hand) else None
+    if lv['kind'] == 'engine' and heavy and heavy.get('as_of') == lv['as_of']:
+        out.update({k: heavy.get(k) for k in ('thesis_id', 'status', 'verdict', 'verdict_reason_he', 'expected_return', 'values',
+                                              'price_at_analysis', 'review_by')})
+    if heavy and heavy.get('as_of') != lv['as_of']:
+        out['heavy_engine_save'] = {'as_of': heavy.get('as_of'), 'folder': heavy.get('folder'), 'thesis_id': heavy.get('thesis_id'),
+                                    'superseded': str(heavy.get('as_of')) < lv['as_of'],
+                                    'note': 'latest.json of research-save (heavy engine); not the valuation in force'
+                                    if str(heavy.get('as_of')) < lv['as_of'] else 'newer than the newest dated folder: check it'}
+    if lv['kind'] in ('lean', 'custom'):
+        out['next'] = (f'start from {rel}: change only the inputs a new fact touches; reprice a lean file with python '
+                       f'scripts/lean_model.py {rel}/lean_params.json --price P --as-of D' if lv['kind'] == 'lean'
+                       else f'start from {rel} (custom model: rerun its own code)')
+    else:
+        out['next'] = (f'start from this valuation: python scripts/ticker_prefetch.py {t} <as_of> --reuse {rel}; update only '
+                       'what happened since its as_of')
+    return out
 
 
 def unsaved_run(ticker, root='.'):

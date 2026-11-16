@@ -1,0 +1,304 @@
+{
+ "ticker": "AVGO",
+ "as_of": "2026-11-07",
+ "price": 293.69,
+ "price_time_utc": null,
+ "verdict_he": "לא לקנות עכשיו; תלוי באי-האטה בהשקעות AI",
+ "buy_test_price": 273.58,
+ "margin_of_safety_price": 277.43,
+ "values": {
+  "today": {
+   "bear": 110.35,
+   "base": 296.09,
+   "bull": 701.15
+  },
+  "end_2027": {
+   "bear": 124.66,
+   "base": 333.6,
+   "bull": 789.25
+  },
+  "end_2028": {
+   "bear": 139.68,
+   "base": 374.23,
+   "bull": 886.24
+  },
+  "end_2029": {
+   "bear": 155.23,
+   "base": 417.14,
+   "bull": 990.1
+  },
+  "end_2030": {
+   "bear": 171.58,
+   "base": 462.4,
+   "bull": 1100.33
+  },
+  "end_2031": {
+   "bear": 188.6,
+   "base": 509.89,
+   "bull": 1216.61
+  },
+  "weighted_today_30_50_20": 321.38,
+  "calibrated_today": 279.9
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": null
+  },
+  "base": {
+   "prob": 0.5,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -8.5,
+  "base": 11.7,
+  "bull": 33.0,
+  "calibrated": 10.4,
+  "weighted": 13.6,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "דוח רבעון 4, בסביבות 10.12.2026",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/AVGO/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/AVGO/2026-11-07/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 261.48,
+   "stated_price": 273.58,
+   "rerun_price": 261.48,
+   "base_12_price": 289.98,
+   "binding_leg": "base_calibrated",
+   "pass_at_price": false,
+   "rerun_used": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 11.7,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 289.98
+    },
+    "base_calibrated": {
+     "return_pct": 10.4,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 273.58
+    },
+    "bull": {
+     "return_pct": 33.0,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 556.65
+    },
+    "bear": {
+     "return_pct": -8.5,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 318.72
+    }
+   },
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used"
+  },
+  "price_ladder": {
+   "horizon_date": "2031-11-01",
+   "years_to_horizon": 4.98,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 277.43,
+     "price_second_lens": 261.73
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 289.98,
+     "price_second_lens": 273.58
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 289.98,
+     "price_second_lens": 273.58
+    },
+    {
+     "id": "index",
+     "return_pct": 9.1,
+     "price": 330.45,
+     "price_second_lens": 311.76
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 381.46,
+     "price_second_lens": 359.89
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 440.1,
+     "price_second_lens": 415.2
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 277.43,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 330.45,
+  "hold_floor_price": 381.46,
+  "sell_line_price": 440.1,
+  "values_dated": {
+   "today": {
+    "bear": 110.35,
+    "base": 296.09,
+    "bull": 701.15,
+    "date": "2026-11-07",
+    "base_calibrated": 279.9
+   },
+   "year_ends": [
+    {
+     "bear": 124.66,
+     "base": 333.6,
+     "bull": 789.25,
+     "fiscal_year": 2027,
+     "date": "2027-11-01",
+     "base_calibrated": 315.38
+    },
+    {
+     "bear": 139.68,
+     "base": 374.23,
+     "bull": 886.24,
+     "fiscal_year": 2028,
+     "date": "2028-11-01",
+     "base_calibrated": 353.76
+    },
+    {
+     "bear": 155.23,
+     "base": 417.14,
+     "bull": 990.1,
+     "fiscal_year": 2029,
+     "date": "2029-11-01",
+     "base_calibrated": 394.17
+    },
+    {
+     "bear": 171.58,
+     "base": 462.4,
+     "bull": 1100.33,
+     "fiscal_year": 2030,
+     "date": "2030-11-01",
+     "base_calibrated": 436.65
+    },
+    {
+     "bear": 188.6,
+     "base": 509.89,
+     "bull": 1216.61,
+     "fiscal_year": 2031,
+     "date": "2031-11-01",
+     "base_calibrated": 481.05
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 124.89,
+     "base": 334.23,
+     "bull": 790.75,
+     "date": "2027-11-07",
+     "base_calibrated": 315.97
+    },
+    "two_year": {
+     "bear": 139.92,
+     "base": 374.9,
+     "bull": 887.86,
+     "date": "2028-11-07",
+     "base_calibrated": 354.39
+    },
+    "five_year": {
+     "bear": 188.89,
+     "base": 510.71,
+     "bull": 1218.62,
+     "date": "2031-11-07",
+     "base_calibrated": 481.82
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-11-01",
+     "source": "fiscal_year_end",
+     "bear": 124.66,
+     "base": 333.6,
+     "bull": 789.25,
+     "second_lens": 315.38
+    },
+    "five_year": {
+     "date": "2031-11-01",
+     "source": "horizon_year_end",
+     "bear": 188.6,
+     "base": 509.89,
+     "bull": 1216.61,
+     "second_lens": 481.05
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 279.9,
+   "annual_return_pct": 10.4,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the lenses differ by the exit multiple and by the margin"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות עכשיו; תלוי באי-האטה בהשקעות AI",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}

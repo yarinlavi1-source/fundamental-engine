@@ -1,0 +1,274 @@
+{
+ "ticker": "BNY",
+ "as_of": "2026-11-11",
+ "price": 152.7,
+ "price_time_utc": null,
+ "verdict_he": "לא לקנות במחיר הזה (חברה חזקה, המחיר כבר מגלם את השיפור)",
+ "buy_test_price": 131.58,
+ "margin_of_safety_price": null,
+ "values": {
+  "today": {
+   "bear": 108.79,
+   "base": 157.8,
+   "bull": 193.99
+  },
+  "end_2027": {
+   "bear": 116.19,
+   "base": 169.83,
+   "bull": 210.3
+  },
+  "end_2028": {
+   "bear": 122.94,
+   "base": 180.66,
+   "bull": 224.88
+  },
+  "end_2029": {
+   "bear": 130.4,
+   "base": 192.24,
+   "bull": 240.04
+  },
+  "end_2030": {
+   "bear": 138.75,
+   "base": 204.69,
+   "bull": 255.79
+  },
+  "end_2031": {
+   "bear": 148.28,
+   "base": 218.15,
+   "bull": 272.1
+  },
+  "weighted_today_25_55_20": 152.79,
+  "calibrated_today": 167.83
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": null
+  },
+  "base": {
+   "prob": 0.55,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": 1.5,
+  "base": 9.1,
+  "bull": 13.7,
+  "calibrated": 10.3,
+  "weighted": null,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "תחזית 2027, אמצע ינואר 2027",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/BNY/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "bank",
+  "record": {
+   "path": "research/companies/BNY/2026-11-11/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 131.58,
+   "stated_price": 131.58,
+   "rerun_price": null,
+   "base_12_price": 133.59,
+   "binding_leg": "bull_17",
+   "pass_at_price": null,
+   "rerun_used": false,
+   "legs": {
+    "base_12": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 133.59
+    },
+    "calibrated_12": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 141.01
+    },
+    "bull_17": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 131.58
+    },
+    "bear_-10": {
+     "return_pct": null,
+     "threshold_pct": null,
+     "pass": null,
+     "max_price": 283.5
+    }
+   },
+   "note": "returns include dividends; the bank model saves no 13%, index, 6% or 3% rung"
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.14,
+   "rungs": [
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 133.59,
+     "price_second_lens": 141.01
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 131.58,
+   "rung": "buy_test.price",
+   "note": null
+  },
+  "index_parity_price": null,
+  "hold_floor_price": null,
+  "sell_line_price": null,
+  "values_dated": {
+   "today": {
+    "bear": 108.79,
+    "base": 157.8,
+    "bull": 193.99,
+    "date": "2026-11-11",
+    "base_calibrated": 167.83
+   },
+   "year_ends": [
+    {
+     "bear": 116.19,
+     "base": 169.83,
+     "bull": 210.3,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 181.0
+    },
+    {
+     "bear": 122.94,
+     "base": 180.66,
+     "bull": 224.88,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 192.73
+    },
+    {
+     "bear": 130.4,
+     "base": 192.24,
+     "bull": 240.04,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 205.03
+    },
+    {
+     "bear": 138.75,
+     "base": 204.69,
+     "bull": 255.79,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 217.98
+    },
+    {
+     "bear": 148.28,
+     "base": 218.15,
+     "bull": 272.1,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 231.59
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 115.27,
+     "base": 168.33,
+     "bull": 208.26,
+     "date": "2027-11-11",
+     "base_calibrated": null
+    },
+    "two_year": {
+     "bear": 122.0,
+     "base": 179.14,
+     "bull": 222.83,
+     "date": "2028-11-11",
+     "base_calibrated": null
+    },
+    "five_year": {
+     "bear": 146.94,
+     "base": 216.26,
+     "bull": 269.81,
+     "date": "2031-11-11",
+     "base_calibrated": null
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 116.19,
+     "base": 169.83,
+     "bull": 210.3,
+     "second_lens": 181.0
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 148.28,
+     "base": 218.15,
+     "bull": 272.1,
+     "second_lens": 231.59
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 167.83,
+   "annual_return_pct": 10.3,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": null,
+   "note": "base path, today's forward P/E (price / base 2027 EPS) held as exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות במחיר הזה (חברה חזקה, המחיר כבר מגלם את השיפור)",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}

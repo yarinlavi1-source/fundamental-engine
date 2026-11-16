@@ -1,0 +1,60 @@
+{
+ "scorecard_version": 1,
+ "ticker": "NBIS",
+ "period": "Q3 2026",
+ "period_end": "2026-09-30",
+ "reported_on": "2026-11-12",
+ "sources": [
+  {"title": "Q3 2026 results release (6-K exhibit 99.1, 12.11.2026)", "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126008/tm2629571d1_ex99-1.htm"},
+  {"title": "Q3 2026 letter to shareholders with 2026 guidance and 2027 outlook (6-K exhibit 99.2, 12.11.2026)", "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126008/tm2629571d1_ex99-2.htm"},
+  {"title": "Q3 2026 financial statements and notes (6-K, 12.11.2026)", "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926126238/"}
+ ],
+ "against": {
+  "thesis_id": "lean:NBIS:2026-11-11:ac070b8fdf64",
+  "ledger": "research/ledger.jsonl",
+  "as_of": "2026-11-11",
+  "folder": "research/companies/NBIS/2026-11-11",
+  "note": "The params and the thesis of 11.11 were committed to Git on 2026-11-11 07:04 UTC (commit 1343e80), before the report, but the valuation was frozen in the ledger only on 2026-11-15: by the rule in research/RULE_CHANGES_he.md this is descriptive only."
+ },
+ "items": [
+  {"metric": "revenue Q3 2026 against the model year 2026 minus H1 (reported before the valuation)", "kind": "partial", "unit": "USD",
+   "model_value": 2318700000.0, "actual": 980800000.0,
+   "note": "Model FY2026 revenue 3,300M (frozen forecast row) minus H1 981.3M (Q2 6-K, in the valuation) = 2,318.7M for H2. Q3 delivered 980.8M = 42.3% of it with half of the time; Q4 now needs 1,337.9M, 36% above Q3. Q3 includes about 325M of non-recurring partnership revenue (letter): without it Q3 is about 656M (28.3%). No ahead/behind word on a partial year."},
+  {"metric": "revenue nine months 2026", "kind": "actual", "unit": "USD", "model_value": null, "actual": 1962100000.0,
+   "note": "release table; the model has no nine-month figure"},
+  {"metric": "non-recurring partnership revenue in Q3 2026", "kind": "actual", "unit": "USD", "model_value": null, "actual": 325000000.0,
+   "note": "letter: 'approximately $325 million of non-recurring revenue as part of our asset-light model'"},
+  {"metric": "operating income Q3 2026 (GAAP)", "kind": "actual", "unit": "USD", "model_value": null, "actual": 50400000.0,
+   "note": "release statement of operations: 50.4M (5.1% of revenue); nine months -253.5M. The model has no 2026 margin (the base year); its 2027 margin is 3.09%."},
+  {"metric": "revenue FY2026 guidance (low end of 3.0-3.4B)", "kind": "guidance", "unit": "USD", "model_value": 3300000000.0, "actual": 3000000000.0,
+   "note": "letter: 'we now expect 2026 revenue at the low end of our $3.0-3.4 billion range'; guidance, not a reported number"},
+  {"metric": "revenue FY2027 outlook (midpoint of 12-13B)", "kind": "guidance", "unit": "USD", "model_value": 11500000000.0, "actual": 12500000000.0,
+   "note": "letter: initial 2027 outlook 'revenue of $12-13 billion'; the model's 2027 base is 11,500M (frozen forecast row)"},
+  {"metric": "capex FY2026 guidance", "kind": "guidance", "unit": "USD", "model_value": 22000000000.0, "actual": 27000000000.0,
+   "note": "letter: 'approximately $27 billion, above our $20-25 billion range'; model 22,000M (frozen params notes, net_cash)"},
+  {"metric": "ARR at the end of September 2026", "kind": "actual", "unit": "USD", "model_value": null, "actual": 6400000000.0,
+   "note": "letter: $6.4B, up 113% from $3.0B at the end of June; the company no longer guides on ARR"}
+ ],
+ "falsifiers": [
+  {"id": "msft_delay", "text": "Cancellation or delay of part of the Microsoft contract", "state": "fired",
+   "note": "letter: in New Jersey more than half of the capacity contracted with Microsoft by year-end, the remaining tranches now scheduled for 2Q27; the contracts remain in place (a delay, not a cancellation)",
+   "action_if_fired": "review", "acted_on": true, "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md as committed on 2026-11-11 07:04 UTC (Git 1343e80), text only; not typed in the frozen record"},
+  {"id": "gpu_price_fall", "text": "GPU rental prices fall", "state": "not_fired",
+   "note": "letter: prices in Q3 rose on average more than 20% per GPU-hour versus Q2",
+   "action_if_fired": "review", "acted_on": null, "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only"},
+  {"id": "citi_refinancing", "text": "Expensive financing when the Citi facility needs refinancing", "state": "not_measurable",
+   "note": "the $3.5B Citi facility of October 2026 runs 364 days; its refinancing falls due about October 2027",
+   "action_if_fired": "review", "acted_on": null, "reason_not_acted": null,
+   "on_file": "research/companies/NBIS/thesis_he.md, Git 1343e80 (before the report), text only"},
+  {"id": "arr_guide", "text": "The end-2026 ARR guide of $7-9B (the base of the model's 2027 revenue) is cut or moved", "state": "fired",
+   "note": "letter: ARR now expected to exceed $7B for the month of February, a shift of about two months",
+   "action_if_fired": "review", "acted_on": true, "reason_not_acted": null,
+   "on_file": "frozen params notes (growth), sha256 in the ledger thesis row"}
+ ],
+ "notes": [
+  "Scored by hand from the company's 6-K filings on SEC EDGAR, read on 2026-11-16. NBIS is a foreign filer: its quarters are not in SEC XBRL.",
+  "The two later valuations (12.11 and 13.11) were made after this report and are not scored against it."
+ ]
+}

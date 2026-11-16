@@ -1,0 +1,304 @@
+{
+ "ticker": "APP",
+ "as_of": "2026-11-06",
+ "price": 348.0,
+ "price_time_utc": null,
+ "verdict_he": "לא לקנות במחיר הזה (התרחיש הדובי נכשל)",
+ "buy_test_price": 300.12,
+ "margin_of_safety_price": 397.2,
+ "values": {
+  "today": {
+   "bear": 100.52,
+   "base": 415.15,
+   "bull": 647.38
+  },
+  "end_2027": {
+   "bear": 115.78,
+   "base": 479.18,
+   "bull": 747.4
+  },
+  "end_2028": {
+   "bear": 129.6,
+   "base": 539.53,
+   "bull": 842.54
+  },
+  "end_2029": {
+   "bear": 144.01,
+   "base": 604.06,
+   "bull": 945.08
+  },
+  "end_2030": {
+   "bear": 158.96,
+   "base": 672.71,
+   "bull": 1054.97
+  },
+  "end_2031": {
+   "bear": 174.44,
+   "base": 745.35,
+   "bull": 1172.06
+  },
+  "weighted_today_30_50_20": 367.21,
+  "calibrated_today": 417.09
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": null
+  },
+  "base": {
+   "prob": 0.5,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -12.5,
+  "base": 15.9,
+  "bull": 26.6,
+  "calibrated": 16.0,
+  "weighted": 13.2,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "דוח רבעון 4, פברואר 2027",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/APP/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/APP/2026-11-06/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 300.12,
+   "stated_price": 300.12,
+   "rerun_price": 300.12,
+   "base_12_price": 415.8,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 15.9,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 415.8
+    },
+    "base_calibrated": {
+     "return_pct": 16.0,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 417.81
+    },
+    "bull": {
+     "return_pct": 26.6,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 522.15
+    },
+    "bear": {
+     "return_pct": -12.5,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 300.12
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.15,
+   "rungs": [
+    {
+     "id": "company_hurdle",
+     "return_pct": 13.0,
+     "price": 397.2,
+     "price_second_lens": 399.12
+    },
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 397.2,
+     "price_second_lens": 399.12
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 415.8,
+     "price_second_lens": 417.81
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 475.05,
+     "price_second_lens": 477.35
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 552.12,
+     "price_second_lens": 554.79
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 640.1,
+     "price_second_lens": 643.19
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 397.2,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 475.05,
+  "hold_floor_price": 552.12,
+  "sell_line_price": 640.1,
+  "values_dated": {
+   "today": {
+    "bear": 100.52,
+    "base": 415.15,
+    "bull": 647.38,
+    "date": "2026-11-06",
+    "base_calibrated": 417.09
+   },
+   "year_ends": [
+    {
+     "bear": 115.78,
+     "base": 479.18,
+     "bull": 747.4,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 481.42
+    },
+    {
+     "bear": 129.6,
+     "base": 539.53,
+     "bull": 842.54,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 542.06
+    },
+    {
+     "bear": 144.01,
+     "base": 604.06,
+     "bull": 945.08,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 606.91
+    },
+    {
+     "bear": 158.96,
+     "base": 672.71,
+     "bull": 1054.97,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 675.91
+    },
+    {
+     "bear": 174.44,
+     "base": 745.35,
+     "bull": 1172.06,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 748.95
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 113.66,
+     "base": 470.27,
+     "bull": 733.48,
+     "date": "2027-11-06",
+     "base_calibrated": 472.47
+    },
+    "two_year": {
+     "bear": 127.42,
+     "base": 530.0,
+     "bull": 827.51,
+     "date": "2028-11-06",
+     "base_calibrated": 532.48
+    },
+    "five_year": {
+     "bear": 172.01,
+     "base": 733.92,
+     "bull": 1153.62,
+     "date": "2031-11-06",
+     "base_calibrated": 737.46
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 115.78,
+     "base": 479.18,
+     "bull": 747.4,
+     "second_lens": 481.42
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 174.44,
+     "base": 745.35,
+     "bull": 1172.06,
+     "second_lens": 748.95
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 417.09,
+   "annual_return_pct": 16.0,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות במחיר הזה (התרחיש הדובי נכשל)",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}

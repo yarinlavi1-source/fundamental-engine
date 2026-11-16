@@ -1,0 +1,46 @@
+{
+ "scorecard_version": 1,
+ "ticker": "NU",
+ "period": "Q3 2026",
+ "period_end": "2026-09-30",
+ "reported_on": "2026-11-12",
+ "sources": [
+  {"title": "Q3 2026 results release (6-K, 12.11.2026)", "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005273/nupr3q26_6k.htm"},
+  {"title": "Q3 2026 IFRS financial statements and notes (6-K, 12.11.2026)", "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005272/nufs3q26_6k.htm"}
+ ],
+ "against": {
+  "thesis_id": "NU:2026-11-01:4df4d5616ef7",
+  "ledger": "research/forecast_ledger.jsonl (legacy heavy-engine ledger, recorded 2026-11-01T22:46 UTC; its chain cannot be verified)",
+  "as_of": "2026-11-01",
+  "folder": "research/companies/NU/2026-11-01",
+  "note": "The only NU valuation in research/ledger.jsonl (13.11.2026) was made and frozen after this report, so nothing is scored against it. The typed falsifiers below are those of the 01.11 heavy-engine thesis (verdict insufficient evidence); the Q3 conditions of the 04.11 lean valuation sit in a private run folder that was never frozen."
+ },
+ "items": [
+  {"metric": "total revenue Q3 2026 (managerial)", "kind": "actual", "unit": "USD", "model_value": null, "actual": 6258500000.0, "note": "release; +37% FX-neutral, +45% in USD against 4,317.2M"},
+  {"metric": "net income Q3 2026", "kind": "actual", "unit": "USD", "model_value": null, "actual": 1091600000.0, "note": "release"},
+  {"metric": "NPL 90+ ratio", "kind": "actual", "unit": "ratio", "model_value": null, "actual": 0.073, "note": "release; 6.9% in Q2 2026, 6.7% in Q3 2025"},
+  {"metric": "NPL 15-90 ratio", "kind": "actual", "unit": "ratio", "model_value": null, "actual": 0.049, "note": "release; 4.8% in Q2 2026"},
+  {"metric": "risk-adjusted NIM", "kind": "actual", "unit": "ratio", "model_value": null, "actual": 0.121, "note": "release; 12.7% excluding non-recurring items, 12.4% in Q2 2026"},
+  {"metric": "ROE (quarter)", "kind": "actual", "unit": "ratio", "model_value": null, "actual": 0.32, "note": "release"},
+  {"metric": "CET1 ratio, Brazil prudential conglomerate", "kind": "actual", "unit": "ratio", "model_value": null, "actual": 0.121, "note": "IFRS statements, capital note; 13.0% at 2025-12-31"},
+  {"metric": "cost of credit Q3 2026 (managerial)", "kind": "actual", "unit": "USD", "model_value": null, "actual": 1788700000.0, "note": "release; 1,035.8M in Q3 2025 (+73%)"},
+  {"metric": "efficiency ratio FY2026 guidance", "kind": "guidance", "unit": "ratio", "model_value": null, "actual": 0.1925, "note": "release: now 19% to 19.5% (midpoint shown), previously around 20%"}
+ ],
+ "falsifiers": [
+  {"id": "fx_npl90", "text": "NPL 90+ ratio above 7.5% (by 2027-08-31)", "state": "not_fired", "note": "7.3%, rising from 6.9% in Q2", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (typed trigger falsifier:fx_npl90)"},
+  {"id": "fx_cet1", "text": "CET1 ratio of the Brazilian prudential conglomerate below 11% (by 2027-08-31)", "state": "not_fired", "note": "12.1% (13.0% at end-2025)", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_cet1)"},
+  {"id": "fx_roe_base", "text": "quarterly ROE below 22% (by 2027-08-31)", "state": "not_fired", "note": "32%", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_roe_base)"},
+  {"id": "fx_tax", "text": "FY2026 IFRS effective income tax rate above 30% (20-F)", "state": "not_measurable", "note": "the FY2026 20-F is not filed; Q3 accounting tax 258.7M on 1,350.3M pre-tax = 19.2%", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_tax)"},
+  {"id": "fx_bull_growth", "text": "credit portfolio growth y/y at Q2 2027 below 25% (bull case)", "state": "not_measurable", "note": "dated Q2 2027; Q3 2026 portfolio +33% FX-neutral", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bull_growth)"},
+  {"id": "fx_bear_roe", "text": "quarterly ROE above 30% in Q2 2027 (breaks the bear case)", "state": "not_measurable", "note": "dated Q2 2027; Q3 2026 ROE 32%", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "legacy ledger thesis NU:2026-11-01 (falsifier:fx_bear_roe)"},
+  {"id": "q3_npl", "text": "Q3 report: NPL 15-90 above 5.0% or NPL 90+ above 7.2%", "state": "fired", "note": "NPL 90+ 7.3% (15-90 at 4.9% stayed under 5.0%); the 13.11 update holds and does not add", "action_if_fired": "add_blocked", "acted_on": true, "reason_not_acted": null, "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)"},
+  {"id": "q3_credit_cost", "text": "Q3 report: risk-adjusted NIM below about 10.5%, or cost of credit above about $1.9B or rising faster than revenue", "state": "fired", "note": "risk-adjusted NIM 12.1% and cost of credit 1,788.7M stay inside, but cost of credit rose 73% against revenue +45% in USD", "action_if_fired": "review", "acted_on": true, "reason_not_acted": null, "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)"},
+  {"id": "q3_profit", "text": "Q3 report: net income below about $1.09B or ROE below about 30%", "state": "not_fired", "note": "net income 1,091.6M, ROE 32%", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)"},
+  {"id": "q3_customers", "text": "Q3 report: customer additions below about 3M or Brazil activity rate below 86%", "state": "not_fired", "note": "3.7M added; Brazil activity rate 86.3%", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)"},
+  {"id": "q3_provisioning", "text": "Q3 report: stage-3 share above about 9.5% on cards, or card coverage below about 17% while NPLs rise", "state": "not_measurable", "note": "not read in this pass (the IFRS credit-quality note)", "action_if_fired": "review", "acted_on": null, "reason_not_acted": null, "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)"}
+ ],
+ "notes": [
+  "Scored by hand from the company's 6-K filings on SEC EDGAR, read on 2026-11-16. NU is a foreign filer (IFRS): its quarters are not in SEC XBRL.",
+  "No item has a model value: the 01.11 heavy-engine thesis froze share-count and return forecasts only, and the 13.11 valuation came after the report."
+ ]
+}

@@ -290,8 +290,10 @@ def main():
                                                "and its frozen thesis into research/forecast_ledger.jsonl")
     rs.add_argument("run", help="runs/tickers/<TICKER>_<as_of>")
     rs.add_argument("--ledger", help="ledger holding the frozen thesis (default runs/tickers/forecast_ledger.jsonl)")
-    rl = subs.add_parser("research-latest", help="The latest saved valuation of a ticker in research/ (summary and paths), or none")
+    rl = subs.add_parser("research-latest", help="The valuation in force of a ticker: the newest dated folder of research/companies/<T>/ "
+                                                 "of any kind (lean, custom or heavy engine), with a summary and paths, or none")
     rl.add_argument("ticker")
+    rl.add_argument("--full", action="store_true", help="include the whole valuation record")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -353,7 +355,7 @@ def main():
             if args.command == "research-save":
                 print(json.dumps(RS.save(args.run, ".", args.ledger), ensure_ascii=False, indent=1, default=str))
             else:
-                print(json.dumps(RS.load(args.ticker, ".") or "none", ensure_ascii=False, indent=1, default=str))
+                print(json.dumps(RS.latest(args.ticker, ".", full=args.full) or "none", ensure_ascii=False, indent=1, default=str))
             return
         if args.command == "pipeline-plan":
             from .pipeline import collection_plan

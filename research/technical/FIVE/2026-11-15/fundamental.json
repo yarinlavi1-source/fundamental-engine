@@ -5,17 +5,40 @@
  "price_time_utc": "2026-11-13 21:00 (NASDAQ close; no later trade as of 2026-11-15 21:30 UTC)",
  "verdict_he": "לא לקנות במחיר הזה, להמתין לדוח רבעון 3: התרחיש הבסיסי נותן כ-11% בשנה בשתי העדשות מול 12% במבחן הקנייה, והשווי נשען על שיעור רווח שיא",
  "buy_test_price": 231.47,
- "buy_test_price_note_he": "המחיר שבו כל תנאי מבחן הקנייה עוברים (12% בשנה בשתי העדשות, שורי 17%, דובי ‎-10%‎); התנאי שקובע הוא העדשה השנייה. בעדשה שלנו לבד: 235.42. בהרצה חוזרת במחיר נמוך העדשה השנייה מחזיקה מכפיל נמוך יותר: כ-220.47",
- "buy_test_price_rerun": 220.47,
  "margin_of_safety_price": 224.76,
- "margin_of_safety_price_calibrated": 220.99,
- "index_parity_price": 267.33,
  "values": {
   "today": {
    "bear": 137.31,
    "base": 263.05,
    "bull": 368.79
   },
+  "end_2027": {
+   "bear": 153.6,
+   "base": 296.27,
+   "bull": 416.26
+  },
+  "end_2028": {
+   "bear": 167.51,
+   "base": 325.57,
+   "bull": 458.51
+  },
+  "end_2029": {
+   "bear": 182.34,
+   "base": 356.79,
+   "bull": 503.7
+  },
+  "end_2030": {
+   "bear": 197.84,
+   "base": 389.88,
+   "bull": 551.83
+  },
+  "end_2031": {
+   "bear": 214.04,
+   "base": 424.88,
+   "bull": 602.94
+  },
+  "weighted_today_30_45_25": 251.76,
+  "calibrated_today": 258.85,
   "end_fy2027_jan_2028": {
    "bear": 153.6,
    "base": 296.27,
@@ -31,8 +54,6 @@
    "base": 424.88,
    "bull": 602.94
   },
-  "weighted_today_30_45_25": 251.76,
-  "calibrated_today": 258.85,
   "calibrated_end_fy2031": 417.75,
   "historical_multiple": {
    "value": 299,
@@ -98,5 +119,340 @@
   "הנתון שמזיז את השווי הכי הרבה הוא שיעור הרווח התפעולי: נקודה אחת שווה כ-19$ למניה. אחרי הקפיצה של 2021 הוא ירד מ-13.3% ל-8.4%",
   "שני הדוחות לא מסכימים: לפי היסודות המחיר הוגן (263$), לפי המכפיל ההיסטורי המניה זולה (כ-299$), ולפי מכפילי המתחרות היא יקרה (194-211$)",
   "המספר לשנה-שנתיים הוא הכי רועש; שנת הכספים נגמרת בסוף ינואר, ולכן '5 שנים' הוא ינואר 2032"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/FIVE/2026-11-15/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 231.47,
+   "stated_price": 231.47,
+   "rerun_price": null,
+   "base_12_price": 235.42,
+   "binding_leg": "base_calibrated",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 11.0,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 235.42
+    },
+    "base_calibrated": {
+     "return_pct": 10.6,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 231.47
+    },
+    "bull": {
+     "return_pct": 18.7,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 266.09
+    },
+    "bear": {
+     "return_pct": -2.7,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 370.59
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2032-01-30",
+   "years_to_horizon": 5.21,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 224.76,
+     "price_second_lens": 220.99
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 235.42,
+     "price_second_lens": 231.47
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 235.42,
+     "price_second_lens": 231.47
+    },
+    {
+     "id": "index",
+     "return_pct": 9.3,
+     "price": 267.33,
+     "price_second_lens": 262.85
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 313.63,
+     "price_second_lens": 308.37
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 364.24,
+     "price_second_lens": 358.12
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 224.76,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 267.33,
+  "hold_floor_price": 313.63,
+  "sell_line_price": 364.24,
+  "values_dated": {
+   "today": {
+    "bear": 137.31,
+    "base": 263.05,
+    "bull": 368.79,
+    "date": "2026-11-15",
+    "base_calibrated": 258.85
+   },
+   "year_ends": [
+    {
+     "bear": 153.6,
+     "base": 296.27,
+     "bull": 416.26,
+     "fiscal_year": 2027,
+     "date": "2028-01-30",
+     "base_calibrated": 291.51
+    },
+    {
+     "bear": 167.51,
+     "base": 325.57,
+     "bull": 458.51,
+     "fiscal_year": 2028,
+     "date": "2029-01-30",
+     "base_calibrated": 320.29
+    },
+    {
+     "bear": 182.34,
+     "base": 356.79,
+     "bull": 503.7,
+     "fiscal_year": 2029,
+     "date": "2030-01-30",
+     "base_calibrated": 350.94
+    },
+    {
+     "bear": 197.84,
+     "base": 389.88,
+     "bull": 551.83,
+     "fiscal_year": 2030,
+     "date": "2031-01-30",
+     "base_calibrated": 383.42
+    },
+    {
+     "bear": 214.04,
+     "base": 424.88,
+     "bull": 602.94,
+     "fiscal_year": 2031,
+     "date": "2032-01-30",
+     "base_calibrated": 417.75
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 150.74,
+     "base": 290.34,
+     "bull": 407.74,
+     "date": "2027-11-15",
+     "base_calibrated": 285.68
+    },
+    "two_year": {
+     "bear": 164.52,
+     "base": 319.26,
+     "bull": 449.4,
+     "date": "2028-11-15",
+     "base_calibrated": 314.09
+    },
+    "five_year": {
+     "bear": 210.56,
+     "base": 417.34,
+     "bull": 591.92,
+     "date": "2031-11-15",
+     "base_calibrated": 410.36
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2028-01-30",
+     "source": "fiscal_year_end",
+     "bear": 153.6,
+     "base": 296.27,
+     "bull": 416.26,
+     "second_lens": 291.51
+    },
+    "five_year": {
+     "date": "2032-01-30",
+     "source": "horizon_year_end",
+     "bear": 214.04,
+     "base": 424.88,
+     "bull": 602.94,
+     "second_lens": 417.75
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 258.85,
+   "annual_return_pct": 10.6,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": 299,
+   "low": 246,
+   "high": 334,
+   "basis": null,
+   "company_type": null,
+   "note": "חציון מכפיל רווח צפוי כ-27 (טווח הערכה 24.6-28.6) על תחזית רווח למניה 11.07$ לשנת הכספים 2027"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר כ-231$ או פחות (כל תנאי מבחן הקנייה עוברים; מקור: lean_result.json)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "דוח רבעון 3: מכירות בחנויות קיימות בתוך התחזית ‎+8%‎ עד ‎+10%‎ או מעליה (הודעת החברה 2.9.2026)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית לרבעון 4 שמגלמת עלייה של 5% ומעלה במכירות בחנויות קיימות, ושיעור רווח תפעולי מתואם של 12.4% ומעלה לשנה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-267$ (התרחיש הבסיסי יורד לתשואת המדד, 9.3%)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   },
+   {
+    "id": "c5",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית ל-2027 עם מכירות בחנויות קיימות ללא שינוי או בירידה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "שני רבעונים ברצף של ירידה במכירות בחנויות קיימות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית לשיעור רווח תפעולי מתואם מתחת ל-11.5% לשנת הכספים 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-364$ (התרחיש הבסיסי מתחת ל-3% בשנה)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "לא לקנות במחיר הזה, להמתין לדוח רבעון 3: התרחיש הבסיסי נותן כ-11% בשנה בשתי העדשות מול 12% במבחן הקנייה, והשווי נשען על שיעור רווח שיא",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2026-11-29",
+    "to": "2026-12-05"
+   },
+   "confirmed": false
+  }
+ },
+ "buy_test_price_note_he": "המחיר שבו כל תנאי מבחן הקנייה עוברים (12% בשנה בשתי העדשות, שורי 17%, דובי ‎-10%‎); התנאי שקובע הוא העדשה השנייה. בעדשה שלנו לבד: 235.42. בהרצה חוזרת במחיר נמוך העדשה השנייה מחזיקה מכפיל נמוך יותר: כ-220.47",
+ "buy_test_price_rerun": 220.47,
+ "margin_of_safety_price_calibrated": 220.99,
+ "index_parity_price": 267.33,
+ "carried_from_previous": [
+  "annual_return_pct.two_year",
+  "buy_test_price_note_he",
+  "buy_test_price_rerun",
+  "index_parity_price",
+  "margin_of_safety_price_calibrated",
+  "values.calibrated_end_fy2031",
+  "values.end_fy2027_jan_2028",
+  "values.end_fy2028_jan_2029",
+  "values.end_fy2031_jan_2032",
+  "values.historical_multiple"
  ]
 }

@@ -1,0 +1,665 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "NBIS",
+ "company": null,
+ "as_of": "2026-11-13",
+ "price": {
+  "value": 110.46,
+  "time_utc": "2026-11-13T15:30:53Z",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 324.1,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/NBIS/2026-11-13/lean_params.json",
+   "sha256": "f28d9a180567e2e42ec52a9f344ac3a12eec4dd208c0dd29619e99d27b894730"
+  },
+  "result": {
+   "path": "research/companies/NBIS/2026-11-13/lean_result.json",
+   "sha256": "594ca792acbc93185fc53809da5625aa93cf4961eca5ab31043cdd6eaaa56cf5"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": "עיכובים חוזרים, לקוח מבטל חלק, מימון יקר ו-Citi לא מוחזרת: רוב ההון אובד (תרחיש חמור)",
+   "value_today": 0.0,
+   "annual_return_pct": null,
+   "wiped": true,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 0.0
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 0.0
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 0.0
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 0.0
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 0.0
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 0.0,
+     "return_pct": null
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 0.0,
+     "return_pct": null
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 0.0,
+     "return_pct": null
+    }
+   },
+   "note": "equity wiped in this scenario: value 0 (the model result floors it at 0.01), no return"
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "2027 בקצה התחתון של התחזית (12 מיליארד $), 2028 כ-21.6 מיליארד $ שדורשים כ-13 מיליארד $ חוזים חדשים",
+   "value_today": 63.6,
+   "annual_return_pct": 8.8,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 77.84
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 98.52
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 121.6
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 145.8
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 170.25
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 75.98,
+     "return_pct": -31.2
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 95.52,
+     "return_pct": -7.0
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 166.81,
+     "return_pct": 8.6
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": "קיבולת בזמן, 2027 בראש התחזית (13 מיליארד $) ומחירים מחזיקים",
+   "value_today": 235.59,
+   "annual_return_pct": 33.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 278.56
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 323.46
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 372.59
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 425.32
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 481.23
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 273.14,
+     "return_pct": 147.3
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 317.18,
+     "return_pct": 69.5
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 473.48,
+     "return_pct": 33.8
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 78.92,
+  "end_value": 181.37,
+  "annual_return_pct": 10.1,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 88.37,
+  "annual_return_pct": 14.3,
+  "band": "buy",
+  "band_ours": "hold",
+  "agree": false,
+  "pe_held": 22,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 106.81
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 131.68
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 159.41
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 188.73
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 218.79
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-13",
+    "value": 104.43,
+    "return_pct": -5.5
+   },
+   "two_year": {
+    "date": "2028-11-13",
+    "value": 128.11,
+    "return_pct": 7.7
+   },
+   "five_year": {
+    "date": "2031-11-13",
+    "value": 214.58,
+    "return_pct": 14.2
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": false,
+   "differs_from_base_only_by_multiple": true,
+   "pe_held": 22,
+   "pe_base_exit": 16,
+   "pe_held_to_base_exit": 1.38,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 3000.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 12000,
+    "op_margin": -0.0141,
+    "eps_operating": -0.44
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 21551,
+    "op_margin": 0.0672,
+    "eps_operating": 3.8
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 27094,
+    "op_margin": 0.1207,
+    "eps_operating": 8.58
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 31404,
+    "op_margin": 0.1518,
+    "eps_operating": 12.5
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 34482,
+    "op_margin": 0.159,
+    "eps_operating": 14.38
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 36944,
+    "op_margin": 0.167,
+    "eps_operating": 16.18
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.13,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 90.95,
+    "price_second_lens": 116.88,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 95.19,
+    "price_second_lens": 122.33,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 12.0,
+    "price": 95.19,
+    "price_second_lens": 122.33,
+    "label": "entry with a margin of safety: buy_return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 108.7,
+    "price_second_lens": 139.69,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 126.26,
+    "price_second_lens": 162.26,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 146.3,
+    "price_second_lens": 188.01,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": null,
+   "stated_price": null,
+   "rerun_price": null,
+   "rerun_used": false,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 8.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 95.19
+    },
+    "base_calibrated": {
+     "return_pct": 14.3,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 122.33
+    },
+    "bull": {
+     "return_pct": 33.2,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 215.06
+    },
+    "bear": {
+     "return_pct": -83.7,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": null
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": "the bear case wipes the equity at the horizon: no price passes that leg"
+  },
+  "buy_test_price": null,
+  "base_12_price": 95.19,
+  "margin_of_safety_price": 90.95,
+  "index_parity_price": 108.7,
+  "hold_floor_price": 126.26,
+  "sell_line_price": 146.3,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 90.95,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "דוח רבעון 4 מראה רווחיות חוזרת בענן של כ-40% ומעלה (לפני פחת)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "החוב של לקוח E (כ-404 מיליון $, ההכנסה מהשותפות) נגבה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחזור או הארכה ל-Citi, או מקור ידוע ל-6-11 מיליארד $ של 2027",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+  },
+  {
+   "id": "c4",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחיר כ-95$ ומטה, או שהבסיס במימון ריאלי מגיע ל-12% בשנה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+  },
+  {
+   "id": "c5",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "ARR ויעד שנתי של 9 מיליארד $ ומעלה: לא מתקיים",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+  },
+  {
+   "id": "c6",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "רווחיות לא יורדת וחיי שרתים של 5 שנים: לא מתקיים (חיי שרתים אושרו, הרווחיות הנקייה ירדה כנראה)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+  },
+  {
+   "id": "c7",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "אין הנפקה זולה, ויש תוכנית ל-Citi: לא מתקיים (אין תוכנית)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+  },
+  {
+   "id": "c8",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחיר לא רחוק מעל 150-160$: מתקיים",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית 2027 מתחת ל-12 מיליארד $",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "Microsoft מבטלת חלק או מקבלת פיצוי",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "גיוס של יותר מ-3 מיליארד $ במחיר מתחת ל-100$",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f4",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "ההכנסה מהשותפות לא נגבית או נמחקת עד דוח רבעון 4",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f5",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "Citi לא מוחזרת או מוארכת עד אמצע 2027",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f6",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "קיצור חיי השרתים או מחיקה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  },
+  {
+   "id": "f7",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "התחייבויות ל-24 חודשים מתחת לכ-20 מיליארד $ בדוח רבעון 1 2027",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-01",
+   "to": "2027-03-31"
+  },
+  "confirmed": false,
+  "text": "Q4 2026 report, Feb-Mar 2027",
+  "check_he": "clean recurring margin, collection of the ~4.04B receivables (Customer D ~3.03B, Customer E ~404), Citi plan, 24-month RPO bucket, any equity raise"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "לא לקנות במחיר הזה: הבסיסי כ-9% בשנה (כמו המדד), העדשה השנייה כ-12% במימון ריאלי (על הגבול), ובתרחיש הדובי רוב ההון אובד",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "buy",
+  "lenses_agree": false,
+  "buy_test_pass": false,
+  "moves_most": "operating margin",
+  "method_gap_warnings": 2
+ },
+ "notes_he": [
+  "הכנסות 2028 הן הנתון הרגיש: כל 1.5 מיליארד $ פחות מורידים כ-8-10$ מהשווי הבסיסי",
+  "ב-2027 חסרים 6-11 מיליארד $ של מימון בלי מקור, והלוואת Citi (3.5 מיליארד $) צריכה מחזור באוקטובר 2027",
+  "השווי הבסיסי ירד ב-13.11 מ-67$ ל-64$ בגלל הביאורים, בעיקר רווחיות נקייה נמוכה יותר"
+ ],
+ "thesis_link": "research/companies/NBIS/thesis_he.md",
+ "warnings": [
+  "lenses disagree (ours hold, calibrated buy): hold, or stage the trade around the next report",
+  "bear: equity wiped (value today is zero or less; the scenario needs a restructuring the model does not show)",
+  "bear funding: net debt 37,766M at the low point (2031) is above 3x that year's after-tax operating profit (389M)",
+  "bear funding: the path needs 25,392M of outside money by 2031 (65.3x that year's after-tax operating profit) that is not in shares or net cash: the model carries it as debt at debt_rate and does not check that it can be raised",
+  "base funding: net debt 37,446M at the low point (2028) is above 3x that year's after-tax operating profit (1,231M)",
+  "base funding: the path needs 25,072M of outside money by 2028 (20.4x that year's after-tax operating profit) that is not in shares or net cash: the model carries it as debt at debt_rate and does not check that it can be raised",
+  "bull funding: net debt 20,944M at the low point (2027) is above 3x that year's after-tax operating profit (372M)",
+  "bull funding: the path needs 8,570M of outside money by 2027 (23.0x that year's after-tax operating profit) that is not in shares or net cash: the model carries it as debt at debt_rate and does not check that it can be raised",
+  "reverse reading at a flat margin: no growth path between -1x and 4x of the base reaches the price (the first-year margin is not positive)",
+  "1 named variant file(s) next to the main file: the record holds the main file only, no weighted value over the variants is computed"
+ ],
+ "judgement_source": "imported from the v1 handoff of the same valuation (texts only)",
+ "variants": [
+  {
+   "name": "funding_variant",
+   "params": {
+    "path": "research/companies/NBIS/2026-11-13/lean_params_funding_variant.json",
+    "sha256": "1c4c534ce18d45c77aa33467555b2d618f4fcf95ee42926b38d8af13f9ef71e8"
+   },
+   "result": {
+    "path": "research/companies/NBIS/2026-11-13/lean_result_funding_variant.json",
+    "sha256": "2f0281d7d8b8bca699d56f983aa7f21e77f350eaf1b758eb39346f9ac78aa63c"
+   },
+   "base_value_today": 68.44,
+   "base_annual_return_pct": 7.4,
+   "weight": null,
+   "note": "a named variant saved next to the main file; no weight is stored"
+  }
+ ]
+}

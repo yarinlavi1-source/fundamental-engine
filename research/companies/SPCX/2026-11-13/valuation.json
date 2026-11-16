@@ -1,0 +1,447 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "SPCX",
+ "company": null,
+ "as_of": "2026-11-13",
+ "price": {
+  "value": 140.66,
+  "time_utc": "2026-11-13T09:36Z",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 13151.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "segment",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/SPCX/2026-11-13/params.json",
+   "sha256": "56adcf68a0aae3f9f441b9eaec86a6ad4a09d14bc69ae34bde4a72d612d8498c"
+  },
+  "result": {
+   "path": "research/companies/SPCX/2026-11-13/results.json",
+   "sha256": "a53073dd2a241d4112d1975673df88d1946772f73178b7dd4b9bb7e08c30be46"
+  },
+  "code": {
+   "path": "research/companies/SPCX/2026-11-13/model.py",
+   "sha256": "bb3aa5e509c8166f9d2f219021bf07e5c654aff418edc53a9d14ebae40419a4f"
+  }
+ },
+ "scenarios": {
+  "base": {
+   "probability": 0.5,
+   "condition_he": "הכנסות 2027 לפי התחזית, ואחר כך מחירי ה-AI יורדים בהדרגה",
+   "value_today": 70.06,
+   "annual_return_pct": -1.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 80.19
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 90.93
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 103.05
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 116.23
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 130.29
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 78.94,
+     "return_pct": -43.9
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 89.44,
+     "return_pct": -20.3
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 128.35,
+     "return_pct": -1.8
+    }
+   }
+  },
+  "bear": {
+   "probability": 0.3,
+   "condition_he": "עודף שרתים, המחירים נופלים, הלקוח הגדול עוזב",
+   "value_today": 1.42,
+   "annual_return_pct": -48.3,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 1.43
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 2.23
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 3.14
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 4.0
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 4.79
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 1.43,
+     "return_pct": -99.0
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 2.1,
+     "return_pct": -87.8
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 4.68,
+     "return_pct": -49.4
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": "הקיבולת לפי התחזית, והמחירים מחזיקים",
+   "value_today": 231.51,
+   "annual_return_pct": 23.9,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 265.44
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 299.72
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 337.63
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 378.75
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 422.74
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 261.25,
+     "return_pct": 85.7
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 294.98,
+     "return_pct": 44.8
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 416.68,
+     "return_pct": 24.3
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 81.76,
+  "end_value": 151.13,
+  "annual_return_pct": 1.4,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 112.41,
+  "annual_return_pct": 7.8,
+  "band": "hold",
+  "band_ours": "sell",
+  "agree": false,
+  "pe_held": 35,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 128.79
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 145.66
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 164.51
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 185.03
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 207.02
+   }
+  ],
+  "diagnostics_note": "repair 13.11: our own forward P/E on 2027 operating EPS is ~39x (3.61); 35 = the market's multiple on the FY2027 consensus EPS ($4.04, AV n=34, P/E 34.8) and inside the IPO-to-date FY27 P/E range 26.8-49.9x (median 36.2x). Margin floored at the 2027 group EBIT margin. Weak evidence here: revenue is flat 2031-32 in the base, so holding 35x on 2032 EPS is generous."
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "group revenue (the model works in $bn; shown here in $M)",
+   "op_margin": "EBIT / revenue",
+   "eps_operating": "operating EPS as the model reports it"
+  },
+  "base_year": 2026,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 172100.0,
+    "op_margin": 0.3,
+    "eps_operating": 3.61
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 299900.0,
+    "op_margin": 0.289,
+    "eps_operating": 5.8
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 390000.0,
+    "op_margin": 0.276,
+    "eps_operating": 6.87
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 431000.0,
+    "op_margin": 0.253,
+    "eps_operating": 6.54
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 446300.0,
+    "op_margin": 0.232,
+    "eps_operating": 6.22
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 442700.0,
+    "op_margin": 0.231,
+    "eps_operating": 6.15
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.13,
+  "rungs": [
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 72.85,
+    "price_second_lens": null,
+    "label": null
+   },
+   {
+    "id": "index",
+    "return_pct": 9.1,
+    "price": 83.19,
+    "price_second_lens": null,
+    "label": null
+   }
+  ],
+  "buy_test": {
+   "price": null,
+   "stated_price": null,
+   "rerun_price": null,
+   "rerun_used": false,
+   "binding_leg": null,
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {},
+   "leg_results": {
+    "base_ge_12_both": false,
+    "bull_ge_17": true,
+    "bear_ge_minus10": false
+   },
+   "rule": "base >= 12% in both lenses, bull >= 17%, bear >= -10%",
+   "note": "the segment model saves pass/fail per leg and the base 12% price only; no all-legs price"
+  },
+  "buy_test_price": null,
+  "base_12_price": 72.85,
+  "margin_of_safety_price": null,
+  "index_parity_price": 83.19,
+  "hold_floor_price": null,
+  "sell_line_price": null,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "note": "margin_of_safety, hold-floor and sell-line prices are null: the segment model does not compute them",
+  "entry_price": {
+   "value": 72.85,
+   "rung": "buy_test",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחיר באזור 73$",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.reconsider; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "דוחות שמראים שמחירי השכרת השרתים מחזיקים כשהקיבולת גדלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.reconsider; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תנאי המיזוג עם Tesla ויחס ההמרה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.watch; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "סוף החסימה על מכירת מניות של משקיעים ותיקים (כ-8.12.2026)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.watch; not typed"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "הלקוח שהוא 34.5% מההכנסות (ביטול בהודעה של 90 יום)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.watch; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": null,
+  "confirmed": false,
+  "text": "Q4 2026, early 2027",
+  "check_he": null,
+  "note": "no date could be read"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "לא לקנות במחיר הזה: הכול תלוי במחיר השכרת שרתי AI; העדשות לא מסכימות",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "sell",
+  "band_second_lens": "hold",
+  "lenses_agree": false,
+  "buy_test_pass": false
+ },
+ "notes_he": [
+  "Starlink שווה כ-17-22$ למניה; השאר תלוי ב-AI",
+  "ההימורים הנפרדים (Starship, תקשורת ישירה לטלפון) מוסיפים בתוחלת כ-3.7$ בלבד",
+  "15.11: Starship Flight 15: החללית נתפסה אחרי טיסה במסלול (לראשונה), המאיץ אבד; ההימור על שימוש חוזר עלה ל-50%, תוספת של כ-0.6$ בתוחלת; השווי והמסקנה לא השתנו"
+ ],
+ "thesis_link": "research/companies/SPCX/thesis_he.md",
+ "warnings": [],
+ "judgement_source": "imported from the v1 handoff of the same valuation (texts only)"
+}

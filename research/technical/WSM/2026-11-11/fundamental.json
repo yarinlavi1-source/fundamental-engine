@@ -1,0 +1,304 @@
+{
+ "ticker": "WSM",
+ "as_of": "2026-11-11",
+ "price": 262.2,
+ "price_time_utc": null,
+ "verdict_he": "לא לקנות במחיר הזה (חברה מצוינת, המכפיל בשיא של 5 שנים)",
+ "buy_test_price": 161.04,
+ "margin_of_safety_price": 153.74,
+ "values": {
+  "today": {
+   "bear": 123.07,
+   "base": 187.31,
+   "bull": 244.0
+  },
+  "end_2027": {
+   "bear": 137.3,
+   "base": 209.46,
+   "bull": 273.13
+  },
+  "end_2028": {
+   "bear": 149.34,
+   "base": 228.49,
+   "bull": 298.4
+  },
+  "end_2029": {
+   "bear": 161.91,
+   "base": 248.41,
+   "bull": 325.04
+  },
+  "end_2030": {
+   "bear": 175.0,
+   "base": 269.23,
+   "bull": 353.05
+  },
+  "end_2031": {
+   "bear": 188.62,
+   "base": 290.98,
+   "bull": 382.46
+  },
+  "weighted_today_25_55_20": 182.59,
+  "calibrated_today": 230.11
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": null
+  },
+  "base": {
+   "prob": 0.55,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -6.1,
+  "base": 2.0,
+  "bull": 7.5,
+  "calibrated": 6.3,
+  "weighted": 1.5,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "דוח רבעון 3, בסביבות 18-19.11.2026",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/WSM/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/WSM/2026-11-11/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 161.04,
+   "stated_price": 161.04,
+   "rerun_price": 161.04,
+   "base_12_price": 161.04,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 2.0,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 161.04
+    },
+    "base_calibrated": {
+     "return_pct": 6.3,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 199.66
+    },
+    "bull": {
+     "return_pct": 7.5,
+     "threshold_pct": 17.0,
+     "pass": false,
+     "max_price": 168.52
+    },
+    "bear": {
+     "return_pct": -6.1,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 326.92
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2032-01-31",
+   "years_to_horizon": 5.22,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 153.74,
+     "price_second_lens": 190.61
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 161.04,
+     "price_second_lens": 199.66
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 161.04,
+     "price_second_lens": 199.66
+    },
+    {
+     "id": "index",
+     "return_pct": 9.1,
+     "price": 184.68,
+     "price_second_lens": 228.96
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 214.67,
+     "price_second_lens": 266.14
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 249.37,
+     "price_second_lens": 309.17
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 153.74,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 184.68,
+  "hold_floor_price": 214.67,
+  "sell_line_price": 249.37,
+  "values_dated": {
+   "today": {
+    "bear": 123.07,
+    "base": 187.31,
+    "bull": 244.0,
+    "date": "2026-11-11",
+    "base_calibrated": 230.11
+   },
+   "year_ends": [
+    {
+     "bear": 137.3,
+     "base": 209.46,
+     "bull": 273.13,
+     "fiscal_year": 2027,
+     "date": "2028-01-31",
+     "base_calibrated": 257.54
+    },
+    {
+     "bear": 149.34,
+     "base": 228.49,
+     "bull": 298.4,
+     "fiscal_year": 2028,
+     "date": "2029-01-31",
+     "base_calibrated": 281.32
+    },
+    {
+     "bear": 161.91,
+     "base": 248.41,
+     "bull": 325.04,
+     "fiscal_year": 2029,
+     "date": "2030-01-31",
+     "base_calibrated": 306.42
+    },
+    {
+     "bear": 175.0,
+     "base": 269.23,
+     "bull": 353.05,
+     "fiscal_year": 2030,
+     "date": "2031-01-31",
+     "base_calibrated": 332.88
+    },
+    {
+     "bear": 188.62,
+     "base": 290.98,
+     "bull": 382.46,
+     "fiscal_year": 2031,
+     "date": "2032-01-31",
+     "base_calibrated": 360.75
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 134.64,
+     "base": 205.29,
+     "bull": 267.63,
+     "date": "2027-11-11",
+     "base_calibrated": 252.36
+    },
+    "two_year": {
+     "bear": 146.59,
+     "base": 224.13,
+     "bull": 292.61,
+     "date": "2028-11-11",
+     "base_calibrated": 275.87
+    },
+    "five_year": {
+     "bear": 185.51,
+     "base": 286.01,
+     "bull": 375.73,
+     "date": "2031-11-11",
+     "base_calibrated": 354.37
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2028-01-31",
+     "source": "fiscal_year_end",
+     "bear": 137.3,
+     "base": 209.46,
+     "bull": 273.13,
+     "second_lens": 257.54
+    },
+    "five_year": {
+     "date": "2032-01-31",
+     "source": "horizon_year_end",
+     "bear": 188.62,
+     "base": 290.98,
+     "bull": 382.46,
+     "second_lens": 360.75
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 230.11,
+   "annual_return_pct": 6.3,
+   "band": "hold",
+   "band_ours": "sell",
+   "agree": false,
+   "inflated_multiple_warning": true,
+   "note": "the held multiple looks inflated: the calibrated lens is not a second opinion here; set \"calibrated.pe\"; the held multiple 26.5 is 1.65x the base exit multiple 16 (above 1.5x)"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות במחיר הזה (חברה מצוינת, המכפיל בשיא של 5 שנים)",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}

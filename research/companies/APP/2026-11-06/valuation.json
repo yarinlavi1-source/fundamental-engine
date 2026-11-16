@@ -1,0 +1,462 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "APP",
+ "company": "AppLovin",
+ "as_of": "2026-11-06",
+ "price": {
+  "value": 348.0,
+  "time_utc": null,
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 331.3,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/APP/2026-11-06/lean_params.json",
+   "sha256": "9b736b690d680db19c047934f685ba5df291b9b7e2e736b4146a9151e0b1f1a6"
+  },
+  "result": {
+   "path": "research/companies/APP/2026-11-06/lean_result.json",
+   "sha256": "6b36811d5e5f828fb94909c6e8c7d808ed5c42ec95b47fb5cf2255c95c007fac"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": null,
+   "value_today": 100.52,
+   "annual_return_pct": -12.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 115.78
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 129.6
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 144.01
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 158.96
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 174.44
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-06",
+     "value": 113.66,
+     "return_pct": -67.3
+    },
+    "two_year": {
+     "date": "2028-11-06",
+     "value": 127.42,
+     "return_pct": -39.5
+    },
+    "five_year": {
+     "date": "2031-11-06",
+     "value": 172.01,
+     "return_pct": -13.1
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": null,
+   "value_today": 415.15,
+   "annual_return_pct": 15.9,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 479.18
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 539.53
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 604.06
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 672.71
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 745.35
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-06",
+     "value": 470.27,
+     "return_pct": 35.1
+    },
+    "two_year": {
+     "date": "2028-11-06",
+     "value": 530.0,
+     "return_pct": 23.4
+    },
+    "five_year": {
+     "date": "2031-11-06",
+     "value": 733.92,
+     "return_pct": 16.1
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": null,
+   "value_today": 647.38,
+   "annual_return_pct": 26.6,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 747.4
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 842.54
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 945.08
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 1054.97
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 1172.06
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-06",
+     "value": 733.48,
+     "return_pct": 110.8
+    },
+    "two_year": {
+     "date": "2028-11-06",
+     "value": 827.51,
+     "return_pct": 54.2
+    },
+    "five_year": {
+     "date": "2031-11-06",
+     "value": 1153.62,
+     "return_pct": 27.1
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 367.21,
+  "end_value": 659.42,
+  "annual_return_pct": 13.2,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 417.09,
+  "annual_return_pct": 16.0,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": 18.2,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 481.42
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 542.06
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 606.91
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 675.91
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 748.95
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-06",
+    "value": 472.47,
+    "return_pct": 35.8
+   },
+   "two_year": {
+    "date": "2028-11-06",
+    "value": 532.48,
+    "return_pct": 23.7
+   },
+   "five_year": {
+    "date": "2031-11-06",
+    "value": 737.46,
+    "return_pct": 16.2
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": false,
+   "differs_from_base_only_by_multiple": true,
+   "pe_held": 18.21,
+   "pe_base_exit": 18.0,
+   "pe_held_to_base_exit": 1.01,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 8331.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 10414,
+    "op_margin": 0.76,
+    "eps_operating": 19.11
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 12288,
+    "op_margin": 0.76,
+    "eps_operating": 22.55
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 14009,
+    "op_margin": 0.76,
+    "eps_operating": 25.71
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 15690,
+    "op_margin": 0.76,
+    "eps_operating": 28.79
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 17259,
+    "op_margin": 0.76,
+    "eps_operating": 31.67
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 18639,
+    "op_margin": 0.76,
+    "eps_operating": 34.21
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.15,
+  "rungs": [
+   {
+    "id": "company_hurdle",
+    "return_pct": 13.0,
+    "price": 397.2,
+    "price_second_lens": 399.12,
+    "label": "entry with a margin of safety: buy_return 13% a year"
+   },
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 397.2,
+    "price_second_lens": 399.12,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 415.8,
+    "price_second_lens": 417.81,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 475.05,
+    "price_second_lens": 477.35,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 552.12,
+    "price_second_lens": 554.79,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 640.1,
+    "price_second_lens": 643.19,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 300.12,
+   "stated_price": 300.12,
+   "rerun_price": 300.12,
+   "rerun_used": false,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 15.9,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 415.8
+    },
+    "base_calibrated": {
+     "return_pct": 16.0,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 417.81
+    },
+    "bull": {
+     "return_pct": 26.6,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 522.15
+    },
+    "bear": {
+     "return_pct": -12.5,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 300.12
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 300.12,
+  "base_12_price": 415.8,
+  "margin_of_safety_price": 397.2,
+  "index_parity_price": 475.05,
+  "hold_floor_price": 552.12,
+  "sell_line_price": 640.1,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 397.2,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [],
+ "falsifiers": [],
+ "next_report": {
+  "date": null,
+  "window": null,
+  "confirmed": false,
+  "text": "דוח רבעון 4, פברואר 2027",
+  "check_he": null,
+  "note": "no date could be read"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "not_buy",
+  "text_he": "לא לקנות במחיר הזה (התרחיש הדובי נכשל)",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": false,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 0
+ },
+ "notes_he": [],
+ "thesis_link": "research/companies/APP/thesis_he.md",
+ "warnings": []
+}

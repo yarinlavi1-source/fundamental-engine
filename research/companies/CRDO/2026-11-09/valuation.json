@@ -1,0 +1,481 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "CRDO",
+ "company": "Credo Technology",
+ "as_of": "2026-11-09",
+ "price": {
+  "value": 132.83,
+  "time_utc": null,
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 198.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/CRDO/2026-11-09/lean_params.json",
+   "sha256": "304fc9e451fde847b53a5258c22a9012c965eb3677ac17a7291e047007108426"
+  },
+  "result": {
+   "path": "research/companies/CRDO/2026-11-09/lean_result.json",
+   "sha256": "193011d1790d9ca0af5b8e0e17ced677e0c8b6a61f2e46b8e30bda37baf6289d"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": null,
+   "value_today": 26.99,
+   "annual_return_pct": -15.3,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-05-01",
+     "value": 33.13
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-05-01",
+     "value": 37.75
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-05-01",
+     "value": 42.72
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-05-01",
+     "value": 48.0
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-05-01",
+     "value": 53.55
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-09",
+     "value": 31.1,
+     "return_pct": -76.6
+    },
+    "two_year": {
+     "date": "2028-11-09",
+     "value": 35.49,
+     "return_pct": -48.3
+    },
+    "five_year": {
+     "date": "2031-11-09",
+     "value": 50.84,
+     "return_pct": -17.5
+    }
+   }
+  },
+  "base": {
+   "probability": 0.45,
+   "condition_he": null,
+   "value_today": 108.37,
+   "annual_return_pct": 10.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-05-01",
+     "value": 134.99
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-05-01",
+     "value": 155.22
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-05-01",
+     "value": 177.03
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-05-01",
+     "value": 200.49
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-05-01",
+     "value": 225.48
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-09",
+     "value": 125.85,
+     "return_pct": -5.3
+    },
+    "two_year": {
+     "date": "2028-11-09",
+     "value": 145.28,
+     "return_pct": 4.6
+    },
+    "five_year": {
+     "date": "2031-11-09",
+     "value": 213.23,
+     "return_pct": 9.9
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": null,
+   "value_today": 225.42,
+   "annual_return_pct": 26.4,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-05-01",
+     "value": 281.5
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-05-01",
+     "value": 324.9
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-05-01",
+     "value": 372.32
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-05-01",
+     "value": 423.54
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-05-01",
+     "value": 478.31
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-09",
+     "value": 262.13,
+     "return_pct": 97.3
+    },
+    "two_year": {
+     "date": "2028-11-09",
+     "value": 303.55,
+     "return_pct": 51.2
+    },
+    "five_year": {
+     "date": "2031-11-09",
+     "value": 451.44,
+     "return_pct": 27.7
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 113.22,
+  "end_value": 237.11,
+  "annual_return_pct": 11.2,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 111.85,
+  "annual_return_pct": 10.8,
+  "band": "hold",
+  "band_ours": "hold",
+  "agree": true,
+  "pe_held": 23.3,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2028,
+    "date": "2028-05-01",
+    "value": 139.34
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-05-01",
+    "value": 160.27
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-05-01",
+    "value": 182.84
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-05-01",
+    "value": 207.07
+   },
+   {
+    "fiscal_year": 2032,
+    "date": "2032-05-01",
+    "value": 232.9
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-09",
+    "value": 129.9,
+    "return_pct": -2.2
+   },
+   "two_year": {
+    "date": "2028-11-09",
+    "value": 149.98,
+    "return_pct": 6.3
+   },
+   "five_year": {
+    "date": "2031-11-09",
+    "value": 220.24,
+    "return_pct": 10.6
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": true,
+   "differs_from_base_only_by_multiple": false,
+   "pe_held": 23.34,
+   "pe_base_exit": 22,
+   "pe_held_to_base_exit": 1.06,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the lenses differ by the exit multiple and by the margin"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2027,
+  "base_year_end": "2027-05-01",
+  "base_year_revenue_m": 2510.0,
+  "years": {
+   "2028": {
+    "fiscal_year_end": "2028-05-01",
+    "revenue_m": 3765,
+    "op_margin": 0.34,
+    "eps_operating": 5.69
+   },
+   "2029": {
+    "fiscal_year_end": "2029-05-01",
+    "revenue_m": 4706,
+    "op_margin": 0.35,
+    "eps_operating": 7.32
+   },
+   "2030": {
+    "fiscal_year_end": "2030-05-01",
+    "revenue_m": 4236,
+    "op_margin": 0.3,
+    "eps_operating": 5.65
+   },
+   "2031": {
+    "fiscal_year_end": "2031-05-01",
+    "revenue_m": 5083,
+    "op_margin": 0.35,
+    "eps_operating": 7.91
+   },
+   "2032": {
+    "fiscal_year_end": "2032-05-01",
+    "revenue_m": 5693,
+    "op_margin": 0.36,
+    "eps_operating": 9.11
+   },
+   "2033": {
+    "fiscal_year_end": "2033-05-01",
+    "revenue_m": 6148,
+    "op_margin": 0.36,
+    "eps_operating": 9.84
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2032-05-01",
+  "years_to_horizon": 5.47,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 115.55,
+    "price_second_lens": 119.35,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 121.31,
+    "price_second_lens": 125.3,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 12.0,
+    "price": 121.31,
+    "price_second_lens": 125.3,
+    "label": "entry with a margin of safety: buy_return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.1,
+    "price": 140.03,
+    "price_second_lens": 144.63,
+    "label": "index return (rf + erp) 9.1% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 163.94,
+    "price_second_lens": 169.33,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 191.82,
+    "price_second_lens": 198.13,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 95.29,
+   "stated_price": 95.29,
+   "rerun_price": 95.29,
+   "rerun_used": false,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 10.2,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 121.31
+    },
+    "base_calibrated": {
+     "return_pct": 10.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 125.3
+    },
+    "bull": {
+     "return_pct": 26.4,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 202.64
+    },
+    "bear": {
+     "return_pct": -15.3,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 95.29
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 95.29,
+  "base_12_price": 121.31,
+  "margin_of_safety_price": 115.55,
+  "index_parity_price": 140.03,
+  "hold_floor_price": 163.94,
+  "sell_line_price": 191.82,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 115.55,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-11-09",
+   "source": "as_of_plus_one_year"
+  },
+  "five_year": {
+   "date": "2032-05-01",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [],
+ "falsifiers": [],
+ "next_report": {
+  "date": null,
+  "window": null,
+  "confirmed": false,
+  "text": "דוח רבעון 2, תחילת דצמבר 2026",
+  "check_he": null,
+  "note": "no date could be read"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "not_buy",
+  "text_he": "לא לקנות עכשיו; תלוי באי-עיכול ובשמירה על הלקוחות",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "hold",
+  "lenses_agree": true,
+  "buy_test_pass": false,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 2
+ },
+ "notes_he": [],
+ "thesis_link": "research/companies/CRDO/thesis_he.md",
+ "warnings": [
+  "1 named variant file(s) next to the main file: the record holds the main file only, no weighted value over the variants is computed"
+ ],
+ "variants": [
+  {
+   "name": "no_digestion",
+   "params": {
+    "path": "research/companies/CRDO/2026-11-09/lean_params_no_digestion.json",
+    "sha256": "289919992f0a58799c649594d8c0d735206e95b85a37baad40819a8bc096ba44"
+   },
+   "result": {
+    "path": "research/companies/CRDO/2026-11-09/lean_result_no_digestion.json",
+    "sha256": "a5aa2a1e29f3f893350f76521064500f6769764fd7d3bc4562934fc1af0f1051"
+   },
+   "base_value_today": 139.5,
+   "base_annual_return_pct": 15.5,
+   "weight": null,
+   "note": "a named variant saved next to the main file; no weight is stored"
+  }
+ ]
+}

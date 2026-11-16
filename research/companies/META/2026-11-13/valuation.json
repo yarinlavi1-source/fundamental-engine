@@ -1,0 +1,495 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "META",
+ "company": null,
+ "as_of": "2026-11-13",
+ "price": {
+  "value": 634.68,
+  "time_utc": "2026-11-13 14:58 UTC (Yahoo chart API, intraday; IBKR returned 502)",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": "pre Class C 1-for-1 stock dividend (effective 19.1.2027, paid within 5 business days); post = pre / 2, tested against the average of the A and C quotes",
+  "model_shares_m": null,
+  "known_split": null
+ },
+ "model": {
+  "kind": "three_lane",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/META/2026-11-13/model/dcf_params.json",
+   "sha256": "58ce4a7d5cbee5dc7f9376517a32a27c9b40a9ee4ab4f86143f0c9f9647cb312"
+  },
+  "result": {
+   "path": "research/companies/META/2026-11-13/model_result.json",
+   "sha256": "5c068d4f97fb1deb220a931fb813a51ffb45dc266e086c45c1f0919be4a33b7e"
+  },
+  "code": {
+   "path": "research/companies/META/2026-11-13/model/model13.py",
+   "sha256": "1df8ddd3a18c61f91cb5bc372552ff9dc22f20af4b1a9f033177adfc0cd441e8"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": "צמיחה של כ-8% בשנה, הפחת מכביד, מכפיל 15, קנס ניו מקסיקו במלואו עם ריבית",
+   "value_today": 209.3,
+   "annual_return_pct": -10.19,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-30",
+     "value": 233.8
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-30",
+     "value": 259.2
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-30",
+     "value": 287.8
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-30",
+     "value": 319.2
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-30",
+     "value": 353.4
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 230.87,
+     "return_pct": -63.6
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 255.79,
+     "return_pct": -36.5
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 348.8,
+     "return_pct": -11.3
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה של כ-20% ב-2027 שדועכת לכ-10%, הפחת עולה לכ-25% מההכנסות, מכפיל כ-20",
+   "value_today": 513.2,
+   "annual_return_pct": 6.54,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-30",
+     "value": 575.5
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-30",
+     "value": 637.8
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-30",
+     "value": 707.0
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-30",
+     "value": 783.0
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-30",
+     "value": 866.0
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 568.03,
+     "return_pct": -10.5
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 629.44,
+     "return_pct": -0.4
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 854.84,
+     "return_pct": 6.1
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": "צמיחה של כ-19.6% בשנה, שיעור רווח גבוה יותר, מכפיל 22-24",
+   "value_today": 910.8,
+   "annual_return_pct": 19.01,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-30",
+     "value": 1022.6
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-30",
+     "value": 1133.3
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-30",
+     "value": 1255.8
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-30",
+     "value": 1390.3
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-30",
+     "value": 1537.4
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 1009.18,
+     "return_pct": 59.0
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 1118.44,
+     "return_pct": 32.7
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 1517.62,
+     "return_pct": 19.0
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 536.6,
+  "end_value": 905.7,
+  "annual_return_pct": 7.46,
+  "index_return_pct": 9.14
+ },
+ "second_lens": {
+  "value_today": null,
+  "annual_return_pct": 10.43,
+  "band": "hold",
+  "band_ours": "hold",
+  "agree": true,
+  "pe_held": 18.68,
+  "dated_values": [
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-30",
+    "value": 1043.7
+   }
+  ],
+  "depreciation_wave_line": {
+   "end_value": 820.2,
+   "annual_return_pct": 5.43
+  },
+  "note": "the model saves the second lens at the horizon only: no value today"
+ },
+ "base_path": {
+  "basis": {
+   "eps": "EPS per lane (dcf / pe / rev), 2027 and 2032 only"
+  },
+  "base_year": 2026,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-30",
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null,
+    "eps_by_lane": {
+     "dcf": 30.01,
+     "pe": 31.31,
+     "rev": 33.32
+    }
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-30",
+    "revenue_m": null,
+    "op_margin": null,
+    "eps_operating": null,
+    "eps_by_lane": {
+     "dcf": 42.02,
+     "pe": 47.2,
+     "rev": 43.9
+    }
+   }
+  },
+  "note": "no revenue or margin path is saved by this model"
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-30",
+  "years_to_horizon": 5.13,
+  "rungs": [
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 491.0,
+    "price_second_lens": 590.0,
+    "label": null
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 561.0,
+    "price_second_lens": 674.0,
+    "label": null
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 651.0,
+    "price_second_lens": 783.0,
+    "label": null
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 755.0,
+    "price_second_lens": 907.0,
+    "label": null
+   }
+  ],
+  "buy_test": {
+   "price": 491.0,
+   "stated_price": 491.0,
+   "rerun_price": null,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 6.54,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 491.0
+    },
+    "base_calibrated": {
+     "return_pct": 10.43,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 590.0
+    }
+   },
+   "at_add_price": {
+    "price": 491.0,
+    "bear": -5.6,
+    "bull": 25.1
+   },
+   "rule": "base >= 12% in both lenses (the add price); bull and bear tested at that price",
+   "note": "the ladder is saved at whole dollars; no 13% rung"
+  },
+  "buy_test_price": 491.0,
+  "base_12_price": 491.0,
+  "margin_of_safety_price": null,
+  "index_parity_price": 561.0,
+  "hold_floor_price": 651.0,
+  "sell_line_price": 755.0,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "note": "no 13% rung in this model: margin_of_safety_price is null; prices are at whole dollars",
+  "entry_price": {
+   "value": 491.0,
+   "rung": "buy_test.price",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-30",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-30",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": 624,
+  "low": 537,
+  "high": 694,
+  "source": null,
+  "note": "2027 consensus EPS 33.97 x own 5y median forward P/E 18.4 (p25-p75)",
+  "computed": false
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-491$ (245.5$ אחרי החלוקה): שתי העדשות נותנות 12% בשנה ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-725-783$ (362.5-391.5$): עד 6% מההון",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית ההוצאות ל-2027 מרמזת על שיעור רווח תפעולי קרוב ל-27%",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-840$ (420$): מתחילים; מעל 907$ (453.5$): מסיימים",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "צמיחת ההכנסות מתחת ל-12% בשני רבעונים ברצף, בזמן שתחזית ההשקעות 200 מיליארד $ ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "ב-2027-2028: המחיר לפרסומת פחות מ-8%+ וגם מספר הפרסומות פחות מ-5%+, בשני רבעונים ברצף",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f4",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "בדוח רבעון 4: אמצע תחזית ההוצאות ל-2027 מול הכנסות הקונצנזוס נותן שיעור רווח תפעולי מתחת ל-27% בלי הוצאות משפטיות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f5",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית השקעות ל-2027 של 240 מיליארד $ ומעלה בלי קפיצה בהכנסות, ורמז ש-2028 גבוהה יותר",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f6",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "משפטים חדשים מעבר להסדר המדינות ולניו מקסיקו: יותר מכ-40 מיליארד $ ביחד, או שתי מדינות נוספות מעל 5 מיליארד $ כל אחת, או צו בניו מקסיקו שמשנה את המוצר מחוץ למדינה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-01-01",
+   "to": "2027-01-31"
+  },
+  "confirmed": false,
+  "text": "late January 2027",
+  "check_he": "תחזית ההוצאות וההשקעות ל-2027, המחיר לפרסומת ומספר הפרסומות, הפרשה לקנס ניו מקסיקו, ולחשב מחדש את קווי הקנייה והמכירה"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "החזקה: התרחיש הבסיסי נותן כ-6.5% בשנה והעדשה השנייה 10.4%, שתיהן באזור החזקה; לא מוסיפים מעל 491$ ולא מוכרים בין דוחות",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "hold",
+  "lenses_agree": true,
+  "post_split_ladder": {
+   "add": 245.5,
+   "parity": 337.0,
+   "trim": 391.5,
+   "sell": 453.5
+  }
+ },
+ "notes_he": [
+  "הקווים עולים כ-11% בשנה; בסוף 2027 קו המכירה כ-1,020$ (511$ אחרי החלוקה). מחשבים מחדש אחרי כל דוח",
+  "אחרי חלוקת Class C (ינואר 2027) כל מחיר מתחלק ב-2; בודקים מול הממוצע של A ו-C",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "thesis_link": "research/companies/META/thesis_he.md",
+ "warnings": [],
+ "judgement_source": "imported from the v1 handoff of the same valuation (texts only)"
+}

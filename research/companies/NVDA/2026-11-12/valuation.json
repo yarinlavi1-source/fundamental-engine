@@ -1,0 +1,698 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "NVDA",
+ "company": null,
+ "as_of": "2026-11-12",
+ "price": {
+  "value": 161.5,
+  "time_utc": "2026-11-12 (exact time of the 161.50 quote not recorded)",
+  "source": "the price in the saved params (161.50; the thesis quoted 161.47); the handoff of 12.11 had the pre-open quote 155.39 of 12.11 14:07 UTC"
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 24700.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/NVDA/2026-11-12/lean_params.json",
+   "sha256": "706e6e9bf54aed90f65cf4aabbd801f9036e3048681311c80761bb4614ca99f3"
+  },
+  "result": {
+   "path": "research/companies/NVDA/2026-11-12/lean_result.json",
+   "sha256": "c62d0f0391163a3175026b51082347e28c25826c2b73b4807bd5d2f70a8fd22e"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  },
+  "worlds": {
+   "path": "research/companies/NVDA/2026-11-12/worlds.json",
+   "sha256": "11e037a70e51ffb0b491a5bd6a31b7bedc00d05f130c5dc782932f196880269f"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": null,
+   "value_today": 69.77,
+   "annual_return_pct": -5.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 80.46
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 89.57
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 99.22
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 109.4
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 120.05
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-12",
+     "value": 78.47,
+     "return_pct": -51.4
+    },
+    "two_year": {
+     "date": "2028-11-12",
+     "value": 87.55,
+     "return_pct": -26.4
+    },
+    "five_year": {
+     "date": "2031-11-12",
+     "value": 117.69,
+     "return_pct": -6.1
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": null,
+   "value_today": 169.02,
+   "annual_return_pct": 12.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 195.18
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 218.23
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 242.45
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 267.75
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 294.11
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-12",
+     "value": 190.3,
+     "return_pct": 17.8
+    },
+    "two_year": {
+     "date": "2028-11-12",
+     "value": 213.1,
+     "return_pct": 14.9
+    },
+    "five_year": {
+     "date": "2031-11-12",
+     "value": 288.26,
+     "return_pct": 12.3
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": null,
+   "value_today": 284.23,
+   "annual_return_pct": 24.3,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 328.33
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 367.78
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 409.65
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 453.82
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 500.21
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-12",
+     "value": 320.1,
+     "return_pct": 98.2
+    },
+    "two_year": {
+     "date": "2028-11-12",
+     "value": 358.99,
+     "return_pct": 49.1
+    },
+    "five_year": {
+     "date": "2031-11-12",
+     "value": 489.92,
+     "return_pct": 24.9
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 173.01,
+  "end_value": null,
+  "annual_return_pct": null,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 189.05,
+  "annual_return_pct": 14.7,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": null,
+  "margin_overridden": null,
+  "dated_values": [
+   {
+    "fiscal_year": 2028,
+    "date": "2028-01-29",
+    "value": 218.32
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-01-29",
+    "value": 244.24
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-01-29",
+    "value": 271.58
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-01-29",
+    "value": 300.21
+   },
+   {
+    "fiscal_year": 2032,
+    "date": "2032-01-29",
+    "value": 330.08
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-12",
+    "value": 212.86,
+    "return_pct": 31.8
+   },
+   "two_year": {
+    "date": "2028-11-12",
+    "value": 238.47,
+    "return_pct": 21.5
+   },
+   "five_year": {
+    "date": "2031-11-12",
+    "value": 323.45,
+    "return_pct": 14.9
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": null,
+   "differs_from_base_only_by_multiple": null,
+   "pe_held": null,
+   "pe_base_exit": null,
+   "pe_held_to_base_exit": null,
+   "inflated_multiple_warning": null
+  },
+  "diagnostics_note": "per world: the second lens of each world holds its own multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2027,
+  "base_year_end": "2027-01-29",
+  "base_year_revenue_m": 410000.0,
+  "years": {
+   "2028": {
+    "fiscal_year_end": "2028-01-29",
+    "revenue_m": 664200,
+    "op_margin": 0.61,
+    "eps_operating": 13.7
+   },
+   "2029": {
+    "fiscal_year_end": "2029-01-29",
+    "revenue_m": 763830,
+    "op_margin": 0.59,
+    "eps_operating": 15.23
+   },
+   "2030": {
+    "fiscal_year_end": "2030-01-29",
+    "revenue_m": 809660,
+    "op_margin": 0.57,
+    "eps_operating": 15.6
+   },
+   "2031": {
+    "fiscal_year_end": "2031-01-29",
+    "revenue_m": 842046,
+    "op_margin": 0.5499999999999999,
+    "eps_operating": 15.66
+   },
+   "2032": {
+    "fiscal_year_end": "2032-01-29",
+    "revenue_m": 875728,
+    "op_margin": 0.53,
+    "eps_operating": 15.69
+   },
+   "2033": {
+    "fiscal_year_end": "2033-01-29",
+    "revenue_m": 910757,
+    "op_margin": 0.51,
+    "eps_operating": 15.7
+   }
+  },
+  "note": "the yearly path of the main file (orderly_succession, weight 0.45): the weighted values have no single path"
+ },
+ "hurdles": {
+  "horizon_date": "2032-01-29",
+  "years_to_horizon": 5.2,
+  "rungs": [
+   {
+    "id": "company_hurdle",
+    "return_pct": 13.0,
+    "price": 155.78,
+    "price_second_lens": 174.83,
+    "label": "entry with a margin of safety: buy_return 13% a year"
+   },
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 155.78,
+    "price_second_lens": 174.83,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 163.15,
+    "price_second_lens": 183.1,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 186.64,
+    "price_second_lens": 209.46,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 217.23,
+    "price_second_lens": 243.8,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 252.21,
+    "price_second_lens": 283.05,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 163.15,
+   "stated_price": 163.15,
+   "rerun_price": 163.15,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 12.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 163.15
+    },
+    "base_calibrated": {
+     "return_pct": 14.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 183.1
+    },
+    "bull": {
+     "return_pct": 24.3,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 221.1
+    },
+    "bear": {
+     "return_pct": -5.5,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 207.64
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 163.15,
+  "base_12_price": 163.15,
+  "margin_of_safety_price": 155.78,
+  "index_parity_price": 186.64,
+  "hold_floor_price": 217.23,
+  "sell_line_price": 252.21,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 155.78,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2028-01-29",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2032-01-29",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "רווח גולמי צפוי 72% ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c4",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c5",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "אין צעד פומבי של משרד המשפטים או של רשות הייצוא",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.sell; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית נמוכה בבירור מ-115 מיליארד $ או רווח גולמי מתחת ל-70%",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.sell; not typed"
+  }
+ ],
+ "next_report": {
+  "date": "2026-11-17",
+  "window": null,
+  "confirmed": true,
+  "text": "2026-11-17",
+  "check_he": null
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "hold",
+  "text_he": "להחזיק; לא לקנות לפני הדוח של 17.11. אחרי הדוח, קנייה רק אם התנאים מתקיימים",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": true,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 0,
+  "worlds": 3
+ },
+ "notes_he": [
+  "הואנג התפטר ב-11.11 (8-K); קרס מנכ\"לית זמנית",
+  "השוק משלם כ-10-11 פעמים הרווח הצפוי לשנה הבאה"
+ ],
+ "thesis_link": "research/companies/NVDA/thesis_he.md",
+ "warnings": [
+  "the values are the weighted worlds of worlds.json (3 worlds); the yearly path is the main file's"
+ ],
+ "worlds": {
+  "source": null,
+  "weights_label": "subjective (judgement, not engine odds)",
+  "note": "weighted value = sum of weight x value of each world, per scenario and date (wiped = 0); the weighted 5-year return is the weighted horizon year-end value against the price; the ladder and buy test are the model's on those weighted values, and the buy test's rerun price holds each world's own multiple at the trial price. The weights are judgement, not engine odds. The other keys describe the main file",
+  "worlds": [
+   {
+    "name": "orderly_succession",
+    "label_he": "הואנג עוזב, מחליף מבפנים, מסודר",
+    "weight": 0.45,
+    "params": {
+     "path": "lean_params.json",
+     "sha256": "706e6e9bf54aed90f65cf4aabbd801f9036e3048681311c80761bb4614ca99f3"
+    },
+    "value_today": {
+     "bear": 71.85,
+     "base": 182.39,
+     "bull": 302.65,
+     "base_calibrated": 195.46
+    },
+    "annual_return_pct": {
+     "bear": -5.0,
+     "base": 13.9,
+     "bull": 25.8,
+     "base_calibrated": 15.5
+    },
+    "buy_test_price": 176.38,
+    "buy_test_pass": true,
+    "margin_of_safety_price": 168.41,
+    "margin_of_safety_price_second_lens": 180.76,
+    "base_band": "buy",
+    "two_lens_agree": true
+   },
+   {
+    "name": "messy_succession",
+    "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ",
+    "weight": 0.35,
+    "params": {
+     "path": "lean_params_B2_messy_succession.json",
+     "sha256": "32c08ed09f78921d279212b52f44870596195a053027384776fc4dfc9777c7a0"
+    },
+    "value_today": {
+     "bear": 70.02,
+     "base": 162.89,
+     "bull": 283.05,
+     "base_calibrated": 185.35
+    },
+    "annual_return_pct": {
+     "bear": -5.5,
+     "base": 11.4,
+     "bull": 24.2,
+     "base_calibrated": 14.3
+    },
+    "buy_test_price": 157.05,
+    "buy_test_pass": false,
+    "margin_of_safety_price": 149.96,
+    "margin_of_safety_price_second_lens": 171.35,
+    "base_band": "hold",
+    "two_lens_agree": false
+   },
+   {
+    "name": "export_finding",
+    "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה",
+    "weight": 0.2,
+    "params": {
+     "path": "lean_params_C_export_hit.json",
+     "sha256": "5c09439075ad413d5a0c76bdf14754c98c3253b313795ef1f308802016f89292"
+    },
+    "value_today": {
+     "bear": 64.63,
+     "base": 149.67,
+     "bull": 244.85,
+     "base_calibrated": 181.09
+    },
+    "annual_return_pct": {
+     "bear": -6.9,
+     "base": 9.6,
+     "bull": 20.7,
+     "base_calibrated": 13.8
+    },
+    "buy_test_price": 144.03,
+    "buy_test_pass": false,
+    "margin_of_safety_price": 137.52,
+    "margin_of_safety_price_second_lens": 167.56,
+    "base_band": "hold",
+    "two_lens_agree": false
+   }
+  ],
+  "weighted_value_today": {
+   "bear": 69.77,
+   "base": 169.02,
+   "bull": 284.23,
+   "base_calibrated": 189.05
+  },
+  "weighted_annual_return_pct": {
+   "bear": -5.5,
+   "base": 12.2,
+   "bull": 24.3,
+   "base_calibrated": 14.7
+  }
+ },
+ "variants": [
+  {
+   "name": "A_huang_stays",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-12/lean_params_A_huang_stays.json",
+    "sha256": "bea199510ed6b7e3959d9a8206162dc9224310bbe39fb492dd55510199a785af"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-12/lean_result_A_huang_stays.json",
+    "sha256": "df9be0c6c22bfdfbafaf87b38c5f2e36e6e82c612f66f0b6694d65e51d56b297"
+   },
+   "base_value_today": 221.76,
+   "base_annual_return_pct": 18.4,
+   "weight": 0.0,
+   "note": "saved next to the main file, not one of the worlds in force (weight 0)"
+  },
+  {
+   "name": "B2_messy_succession",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-12/lean_params_B2_messy_succession.json",
+    "sha256": "32c08ed09f78921d279212b52f44870596195a053027384776fc4dfc9777c7a0"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-12/lean_result_B2_messy_succession.json",
+    "sha256": "906a4b351be63ee45cb0da065b084645b865a02ed2d99154f0b58f31d3c37f84"
+   },
+   "base_value_today": 162.89,
+   "base_annual_return_pct": 11.4,
+   "weight": 0.35,
+   "note": "a world of the weighted value (worlds.json)"
+  },
+  {
+   "name": "C_export_hit",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-12/lean_params_C_export_hit.json",
+    "sha256": "5c09439075ad413d5a0c76bdf14754c98c3253b313795ef1f308802016f89292"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-12/lean_result_C_export_hit.json",
+    "sha256": "4c17250f817c84d111647c996859efc8bf3fb5cea45373d91c46523402b27366"
+   },
+   "base_value_today": 149.67,
+   "base_annual_return_pct": 9.6,
+   "weight": 0.2,
+   "note": "a world of the weighted value (worlds.json)"
+  }
+ ]
+}

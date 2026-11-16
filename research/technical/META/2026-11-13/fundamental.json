@@ -3,12 +3,415 @@
  "as_of": "2026-11-13",
  "price": 634.68,
  "price_time_utc": "2026-11-13 14:58 UTC (Yahoo chart API, intraday; IBKR returned 502)",
- "share_basis": "pre Class C 1-for-1 stock dividend (effective 19.1.2027, paid within 5 business days); post = pre / 2, tested against the average of the A and C quotes",
  "verdict_he": "החזקה: התרחיש הבסיסי נותן כ-6.5% בשנה והעדשה השנייה 10.4%, שתיהן באזור החזקה; לא מוסיפים מעל 491$ ולא מוכרים בין דוחות",
- "buy_test_price": 491,
+ "buy_test_price": 491.0,
+ "margin_of_safety_price": null,
+ "values": {
+  "today": {
+   "bear": 209.3,
+   "base": 513.2,
+   "bull": 910.8
+  },
+  "end_2027": {
+   "bear": 233.8,
+   "base": 575.5,
+   "bull": 1022.6
+  },
+  "end_2028": {
+   "bear": 259.2,
+   "base": 637.8,
+   "bull": 1133.3
+  },
+  "end_2029": {
+   "bear": 287.8,
+   "base": 707.0,
+   "bull": 1255.8
+  },
+  "end_2030": {
+   "bear": 319.2,
+   "base": 783.0,
+   "bull": 1390.3
+  },
+  "end_2031": {
+   "bear": 353.4,
+   "base": 866.0,
+   "bull": 1537.4
+  },
+  "weighted_today_25_50_25": 536.6,
+  "calibrated_today": null,
+  "calibrated_end_2031": 1043.7,
+  "depwave_evidenced_end_2031": 965.2,
+  "hist_multiple_today": {
+   "value": 624,
+   "range": [
+    537,
+    694
+   ],
+   "basis": "2027 consensus EPS 33.97 x own 5y median forward P/E 18.4 (p25-p75)"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "צמיחה של כ-8% בשנה, הפחת מכביד, מכפיל 15, קנס ניו מקסיקו במלואו עם ריבית"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה של כ-20% ב-2027 שדועכת לכ-10%, הפחת עולה לכ-25% מההכנסות, מכפיל כ-20"
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": "צמיחה של כ-19.6% בשנה, שיעור רווח גבוה יותר, מכפיל 22-24"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -10.19,
+  "base": 6.54,
+  "bull": 19.01,
+  "calibrated": 10.43,
+  "weighted": 7.46,
+  "index": 9.14,
+  "depwave_evidenced": 8.78,
+  "calibrated_full_depwave_weighted": 5.43
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-491$ (245.5$ אחרי החלוקה): שתי העדשות נותנות 12% בשנה ומעלה"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-725-783$ (362.5-391.5$): עד 6% מההון",
+   "תחזית ההוצאות ל-2027 מרמזת על שיעור רווח תפעולי קרוב ל-27%"
+  ],
+  "proposed_exit": [
+   "המחיר מעל כ-840$ (420$): מתחילים; מעל 907$ (453.5$): מסיימים",
+   "צמיחת ההכנסות מתחת ל-12% בשני רבעונים ברצף, בזמן שתחזית ההשקעות 200 מיליארד $ ומעלה",
+   "ב-2027-2028: המחיר לפרסומת פחות מ-8%+ וגם מספר הפרסומות פחות מ-5%+, בשני רבעונים ברצף",
+   "בדוח רבעון 4: אמצע תחזית ההוצאות ל-2027 מול הכנסות הקונצנזוס נותן שיעור רווח תפעולי מתחת ל-27% בלי הוצאות משפטיות",
+   "תחזית השקעות ל-2027 של 240 מיליארד $ ומעלה בלי קפיצה בהכנסות, ורמז ש-2028 גבוהה יותר",
+   "משפטים חדשים מעבר להסדר המדינות ולניו מקסיקו: יותר מכ-40 מיליארד $ ביחד, או שתי מדינות נוספות מעל 5 מיליארד $ כל אחת, או צו בניו מקסיקו שמשנה את המוצר מחוץ למדינה"
+  ]
+ },
+ "next_report": {
+  "date": "late January 2027",
+  "confirmed": false,
+  "check": "תחזית ההוצאות וההשקעות ל-2027, המחיר לפרסומת ומספר הפרסומות, הפרשה לקנס ניו מקסיקו, ולחשב מחדש את קווי הקנייה והמכירה"
+ },
+ "thesis_link": "research/companies/META/thesis_he.md",
+ "notes_he": [
+  "הקווים עולים כ-11% בשנה; בסוף 2027 קו המכירה כ-1,020$ (511$ אחרי החלוקה). מחשבים מחדש אחרי כל דוח",
+  "אחרי חלוקת Class C (ינואר 2027) כל מחיר מתחלק ב-2; בודקים מול הממוצע של A ו-C",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": "pre Class C 1-for-1 stock dividend (effective 19.1.2027, paid within 5 business days); post = pre / 2, tested against the average of the A and C quotes",
+  "known_split": null,
+  "model_kind": "three_lane",
+  "record": {
+   "path": "research/companies/META/2026-11-13/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 491.0,
+   "stated_price": 491.0,
+   "rerun_price": null,
+   "base_12_price": 491.0,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 6.54,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 491.0
+    },
+    "base_calibrated": {
+     "return_pct": 10.43,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 590.0
+    }
+   },
+   "note": "the ladder is saved at whole dollars; no 13% rung"
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-30",
+   "years_to_horizon": 5.13,
+   "rungs": [
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 491.0,
+     "price_second_lens": 590.0
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 561.0,
+     "price_second_lens": 674.0
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 651.0,
+     "price_second_lens": 783.0
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 755.0,
+     "price_second_lens": 907.0
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 491.0,
+   "rung": "buy_test.price",
+   "note": null
+  },
+  "index_parity_price": 561.0,
+  "hold_floor_price": 651.0,
+  "sell_line_price": 755.0,
+  "values_dated": {
+   "today": {
+    "bear": 209.3,
+    "base": 513.2,
+    "bull": 910.8,
+    "date": "2026-11-13",
+    "base_calibrated": null
+   },
+   "year_ends": [
+    {
+     "bear": 233.8,
+     "base": 575.5,
+     "bull": 1022.6,
+     "fiscal_year": 2027,
+     "date": "2027-12-30",
+     "base_calibrated": null
+    },
+    {
+     "bear": 259.2,
+     "base": 637.8,
+     "bull": 1133.3,
+     "fiscal_year": 2028,
+     "date": "2028-12-30",
+     "base_calibrated": null
+    },
+    {
+     "bear": 287.8,
+     "base": 707.0,
+     "bull": 1255.8,
+     "fiscal_year": 2029,
+     "date": "2029-12-30",
+     "base_calibrated": null
+    },
+    {
+     "bear": 319.2,
+     "base": 783.0,
+     "bull": 1390.3,
+     "fiscal_year": 2030,
+     "date": "2030-12-30",
+     "base_calibrated": null
+    },
+    {
+     "bear": 353.4,
+     "base": 866.0,
+     "bull": 1537.4,
+     "fiscal_year": 2031,
+     "date": "2031-12-30",
+     "base_calibrated": 1043.7
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 230.87,
+     "base": 568.03,
+     "bull": 1009.18,
+     "date": "2027-11-13",
+     "base_calibrated": null
+    },
+    "two_year": {
+     "bear": 255.79,
+     "base": 629.44,
+     "bull": 1118.44,
+     "date": "2028-11-13",
+     "base_calibrated": null
+    },
+    "five_year": {
+     "bear": 348.8,
+     "base": 854.84,
+     "bull": 1517.62,
+     "date": "2031-11-13",
+     "base_calibrated": null
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-30",
+     "source": "fiscal_year_end",
+     "bear": 233.8,
+     "base": 575.5,
+     "bull": 1022.6,
+     "second_lens": null
+    },
+    "five_year": {
+     "date": "2031-12-30",
+     "source": "horizon_year_end",
+     "bear": 353.4,
+     "base": 866.0,
+     "bull": 1537.4,
+     "second_lens": 1043.7
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": null,
+   "annual_return_pct": 10.43,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": null,
+   "note": "the model saves the second lens at the horizon only: no value today"
+  },
+  "historical_multiple": {
+   "value": 624,
+   "low": 537,
+   "high": 694,
+   "basis": null,
+   "company_type": null,
+   "note": "2027 consensus EPS 33.97 x own 5y median forward P/E 18.4 (p25-p75)"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-491$ (245.5$ אחרי החלוקה): שתי העדשות נותנות 12% בשנה ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-725-783$ (362.5-391.5$): עד 6% מההון",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "trim",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית ההוצאות ל-2027 מרמזת על שיעור רווח תפעולי קרוב ל-27%",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מעל כ-840$ (420$): מתחילים; מעל 907$ (453.5$): מסיימים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "צמיחת ההכנסות מתחת ל-12% בשני רבעונים ברצף, בזמן שתחזית ההשקעות 200 מיליארד $ ומעלה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ב-2027-2028: המחיר לפרסומת פחות מ-8%+ וגם מספר הפרסומות פחות מ-5%+, בשני רבעונים ברצף",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f4",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "בדוח רבעון 4: אמצע תחזית ההוצאות ל-2027 מול הכנסות הקונצנזוס נותן שיעור רווח תפעולי מתחת ל-27% בלי הוצאות משפטיות",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f5",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית השקעות ל-2027 של 240 מיליארד $ ומעלה בלי קפיצה בהכנסות, ורמז ש-2028 גבוהה יותר",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   },
+   {
+    "id": "f6",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "משפטים חדשים מעבר להסדר המדינות ולניו מקסיקו: יותר מכ-40 מיליארד $ ביחד, או שתי מדינות נוספות מעל 5 מיליארד $ כל אחת, או צו בניו מקסיקו שמשנה את המוצר מחוץ למדינה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "החזקה: התרחיש הבסיסי נותן כ-6.5% בשנה והעדשה השנייה 10.4%, שתיהן באזור החזקה; לא מוסיפים מעל 491$ ולא מוכרים בין דוחות",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-01-01",
+    "to": "2027-01-31"
+   },
+   "confirmed": false
+  }
+ },
+ "share_basis": "pre Class C 1-for-1 stock dividend (effective 19.1.2027, paid within 5 business days); post = pre / 2, tested against the average of the A and C quotes",
  "buy_test_price_basis": "pre Class C stock dividend share basis (the basis of price and values in this file)",
  "buy_test_price_post_class_c_dividend": 245.5,
- "margin_of_safety_price": null,
  "sell_price": {
   "rule_both_lenses": {
    "pre": 907,
@@ -53,89 +456,17 @@
    "post": 312.0
   }
  },
- "values": {
-  "today": {
-   "bear": 209.3,
-   "base": 513.2,
-   "bull": 910.8
-  },
-  "end_2027": {
-   "bear": 233.8,
-   "base": 575.5,
-   "bull": 1022.6
-  },
-  "end_2028": {
-   "bear": 259.2,
-   "base": 637.8,
-   "bull": 1133.3
-  },
-  "end_2031": {
-   "bear": 353.4,
-   "base": 866.0,
-   "bull": 1537.4
-  },
-  "weighted_today_25_50_25": 536.6,
-  "calibrated_end_2031": 1043.7,
-  "depwave_evidenced_end_2031": 965.2,
-  "hist_multiple_today": {
-   "value": 624,
-   "range": [
-    537,
-    694
-   ],
-   "basis": "2027 consensus EPS 33.97 x own 5y median forward P/E 18.4 (p25-p75)"
-  }
- },
- "scenarios": {
-  "bear": {
-   "prob": 0.25,
-   "he": "צמיחה של כ-8% בשנה, הפחת מכביד, מכפיל 15, קנס ניו מקסיקו במלואו עם ריבית"
-  },
-  "base": {
-   "prob": 0.5,
-   "he": "צמיחה של כ-20% ב-2027 שדועכת לכ-10%, הפחת עולה לכ-25% מההכנסות, מכפיל כ-20"
-  },
-  "bull": {
-   "prob": 0.25,
-   "he": "צמיחה של כ-19.6% בשנה, שיעור רווח גבוה יותר, מכפיל 22-24"
-  },
-  "label": "subjective"
- },
- "annual_return_pct": {
-  "bear": -10.19,
-  "base": 6.54,
-  "bull": 19.01,
-  "weighted": 7.46,
-  "calibrated": 10.43,
-  "depwave_evidenced": 8.78,
-  "calibrated_full_depwave_weighted": 5.43
- },
- "conditions": {
-  "add": [
-   "המחיר מתחת לכ-491$ (245.5$ אחרי החלוקה): שתי העדשות נותנות 12% בשנה ומעלה"
-  ],
-  "proposed_trim": [
-   "המחיר מעל כ-725-783$ (362.5-391.5$): עד 6% מההון",
-   "תחזית ההוצאות ל-2027 מרמזת על שיעור רווח תפעולי קרוב ל-27%"
-  ],
-  "proposed_exit": [
-   "המחיר מעל כ-840$ (420$): מתחילים; מעל 907$ (453.5$): מסיימים",
-   "צמיחת ההכנסות מתחת ל-12% בשני רבעונים ברצף, בזמן שתחזית ההשקעות 200 מיליארד $ ומעלה",
-   "ב-2027-2028: המחיר לפרסומת פחות מ-8%+ וגם מספר הפרסומות פחות מ-5%+, בשני רבעונים ברצף",
-   "בדוח רבעון 4: אמצע תחזית ההוצאות ל-2027 מול הכנסות הקונצנזוס נותן שיעור רווח תפעולי מתחת ל-27% בלי הוצאות משפטיות",
-   "תחזית השקעות ל-2027 של 240 מיליארד $ ומעלה בלי קפיצה בהכנסות, ורמז ש-2028 גבוהה יותר",
-   "משפטים חדשים מעבר להסדר המדינות ולניו מקסיקו: יותר מכ-40 מיליארד $ ביחד, או שתי מדינות נוספות מעל 5 מיליארד $ כל אחת, או צו בניו מקסיקו שמשנה את המוצר מחוץ למדינה"
-  ]
- },
- "next_report": {
-  "date": "late January 2027",
-  "confirmed": false,
-  "check": "תחזית ההוצאות וההשקעות ל-2027, המחיר לפרסומת ומספר הפרסומות, הפרשה לקנס ניו מקסיקו, ולחשב מחדש את קווי הקנייה והמכירה"
- },
- "thesis_link": "research/companies/META/thesis_he.md",
- "notes_he": [
-  "הקווים עולים כ-11% בשנה; בסוף 2027 קו המכירה כ-1,020$ (511$ אחרי החלוקה). מחשבים מחדש אחרי כל דוח",
-  "אחרי חלוקת Class C (ינואר 2027) כל מחיר מתחלק ב-2; בודקים מול הממוצע של A ו-C",
-  "המספר לשנה-שנתיים הוא הכי רועש"
+ "carried_from_previous": [
+  "annual_return_pct.calibrated_full_depwave_weighted",
+  "annual_return_pct.depwave_evidenced",
+  "buy_test_price_basis",
+  "buy_test_price_post_class_c_dividend",
+  "index_parity_price",
+  "sell_price",
+  "share_basis",
+  "trim_price",
+  "values.calibrated_end_2031",
+  "values.depwave_evidenced_end_2031",
+  "values.hist_multiple_today"
  ]
 }

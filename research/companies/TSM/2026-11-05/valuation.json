@@ -1,0 +1,540 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "TSM",
+ "company": null,
+ "as_of": "2026-11-05",
+ "price": {
+  "value": 362.13,
+  "time_utc": "2026-11-05 (time not recorded in the saved params)",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 5186.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/TSM/2026-11-05/lean_params.json",
+   "sha256": "6b21e280ad6508da7e1b0ad39612d313d45a8bb9c546224305167fe38e653db6"
+  },
+  "result": {
+   "path": "research/companies/TSM/2026-11-05/lean_result.json",
+   "sha256": "3665225e341d8f5b45bce0b8c8723ac86b6ea5d7833401172447e676f9e35945"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": "מחזור יורד: צמיחה 12% ב-2027 ו-‎-12%‎ ב-2028, שיעור רווח תפעולי יורד ל-45%-47%, מכפיל 12",
+   "value_today": 206.31,
+   "annual_return_pct": -2.1,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 229.99
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 251.73
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 274.82
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 299.27
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 325.05
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-05",
+     "value": 226.72,
+     "return_pct": -37.4
+    },
+    "two_year": {
+     "date": "2028-11-05",
+     "value": 248.28,
+     "return_pct": -17.2
+    },
+    "five_year": {
+     "date": "2031-11-05",
+     "value": 320.96,
+     "return_pct": -2.4
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה 25% ב-2027 שדועכת ל-8%; שיעור רווח תפעולי יורד מ-56% ל-52% (דור N2 ומפעלים מחוץ לטייוואן); מכפיל 18",
+   "value_today": 427.63,
+   "annual_return_pct": 13.3,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 478.18
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 525.58
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 576.55
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 631.18
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 689.52
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-05",
+     "value": 471.15,
+     "return_pct": 30.1
+    },
+    "two_year": {
+     "date": "2028-11-05",
+     "value": 518.03,
+     "return_pct": 19.6
+    },
+    "five_year": {
+     "date": "2031-11-05",
+     "value": 680.23,
+     "return_pct": 13.4
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": "צמיחה 32% ב-2027 שדועכת ל-10%, שיעור רווח תפעולי נשאר 58%, מכפיל 22",
+   "value_today": 661.21,
+   "annual_return_pct": 23.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 740.1
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 814.63
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 895.18
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 981.87
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 1074.8
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-05",
+     "value": 729.11,
+     "return_pct": 101.3
+    },
+    "two_year": {
+     "date": "2028-11-05",
+     "value": 802.76,
+     "return_pct": 48.9
+    },
+    "five_year": {
+     "date": "2031-11-05",
+     "value": 1059.99,
+     "return_pct": 24.0
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 430.69,
+  "end_value": 694.72,
+  "annual_return_pct": 13.5,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 459.93,
+  "annual_return_pct": 15.0,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": 18.3,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 514.39
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 565.54
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 620.6
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 679.66
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 742.77
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-05",
+    "value": 506.82,
+    "return_pct": 40.0
+   },
+   "two_year": {
+    "date": "2028-11-05",
+    "value": 557.4,
+    "return_pct": 24.1
+   },
+   "five_year": {
+    "date": "2031-11-05",
+    "value": 732.72,
+    "return_pct": 15.1
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": true,
+   "differs_from_base_only_by_multiple": false,
+   "pe_held": 18.25,
+   "pe_base_exit": 18,
+   "pe_held_to_base_exit": 1.01,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the lenses differ by the exit multiple and by the margin"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 175000.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 218750,
+    "op_margin": 0.56,
+    "eps_operating": 19.84
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 258125,
+    "op_margin": 0.55,
+    "eps_operating": 23.0
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 294263,
+    "op_margin": 0.54,
+    "eps_operating": 25.74
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 326631,
+    "op_margin": 0.53,
+    "eps_operating": 28.04
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 356028,
+    "op_margin": 0.52,
+    "eps_operating": 29.99
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 384510,
+    "op_margin": 0.52,
+    "eps_operating": 32.39
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.15,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 367.45,
+    "price_second_lens": 395.82,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 384.66,
+    "price_second_lens": 414.36,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 10.45,
+    "price": 413.28,
+    "price_second_lens": 445.2,
+    "label": "entry with a margin of safety: buy_return 10.45% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 439.47,
+    "price_second_lens": 473.41,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 510.77,
+    "price_second_lens": 550.21,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 592.15,
+    "price_second_lens": 637.89,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 384.66,
+   "stated_price": 384.66,
+   "rerun_price": 384.66,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 13.3,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 384.66
+    },
+    "base_calibrated": {
+     "return_pct": 15.0,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 414.36
+    },
+    "bull": {
+     "return_pct": 23.5,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 478.82
+    },
+    "bear": {
+     "return_pct": -2.1,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 559.24
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 384.66,
+  "base_12_price": 384.66,
+  "margin_of_safety_price": 367.45,
+  "index_parity_price": 439.47,
+  "hold_floor_price": 510.77,
+  "sell_line_price": 592.15,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 367.45,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-385$ ל-ADR: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית הכנסות ל-2027 של כ-215 מיליארד $ ומעלה ותחזית רווח גולמי של 60% ומעלה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-550$ ל-ADR: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית הכנסות ל-2027 מתחת לכ-215 מיליארד $ (מתחת לקצב של רבעון 4), או תחזית רווח גולמי מתחת ל-60%",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "סגר ימי או עימות צבאי סביב טייוואן: יציאה בלי קשר למחיר",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-638$ ל-ADR: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-01-12",
+   "to": "2027-01-18"
+  },
+  "confirmed": false,
+  "text": "~2027-01-15",
+  "check_he": "תחזית ההכנסות והרווח הגולמי ל-2027, ההשקעות, והביקוש לשבבי AI"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "עוברת את מבחן הקנייה במחיר של 5.11 (362$ ל-ADR): בסיסי 13.3% בשנה, עדשה שנייה 15.0%; מבחן הקנייה עובר עד כ-385$. סיכון טייוואן לא במודל",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": true,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 0
+ },
+ "notes_he": [
+  "העתק של הערכת השווי מ-5.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: בסביבות 15.1.2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "thesis_link": "research/companies/TSM/thesis_he.md",
+ "warnings": [],
+ "index_texts": {
+  "next_check_he": "דוח רבעון 4, בסביבות 15.1.2027 (לא אושר)",
+  "updated_note_he": "העתק, בלי בדיקה מחדש"
+ }
+}

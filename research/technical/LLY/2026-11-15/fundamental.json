@@ -5,9 +5,7 @@
  "price_time_utc": "2026-11-13 21:00 (NYSE close); latest quote 1439.99 at 2026-11-14 00:57 UTC (IBKR, after-hours, frozen)",
  "verdict_he": "לא לקנות במחיר הזה: עסק מצוין, אבל המחיר מגלם יותר מהתרחיש השורי; כל ארבעת חלקי מבחן הקנייה נכשלים",
  "buy_test_price": 668.81,
- "buy_test_price_rerun": 569.1,
  "margin_of_safety_price": 638.99,
- "margin_of_safety_price_rerun": 528.53,
  "values": {
   "today": {
    "bear": 342.23,
@@ -23,6 +21,16 @@
    "bear": 402.96,
    "base": 957.72,
    "bull": 1965.32
+  },
+  "end_2029": {
+   "bear": 434.71,
+   "base": 1031.71,
+   "bull": 2117.1
+  },
+  "end_2030": {
+   "bear": 468.33,
+   "base": 1111.15,
+   "bull": 2281.58
   },
   "end_2031": {
    "bear": 503.78,
@@ -65,7 +73,7 @@
   "bull": 10.9,
   "calibrated": 2.4,
   "weighted": -2.4,
-  "index": 9.14,
+  "index": 9.1,
   "to_end_2028": {
    "bear": -45.1,
    "base": -17.5,
@@ -73,6 +81,381 @@
    "calibrated": -4.7
   }
  },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": [],
+  "would_pass_buy_test": [
+   "המחיר מתחת לכ-669$ (בהרצה חוזרת כ-569$): כל חלקי מבחן הקנייה עוברים",
+   "או שהעסק עולה למסלול השורי: תחזית 2027 של 112 מיליארד $ ומעלה עם שיעור רווח 54.5% ומעלה (הודעת התוצאות של רבעון 4)"
+  ],
+  "would_improve_view": [
+   "ירידת המחיר נטו של התרופות מאטה אל מתחת ל-10% בשנה (2026: 13-15%, הודעות התוצאות)",
+   "הסכם קבוע לכיסוי Medicare אחרי 31.12.2027 (10-Q)",
+   "אישור רחב ל-retatrutide ו-Foundayo מעל מיליארד $ ברבעון במהלך 2027",
+   "רכישות חוזרות לכ-4-5 מיליארד $ בשנה (2023-2025: 3.7-5.0; תשעה חודשים של 2026: 18.2)"
+  ],
+  "would_worsen_view": [
+   "הפסד במשפט הפטנטים על tirzepatide (פטנט בארה\"ב עד 2036; בקשות גנריות הוגשו ב-2026, 10-Q)",
+   "גרסה גנרית של semaglutide בארה\"ב מוקדם מ-2032 (Novo Nordisk 20-F)",
+   "אין הסכם Medicare עד אמצע 2027",
+   "בעיית בטיחות, או עוד שנת רכישות כמו 2026"
+  ]
+ },
+ "next_report": {
+  "date": "~2027-02-03",
+  "confirmed": false,
+  "check": "תחזית 2027 (הכנסות ושיעור רווח), ירידת המחיר מול הכמויות, Medicare, Foundayo ו-retatrutide, היקף הרכישות; יום משקיעים ב-7.12.2026"
+ },
+ "thesis_link": "research/companies/LLY/thesis_he.md",
+ "notes_he": [
+  "המחיר הוא שיא סגירה של 52 שבועות; כדי להצדיק אותו ההכנסות צריכות להגיע ל-246 מיליארד $ ב-2031 (בסיסי 146.5, שורי 196)",
+  "העדשה השנייה (המכפיל של היום נשמר) אינה דעה שנייה עצמאית כאן: המודל מזהיר שהמכפיל גבוה פי 1.75 ממכפיל היציאה שלנו",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/LLY/2026-11-15/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 569.1,
+   "stated_price": 668.81,
+   "rerun_price": 569.1,
+   "base_12_price": 668.81,
+   "binding_leg": "base_calibrated",
+   "pass_at_price": false,
+   "rerun_used": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": -3.6,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 668.81
+    },
+    "base_calibrated": {
+     "return_pct": 2.4,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 912.13
+    },
+    "bull": {
+     "return_pct": 10.9,
+     "threshold_pct": 17.0,
+     "pass": false,
+     "max_price": 1099.08
+    },
+    "bear": {
+     "return_pct": -18.6,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 864.92
+    }
+   },
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used"
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.13,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 638.99,
+     "price_second_lens": 871.47
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 668.81,
+     "price_second_lens": 912.13
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 668.81,
+     "price_second_lens": 912.13
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 763.72,
+     "price_second_lens": 1041.57
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 887.1,
+     "price_second_lens": 1209.83
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 1027.86,
+     "price_second_lens": 1401.81
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 638.99,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 763.72,
+  "hold_floor_price": 887.1,
+  "sell_line_price": 1027.86,
+  "values_dated": {
+   "today": {
+    "bear": 342.23,
+    "base": 818.1,
+    "bull": 1682.22,
+    "date": "2026-11-15",
+    "base_calibrated": 1114.87
+   },
+   "year_ends": [
+    {
+     "bear": 373.22,
+     "base": 889.03,
+     "bull": 1825.65,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 1210.7
+    },
+    {
+     "bear": 402.96,
+     "base": 957.72,
+     "bull": 1965.32,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 1303.81
+    },
+    {
+     "bear": 434.71,
+     "base": 1031.71,
+     "bull": 2117.1,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 1404.66
+    },
+    {
+     "bear": 468.33,
+     "base": 1111.15,
+     "bull": 2281.58,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 1513.7
+    },
+    {
+     "bear": 503.78,
+     "base": 1196.16,
+     "bull": 2459.36,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 1631.34
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 369.58,
+     "base": 880.76,
+     "bull": 1808.98,
+     "date": "2027-11-15",
+     "base_calibrated": 1199.55
+    },
+    "two_year": {
+     "bear": 399.1,
+     "base": 948.8,
+     "bull": 1947.19,
+     "date": "2028-11-15",
+     "base_calibrated": 1291.73
+    },
+    "five_year": {
+     "bear": 499.17,
+     "base": 1185.1,
+     "bull": 2436.21,
+     "date": "2031-11-15",
+     "base_calibrated": 1616.02
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 373.22,
+     "base": 889.03,
+     "bull": 1825.65,
+     "second_lens": 1210.7
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 503.78,
+     "base": 1196.16,
+     "bull": 2459.36,
+     "second_lens": 1631.34
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 1114.87,
+   "annual_return_pct": 2.4,
+   "band": "sell",
+   "band_ours": "sell",
+   "agree": true,
+   "inflated_multiple_warning": true,
+   "note": "the held multiple looks inflated: the calibrated lens is not a second opinion here; set \"calibrated.pe\"; the held multiple 34.9 is 1.75x the base exit multiple 20 (above 1.5x)"
+  },
+  "historical_multiple": {
+   "value": 1910.62,
+   "low": 1456.42,
+   "high": 2305.58,
+   "basis": null,
+   "company_type": null,
+   "note": "סדרת מכפילים שחושבה בדיעבד; המכפיל הישן שייך לשנים של צמיחת רווח של 46-105% בשנה"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-669$ (בהרצה חוזרת כ-569$): כל חלקי מבחן הקנייה עוברים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_pass_buy_test; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "או שהעסק עולה למסלול השורי: תחזית 2027 של 112 מיליארד $ ומעלה עם שיעור רווח 54.5% ומעלה (הודעת התוצאות של רבעון 4)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_pass_buy_test; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ירידת המחיר נטו של התרופות מאטה אל מתחת ל-10% בשנה (2026: 13-15%, הודעות התוצאות)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_improve_view; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "הסכם קבוע לכיסוי Medicare אחרי 31.12.2027 (10-Q)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_improve_view; not typed"
+   },
+   {
+    "id": "c5",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "אישור רחב ל-retatrutide ו-Foundayo מעל מיליארד $ ברבעון במהלך 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_improve_view; not typed"
+   },
+   {
+    "id": "c6",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "רכישות חוזרות לכ-4-5 מיליארד $ בשנה (2023-2025: 3.7-5.0; תשעה חודשים של 2026: 18.2)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_improve_view; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "הפסד במשפט הפטנטים על tirzepatide (פטנט בארה\"ב עד 2036; בקשות גנריות הוגשו ב-2026, 10-Q)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_worsen_view; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "גרסה גנרית של semaglutide בארה\"ב מוקדם מ-2032 (Novo Nordisk 20-F)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_worsen_view; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "אין הסכם Medicare עד אמצע 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_worsen_view; not typed"
+   },
+   {
+    "id": "f4",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "בעיית בטיחות, או עוד שנת רכישות כמו 2026",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.would_worsen_view; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "לא לקנות במחיר הזה: עסק מצוין, אבל המחיר מגלם יותר מהתרחיש השורי; כל ארבעת חלקי מבחן הקנייה נכשלים",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-01-31",
+    "to": "2027-02-06"
+   },
+   "confirmed": false
+  }
+ },
+ "buy_test_price_rerun": 569.1,
+ "margin_of_safety_price_rerun": 528.53,
  "price_ladder": {
   "buy_test_12pct": {
    "ours": 668.81,
@@ -120,33 +503,18 @@
   "rerun_max_price_passing": 569.1,
   "rerun_binding_leg": "base_calibrated"
  },
- "conditions": {
-  "would_pass_buy_test": [
-   "המחיר מתחת לכ-669$ (בהרצה חוזרת כ-569$): כל חלקי מבחן הקנייה עוברים",
-   "או שהעסק עולה למסלול השורי: תחזית 2027 של 112 מיליארד $ ומעלה עם שיעור רווח 54.5% ומעלה (הודעת התוצאות של רבעון 4)"
-  ],
-  "would_improve_view": [
-   "ירידת המחיר נטו של התרופות מאטה אל מתחת ל-10% בשנה (2026: 13-15%, הודעות התוצאות)",
-   "הסכם קבוע לכיסוי Medicare אחרי 31.12.2027 (10-Q)",
-   "אישור רחב ל-retatrutide ו-Foundayo מעל מיליארד $ ברבעון במהלך 2027",
-   "רכישות חוזרות לכ-4-5 מיליארד $ בשנה (2023-2025: 3.7-5.0; תשעה חודשים של 2026: 18.2)"
-  ],
-  "would_worsen_view": [
-   "הפסד במשפט הפטנטים על tirzepatide (פטנט בארה\"ב עד 2036; בקשות גנריות הוגשו ב-2026, 10-Q)",
-   "גרסה גנרית של semaglutide בארה\"ב מוקדם מ-2032 (Novo Nordisk 20-F)",
-   "אין הסכם Medicare עד אמצע 2027",
-   "בעיית בטיחות, או עוד שנת רכישות כמו 2026"
-  ]
- },
- "next_report": {
-  "date": "~2027-02-03",
-  "confirmed": false,
-  "check": "תחזית 2027 (הכנסות ושיעור רווח), ירידת המחיר מול הכמויות, Medicare, Foundayo ו-retatrutide, היקף הרכישות; יום משקיעים ב-7.12.2026"
- },
- "thesis_link": "research/companies/LLY/thesis_he.md",
- "notes_he": [
-  "המחיר הוא שיא סגירה של 52 שבועות; כדי להצדיק אותו ההכנסות צריכות להגיע ל-246 מיליארד $ ב-2031 (בסיסי 146.5, שורי 196)",
-  "העדשה השנייה (המכפיל של היום נשמר) אינה דעה שנייה עצמאית כאן: המודל מזהיר שהמכפיל גבוה פי 1.75 ממכפיל היציאה שלנו",
-  "המספר לשנה-שנתיים הוא הכי רועש"
+ "carried_from_previous": [
+  "annual_return_pct.to_end_2028",
+  "buy_test",
+  "buy_test_price_rerun",
+  "conditions.would_improve_view",
+  "conditions.would_pass_buy_test",
+  "conditions.would_worsen_view",
+  "margin_of_safety_price_rerun",
+  "price_ladder",
+  "values.calibrated_end_2027",
+  "values.calibrated_end_2028",
+  "values.calibrated_end_2031",
+  "values.historical_multiple"
  ]
 }

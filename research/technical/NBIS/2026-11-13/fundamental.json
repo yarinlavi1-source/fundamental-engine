@@ -1,47 +1,48 @@
 {
  "ticker": "NBIS",
- "as_of": "2026-11-13 (after the Q3 interim-statements 6-K, notes 1-16)",
+ "as_of": "2026-11-13",
  "price": 110.46,
  "price_time_utc": "2026-11-13T15:30:53Z",
  "verdict_he": "לא לקנות במחיר הזה: הבסיסי כ-9% בשנה (כמו המדד), העדשה השנייה כ-12% במימון ריאלי (על הגבול), ובתרחיש הדובי רוב ההון אובד",
  "buy_test_price": 95.19,
- "buy_test_price_calibrated": 122.33,
- "buy_test_price_financing_realistic": {
-  "ours": 88.93,
-  "calibrated": 111.64,
-  "note": "debt 8.5% + $6B of shares at $95"
- },
- "index_parity_price": {
-  "base": 108.7,
-  "weighted_subjective": 115.8
- },
- "margin_of_safety_price": null,
- "buy_test_passes_at_any_price": false,
+ "margin_of_safety_price": 90.95,
  "values": {
   "today": {
-   "bear": "0-20 (model 0.01)",
+   "bear": 0.0,
    "base": 63.6,
    "bull": 235.59,
    "calibrated": 88.37
   },
   "end_2027": {
-   "bear": 0.01,
+   "bear": 0.0,
    "base": 77.84,
    "bull": 278.56,
    "calibrated": 106.81
   },
   "end_2028": {
-   "bear": 0.01,
+   "bear": 0.0,
    "base": 98.52,
    "bull": 323.46,
    "calibrated": 131.68
   },
+  "end_2029": {
+   "bear": 0.0,
+   "base": 121.6,
+   "bull": 372.59
+  },
+  "end_2030": {
+   "bear": 0.0,
+   "base": 145.8,
+   "bull": 425.32
+  },
   "end_2031": {
-   "bear": 0.01,
+   "bear": 0.0,
    "base": 170.25,
    "bull": 481.23,
    "calibrated": 218.79
   },
+  "weighted_today_30_50_20": 78.92,
+  "calibrated_today": 88.37,
   "weighted_today": 78.92,
   "weighted_end_2031": 181.37
  },
@@ -61,16 +62,17 @@
   "label": "subjective"
  },
  "annual_return_pct": {
-  "bear": "-80 to -100",
+  "bear": null,
   "base": 8.8,
   "bull": 33.2,
   "calibrated": 14.3,
+  "weighted": 10.1,
+  "index": 9.1,
   "financing_realistic": {
    "ours": 7.4,
    "calibrated": 12.2
   },
   "weighted_subjective": 10.1,
-  "index": 9.1,
   "two_year_to_end_2028": {
    "base_ours": -5.2,
    "calibrated": 8.6,
@@ -79,6 +81,9 @@
   }
  },
  "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": [],
   "add_small_bet_only_if_all": [
    "דוח רבעון 4 מראה רווחיות חוזרת בענן של כ-40% ומעלה (לפני פחת)",
    "החוב של לקוח E (כ-404 מיליון $, ההכנסה מהשותפות) נגבה",
@@ -112,5 +117,431 @@
   "הכנסות 2028 הן הנתון הרגיש: כל 1.5 מיליארד $ פחות מורידים כ-8-10$ מהשווי הבסיסי",
   "ב-2027 חסרים 6-11 מיליארד $ של מימון בלי מקור, והלוואת Citi (3.5 מיליארד $) צריכה מחזור באוקטובר 2027",
   "השווי הבסיסי ירד ב-13.11 מ-67$ ל-64$ בגלל הביאורים, בעיקר רווחיות נקייה נמוכה יותר"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/NBIS/2026-11-13/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": null,
+   "stated_price": null,
+   "rerun_price": null,
+   "base_12_price": 95.19,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 8.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 95.19
+    },
+    "base_calibrated": {
+     "return_pct": 14.3,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 122.33
+    },
+    "bull": {
+     "return_pct": 33.2,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 215.06
+    },
+    "bear": {
+     "return_pct": -83.7,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": null
+    }
+   },
+   "note": "the bear case wipes the equity at the horizon: no price passes that leg"
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.13,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 90.95,
+     "price_second_lens": 116.88
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 95.19,
+     "price_second_lens": 122.33
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 95.19,
+     "price_second_lens": 122.33
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 108.7,
+     "price_second_lens": 139.69
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 126.26,
+     "price_second_lens": 162.26
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 146.3,
+     "price_second_lens": 188.01
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 90.95,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 108.7,
+  "hold_floor_price": 126.26,
+  "sell_line_price": 146.3,
+  "values_dated": {
+   "today": {
+    "bear": 0.0,
+    "base": 63.6,
+    "bull": 235.59,
+    "date": "2026-11-13",
+    "base_calibrated": 88.37
+   },
+   "year_ends": [
+    {
+     "bear": 0.0,
+     "base": 77.84,
+     "bull": 278.56,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 106.81
+    },
+    {
+     "bear": 0.0,
+     "base": 98.52,
+     "bull": 323.46,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 131.68
+    },
+    {
+     "bear": 0.0,
+     "base": 121.6,
+     "bull": 372.59,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 159.41
+    },
+    {
+     "bear": 0.0,
+     "base": 145.8,
+     "bull": 425.32,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 188.73
+    },
+    {
+     "bear": 0.0,
+     "base": 170.25,
+     "bull": 481.23,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 218.79
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 0.0,
+     "base": 75.98,
+     "bull": 273.14,
+     "date": "2027-11-13",
+     "base_calibrated": 104.43
+    },
+    "two_year": {
+     "bear": 0.0,
+     "base": 95.52,
+     "bull": 317.18,
+     "date": "2028-11-13",
+     "base_calibrated": 128.11
+    },
+    "five_year": {
+     "bear": 0.0,
+     "base": 166.81,
+     "bull": 473.48,
+     "date": "2031-11-13",
+     "base_calibrated": 214.58
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 0.0,
+     "base": 77.84,
+     "bull": 278.56,
+     "second_lens": 106.81
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 0.0,
+     "base": 170.25,
+     "bull": 481.23,
+     "second_lens": 218.79
+    }
+   }
+  },
+  "wiped": {
+   "bear": true,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 88.37,
+   "annual_return_pct": 14.3,
+   "band": "buy",
+   "band_ours": "hold",
+   "agree": false,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "דוח רבעון 4 מראה רווחיות חוזרת בענן של כ-40% ומעלה (לפני פחת)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "החוב של לקוח E (כ-404 מיליון $, ההכנסה מהשותפות) נגבה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מחזור או הארכה ל-Citi, או מקור ידוע ל-6-11 מיליארד $ של 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+   },
+   {
+    "id": "c4",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מחיר כ-95$ ומטה, או שהבסיס במימון ריאלי מגיע ל-12% בשנה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.add_small_bet_only_if_all; not typed"
+   },
+   {
+    "id": "c5",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ARR ויעד שנתי של 9 מיליארד $ ומעלה: לא מתקיים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+   },
+   {
+    "id": "c6",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "רווחיות לא יורדת וחיי שרתים של 5 שנים: לא מתקיים (חיי שרתים אושרו, הרווחיות הנקייה ירדה כנראה)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+   },
+   {
+    "id": "c7",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "אין הנפקה זולה, ויש תוכנית ל-Citi: לא מתקיים (אין תוכנית)",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+   },
+   {
+    "id": "c8",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מחיר לא רחוק מעל 150-160$: מתקיים",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.entry_conditions_11_11; not typed"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית 2027 מתחת ל-12 מיליארד $",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "Microsoft מבטלת חלק או מקבלת פיצוי",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "גיוס של יותר מ-3 מיליארד $ במחיר מתחת ל-100$",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f4",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ההכנסה מהשותפות לא נגבית או נמחקת עד דוח רבעון 4",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f5",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "Citi לא מוחזרת או מוארכת עד אמצע 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f6",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "קיצור חיי השרתים או מחיקה",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   },
+   {
+    "id": "f7",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "התחייבויות ל-24 חודשים מתחת לכ-20 מיליארד $ בדוח רבעון 1 2027",
+    "state": "open",
+    "note": "imported from the v1 handoff key conditions.exit_falsifiers; not typed"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "לא לקנות במחיר הזה: הבסיסי כ-9% בשנה (כמו המדד), העדשה השנייה כ-12% במימון ריאלי (על הגבול), ובתרחיש הדובי רוב ההון אובד",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-01",
+    "to": "2027-03-31"
+   },
+   "confirmed": false
+  }
+ },
+ "buy_test_price_calibrated": 122.33,
+ "buy_test_price_financing_realistic": {
+  "ours": 88.93,
+  "calibrated": 111.64,
+  "note": "debt 8.5% + $6B of shares at $95"
+ },
+ "index_parity_price": {
+  "base": 108.7,
+  "weighted_subjective": 115.8
+ },
+ "buy_test_passes_at_any_price": false,
+ "carried_from_previous": [
+  "annual_return_pct.financing_realistic",
+  "annual_return_pct.two_year_to_end_2028",
+  "annual_return_pct.weighted_subjective",
+  "buy_test_passes_at_any_price",
+  "buy_test_price_calibrated",
+  "buy_test_price_financing_realistic",
+  "conditions.add_small_bet_only_if_all",
+  "conditions.entry_conditions_11_11",
+  "conditions.exit_falsifiers",
+  "conditions.source",
+  "index_parity_price",
+  "values.end_2027.calibrated",
+  "values.end_2028.calibrated",
+  "values.end_2031.calibrated",
+  "values.today.calibrated",
+  "values.weighted_end_2031",
+  "values.weighted_today"
  ]
 }

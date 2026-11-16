@@ -8,6 +8,7 @@ Value = average of the two. Year-end values are conditional values on each path,
 
 Usage: python scripts/lean_model.py params.json [--out result.json] [--summary]
                                     [--price P] [--as-of YYYY-MM-DD] [--params-out repriced_params.json]
+                                    [--worlds worlds.json]
 --summary prints a short plain table (values, 2-year and 5-year ranges, values in exactly 1, 2 and 5 years, returns, the
 return with distributions, ladder, buy test, method gap, sensitivities, warnings) instead of the JSON; --out still writes
 the full JSON.
@@ -84,12 +85,38 @@ Reporting keys of the engine upgrade (15.11.2026, second set; additive, no earli
 - price_ladder.rungs.margin_of_safety_13: a fixed 13% rung, the handoff's margin_of_safety_price. The older
   margin_of_safety rung is the company hurdle (buy_return): its key, label and prices are unchanged and "meaning" says so.
 In these new keys a wiped scenario is value 0 and return null (the older keys keep the 0.01 floor).
+
+Optional inputs of the engine upgrade (15.11.2026, P3b; absent = the output is identical, key for key):
+- Per-scenario "funding": scenarios.<k>.funding = {"equity_raise_m": {year index: $M}, "issue_price": number or "model",
+  "debt_raise_m": {year index: $M}, "debt_rate": r, "why": text}. The year index is the charge index (0 = base year + 1)
+  and the money arrives at the start of that year (the year-end before it; key 0 = the base year-end, where net_cash_m
+  is measured), so it pays for that year's spending and earns or saves interest from then on. Equity: the proceeds go
+  into net cash and the new shares (amount / issue_price) into the share count. "model" = the scenario's own value per
+  share at that year-end, after the money (closed form: shares = shares before / (1 - sum of raise / total value at its
+  year-end)), so a raise at the model's value moves no value from the holders. Every per-share value is on the full
+  share count of the plan, with a later raise's proceeds discounted at the cost of equity (fully diluted, which is the
+  holders' value when the shares are sold at the issue price); EPS uses the shares out in that year. Debt: borrowing
+  leaves net cash unchanged at issue (cash and debt rise together); the named debt pays debt_rate to the horizon while
+  the cash it brought earns cash_yield until it is spent. debt_rate (funding) replaces the file's debt_rate for this
+  scenario, on the named debt and on any other net debt. The scenario's result gains "funding" (shares before and after,
+  issue prices, the money by the year-end it lands); the funding key lists the plan and flags only the outside money the
+  plan does not name. Use it in place of a side script that edits net_cash_m and shares_m by hand.
+- "worlds": a params key or a separate file given with --worlds: {"worlds": [{"name", "file", "weight"}]} with the
+  files relative to the file that names them and weights that sum to 1. Every world is a full params file (same ticker,
+  price, as_of, base year and dates as the main file; with --price / --as-of each world is repriced the same way). The
+  output gains "worlds": per world its bear/base/bull (and calibrated) value today, dated year-end values, values at
+  exactly 1, 2 and 5 years and 5-year returns, buy test and 13% price; and the weighted values (sum of weight x value,
+  for each scenario, today, at each year-end and at 1, 2 and 5 years), the weighted 5-year return of each scenario from
+  the weighted horizon value against the price, the weighted price ladder and the weighted buy test (its rerun price
+  holds each world's own multiple at the trial price). The existing keys describe the main file only.
 """
 import argparse
 import copy
 import datetime
+import hashlib
 import json
 import math
+import os
 import re
 import sys
 
@@ -317,6 +344,48 @@ def _check_scenario(name, d, warns):
                                   'year); the model would drop the charge')
                 elif not _num(v):
                     errors.append(f'scenario {name}: charge {k!r} must be a number (got {v!r})')
+    if d.get('funding') is not None:
+        errors += _check_funding(name, d['funding'], warns)
+    return errors
+
+
+FUNDING_KEYS = ('equity_raise_m', 'issue_price', 'debt_raise_m', 'debt_rate', 'why', 'note')
+
+
+def _check_funding(name, f, warns):
+    """Errors of a scenario's funding plan (see the docstring); warnings go to warns."""
+    tag = f'scenario {name}: funding'
+    if not isinstance(f, dict):
+        return [f'{tag} must be an object {{equity_raise_m, issue_price, debt_raise_m, debt_rate}}']
+    errors = [f'{tag}: unknown key {k!r} (the keys are {", ".join(FUNDING_KEYS)})' for k in f if k not in FUNDING_KEYS]
+    for key in ('equity_raise_m', 'debt_raise_m'):
+        sched = f.get(key)
+        if sched is None:
+            continue
+        if not isinstance(sched, dict):
+            errors.append(f'{tag}.{key} must be an object {{year index 0-5: $M}}')
+            continue
+        for k, v in sched.items():
+            try:
+                i = int(k)
+            except (TypeError, ValueError):
+                i = None
+            if i is None or not 0 <= i <= 5:
+                errors.append(f'{tag}.{key}: key {k!r} is not a year index 0-5 (0 = base year + 1, the money arrives at the '
+                              'base year-end; not a calendar year)')
+            elif not (_num(v) and v >= 0):
+                errors.append(f'{tag}.{key}: {k!r} must be an amount of $M, zero or more (got {v!r}); buybacks are not '
+                              'modelled here')
+    raises = any(_num(v) and v > 0 for v in (f.get('equity_raise_m') or {}).values()) if isinstance(f.get('equity_raise_m'), dict) else False
+    px = f.get('issue_price')
+    if raises and px is None:
+        errors.append(f'{tag}: equity_raise_m needs issue_price (a price per share, or "model")')
+    elif px is not None and px != 'model' and not (_num(px) and px > 0):
+        errors.append(f'{tag}: issue_price must be a positive number or "model" (got {px!r})')
+    if 'debt_rate' in f and not (_num(f['debt_rate']) and 0 <= f['debt_rate'] < 0.5):
+        errors.append(f'{tag}: debt_rate must be a fraction from 0 to under 0.5, e.g. 0.085 for 8.5% (got {f["debt_rate"]!r})')
+    if not errors and not raises and 'debt_rate' not in f and not any((f.get('debt_raise_m') or {}).values()):
+        warns.append(f'{tag} names no money and no rate: it changes nothing')
     return errors
 
 
@@ -386,22 +455,21 @@ def _ke_path(p, n):
     return [k0 + (km - k0) * min(i, 10) / 10 for i in range(n)]
 
 
-def run_scenario(p, d, detail=False, tg=None):
-    """One scenario. Revenue index 0 = base year; g/m/conv index i = base year + 1 + i (6 years).
-
-    tg: terminal growth for the sensitivity rows only; None = the risk-free rate, the model's rule."""
-    tax, sh = p['tax'], d.get('shares_m', p['shares_m'])  # per-scenario shares (e.g. warrants vesting with the deals)
+def _operating(p, d, tg=None):
+    """The operating path of one scenario: revenue, operating profit, NOPAT, free cash flow (6 forecast years and 9
+    fade years), the cost-of-equity path and the terminal value. tg: None = the risk-free rate."""
+    tax = p['tax']
     rev = [p['rev0_m']]
-    opi, eps_op, fcf = [], [], []
+    opi, nopat, fcf = [], [], []
     charge = {int(k): v for k, v in (d.get('charge') or {}).items()}
     for i, g in enumerate(d['g']):
         r = rev[-1] * (1 + g)
         rev.append(r)
         oi = r * d['m'][i]
         opi.append(oi)
-        nopat = oi * (1 - tax)
-        eps_op.append(nopat / sh)
-        fcf.append(nopat * d['conv'][i] - charge.get(i, 0.0))
+        n = oi * (1 - tax)
+        nopat.append(n)
+        fcf.append(n * d['conv'][i] - charge.get(i, 0.0))
     tg, roic = (p['rf'] if tg is None else tg), p['roic_terminal']
     g_last, n_last = d['g'][-1], opi[-1] * (1 - tax)
     for j in range(1, 10):
@@ -410,6 +478,19 @@ def run_scenario(p, d, detail=False, tg=None):
         fcf.append(n_last * (1 - g / roic))
     ke = _ke_path(p, len(fcf) + 1)
     tv = n_last * (1 + tg) * (1 - tg / roic) / (ke[len(fcf)] - tg)
+    return rev, opi, nopat, fcf, ke, tv
+
+
+def run_scenario(p, d, detail=False, tg=None):
+    """One scenario. Revenue index 0 = base year; g/m/conv index i = base year + 1 + i (6 years).
+
+    tg: terminal growth for the sensitivity rows only; None = the risk-free rate, the model's rule.
+    A scenario with a "funding" plan runs in _run_funded (absent = this path, unchanged)."""
+    if d.get('funding'):
+        return _run_funded(p, d, detail, tg)
+    tax, sh = p['tax'], d.get('shares_m', p['shares_m'])  # per-scenario shares (e.g. warrants vesting with the deals)
+    rev, opi, nopat, fcf, ke, tv = _operating(p, d, tg)
+    eps_op = [n / sh for n in nopat]
     cash = [p['net_cash_m']]
     for i in range(5):
         c = cash[-1]
@@ -454,6 +535,112 @@ def run_scenario(p, d, detail=False, tg=None):
         return res, {'shares_m': sh, 'nopat': [x * (1 - tax) for x in opi], 'fcf': fcf[:5], 'cash': cash,
                      'val_raw': [(a + b) / 2 for a, b in zip(dcf, mul)], 'val': val, 'today': today, 'ret': ret,
                      'dcf': dcf, 'mul': mul, 'eps_op': eps_op, 'ke': ke}
+    return res
+
+
+def _schedule(f, key):
+    return {int(k): float(v) for k, v in (f.get(key) or {}).items() if v}
+
+
+def _run_funded(p, d, detail=False, tg=None):
+    """run_scenario with a funding plan (docstring, "funding"): the same operating path; the named equity and debt are
+    in the net-cash path, the new shares in the share count. Values are totals first, then per share on the plan's
+    full share count."""
+    f = d['funding']
+    tax, sh0, y0 = p['tax'], d.get('shares_m', p['shares_m']), p['base_year']
+    rd = f.get('debt_rate', p.get('debt_rate', p['cash_yield']))
+    eq, dt = _schedule(f, 'equity_raise_m'), _schedule(f, 'debt_raise_m')
+    rev, opi, nopat, fcf, ke, tv = _operating(p, d, tg)
+    # bal = net cash before the named debt (earns cash_yield, or pays rd below zero); debt = the named debt (pays rd)
+    bal, debt = p['net_cash_m'] + eq.get(0, 0.0) + dt.get(0, 0.0), dt.get(0, 0.0)
+    cash, owed, interest = [bal - debt], [debt], []
+    for i in range(6):
+        rate = p['cash_yield'] if bal >= 0 else rd
+        interest.append((bal * rate - debt * rd) * (1 - tax))   # after tax, during model year i
+        if i < 5:
+            bal += fcf[i] + interest[i] + eq.get(i + 1, 0.0) + dt.get(i + 1, 0.0)
+            debt += dt.get(i + 1, 0.0)
+            cash.append(bal - debt)
+            owed.append(debt)
+
+    def equity_later(t):   # equity arriving after year-end t, discounted to t at the cost of equity
+        v, disc = 0.0, 1.0
+        for j in range(t + 1, 6):
+            disc *= 1 + ke[j - 1]
+            v += eq.get(j, 0.0) / disc
+        return v
+
+    def dcf_at(t):
+        v, disc = 0.0, 1.0
+        for i in range(t, len(fcf)):
+            disc *= 1 + ke[i]
+            v += fcf[i] / disc
+        return v + tv / disc + cash[t] + equity_later(t)
+
+    exit_total = d['pe'] * nopat[5]
+
+    def mult_at(t):
+        v, disc = 0.0, 1.0
+        for i in range(t, 5):
+            disc *= 1 + ke[i]
+            v += fcf[i] / disc
+        return v + exit_total / disc + cash[t] + equity_later(t)
+
+    dcf_t, mul_t = [dcf_at(t) for t in range(6)], [mult_at(t) for t in range(6)]
+    val_t = [(a + b) / 2 for a, b in zip(dcf_t, mul_t)]
+    basis, failed = f.get('issue_price'), False
+    if not eq:
+        px = {}
+    elif basis == 'model':
+        share = sum(a / val_t[j] for j, a in eq.items()) if all(val_t[j] > 0 for j in eq) else 1.0
+        if share < 1:
+            total = sh0 / (1 - share)
+            px = {j: val_t[j] / total for j in eq}
+        else:   # the raise is worth the whole company or more at the model's value: no such price
+            failed, px = True, {j: 0.01 for j in eq}
+    else:
+        px = {j: float(basis) for j in eq}
+    new = {j: a / px[j] for j, a in eq.items()}
+    sh = sh0 + sum(new.values())
+    sh_year = [sh0 + sum(n for j, n in new.items() if j <= i) for i in range(6)]
+    eps_op = [nopat[i] / sh_year[i] for i in range(6)]
+    dcf, mul = [x / sh for x in dcf_t], [x / sh for x in mul_t]
+    val_raw = [x / sh for x in val_t]
+    val = [max(x, 0.01) for x in val_raw]
+    stub = (1 + ke[0]) ** (p['days_to_base_year_end'] / 365)
+    today = val[0] / stub
+    ret = (val[5] / p['price']) ** (1 / p['years_to_horizon']) - 1
+    plan = {'shares_m_before': sh0, 'new_shares_m': round(sh - sh0, 2), 'shares_m': round(sh, 2),
+            'equity_raise_m': {y0 + j: a for j, a in sorted(eq.items())},
+            'issue_price': {y0 + j: round(px[j], 2) for j in sorted(eq)},
+            'issue_price_basis': None if not eq else ('model' if basis == 'model' else 'given'),
+            'debt_raise_m': {y0 + j: a for j, a in sorted(dt.items())}, 'debt_rate': rd,
+            'debt_m': {y0 + t: round(x) for t, x in enumerate(owed)},
+            'note': ('money by the year-end it lands (key 0 = the base year-end); values per share on the full share count '
+                     'of the plan, EPS on the shares out in each year')}
+    if f.get('why'):
+        plan['why'] = f['why']
+    if failed:
+        plan['issue_price_model_failed'] = ('the raise is worth the whole company or more at the model\'s value: no issue '
+                                            'price exists; priced at 0.01, which leaves the holders nothing')
+    res = {
+        'revenue_m': {y0 + i: round(x) for i, x in enumerate(rev)},
+        'op_margin': {y0 + 1 + i: m for i, m in enumerate(d['m'])},
+        'eps_operating': {y0 + 1 + i: round(x, 2) for i, x in enumerate(eps_op)},
+        'eps_with_interest': {y0 + 1 + i: round((nopat[i] + interest[i]) / sh_year[i], 2) for i in range(6)},
+        'dcf_today': round(dcf[0] / stub, 2),
+        'multiple_today': round(mul[0] / stub, 2),
+        'value_today': round(today, 2),
+        'year_end_values': {y0 + t: round(val[t], 2) for t in range(1, 6)},
+        'annual_return_pct': round(ret * 100, 1),
+        'ke0_pct': round(ke[0] * 100, 2),
+        'funding': plan,
+    }
+    if detail:
+        return res, {'shares_m': sh, 'nopat': nopat, 'fcf': fcf[:5], 'cash': cash, 'val_raw': val_raw, 'val': val,
+                     'today': today, 'ret': ret, 'dcf': dcf, 'mul': mul, 'eps_op': eps_op, 'ke': ke,
+                     'fin': [eq.get(t + 1, 0.0) for t in range(5)], 'debt_in': [dt.get(t + 1, 0.0) for t in range(5)],
+                     'debt': owed, 'debt_rate': rd}
     return res
 
 
@@ -531,8 +718,13 @@ def _repriced(p, base, hurdle_pct):
     def end(price):
         return run_scenario(p, dict(base, pe=price / eps0, m=m), detail=True)[1]['val_raw'][5]
 
-    k = (1 + hurdle_pct / 100) ** p['years_to_horizon']
-    p1, p2 = p['price'], p['price'] / 2
+    return _solve_rerun(end, p['price'], (1 + hurdle_pct / 100) ** p['years_to_horizon'])
+
+
+def _solve_rerun(end, price, k):
+    """The price x with end(x) = k * x, for an end value linear in the trial price (two runs give the line, one more
+    checks it). None: no such price."""
+    p1, p2 = price, price / 2
     slope = (end(p1) - end(p2)) / (p1 - p2)
     if k - slope <= 1e-9:
         return None
@@ -573,7 +765,9 @@ def price_ladder(p, out, cal, bands=None):
                                 'after a price move a rerun holds the new multiple (see buy_test.rerun)')}
 
 
-def buy_test(p, out, cal, base, fund, bands=None):
+def buy_test(p, out, cal, base, fund, bands=None, rerun=None):
+    """rerun: a function hurdle % -> the calibrated price a rerun confirms (the worlds pass their weighted one);
+    None = _repriced on p and base."""
     b = bands or BANDS
     last = p['base_year'] + 5
     years, ends = p['years_to_horizon'], _end_values(p, out, cal)
@@ -606,7 +800,7 @@ def buy_test(p, out, cal, base, fund, bands=None):
             res['on_the_line'] = True   # the legs compare returns rounded to 0.1 point, the price is the exact one
     if not wiped and legs['base_calibrated']['max_price'] is not None and 'pe' not in (p.get('calibrated') or {}):
         # the calibrated leg holds today's multiple; at another price a rerun holds that price's multiple
-        rp = _repriced(p, base, b['buy'])
+        rp = rerun(b['buy']) if rerun else _repriced(p, base, b['buy'])
         rerun = dict(priced, base_calibrated=rp) if rp is not None else {k: v for k, v in priced.items() if k != 'base_calibrated'}
         lead = min(rerun, key=rerun.get)
         res['rerun'] = {'calibrated_max_price': rp, 'max_price_passing': rerun[lead], 'binding_leg': lead,
@@ -686,21 +880,29 @@ def calibrated_diagnostics(p, base, out, cal_out):
 def funding(p, scenarios):
     y0, res = p['base_year'], {}
     for k, d in scenarios.items():
-        _, det = run_scenario(p, d, detail=True)
+        r0, det = run_scenario(p, d, detail=True)
         cash, nopat = det['cash'], det['nopat']
         i = min(range(len(cash)), key=lambda j: cash[j])
         low = cash[i]
         profit = nopat[max(i - 1, 0)]   # the low-point year's after-tax operating profit (base year-end: the first forecast year)
         net_debt = max(-low, 0.0)
         outside = max(min(cash[0], 0.0) - low, 0.0)   # borrowing beyond today's balance sheet
+        plan = r0.get('funding')
+        if plan:   # a funding plan: its equity is in the path; the debt it names is not outside money it leaves open
+            outside_before = outside
+            outside = max(outside - det['debt'][i], 0.0)
         reasons = []
         if net_debt > 0 and (profit <= 0 or net_debt > 3 * profit):
             reasons.append(f'net debt {net_debt:,.0f}M at the low point ({y0 + i}) is above 3x that year\'s after-tax operating '
                            f'profit ({profit:,.0f}M)')
         if outside > 0.5:
             size = f' ({outside / profit:.1f}x that year\'s after-tax operating profit)' if profit > 0 else ''
-            reasons.append(f'the path needs {outside:,.0f}M of outside money by {y0 + i}{size} that is not in shares or net '
-                           'cash: the model carries it as debt at debt_rate and does not check that it can be raised')
+            if plan:
+                reasons.append(f'the path needs {outside:,.0f}M of outside money by {y0 + i}{size} beyond the funding plan: the '
+                               f'model carries it as debt at {plan["debt_rate"]:g} and does not check that it can be raised')
+            else:
+                reasons.append(f'the path needs {outside:,.0f}M of outside money by {y0 + i}{size} that is not in shares or net '
+                               'cash: the model carries it as debt at debt_rate and does not check that it can be raised')
         row = {'net_cash_m': {y0 + j: round(c) for j, c in enumerate(cash)},
                'fcf_m': {y0 + 1 + j: round(x) for j, x in enumerate(det['fcf'])},
                'low_point_m': round(low), 'low_point_year': y0 + i,
@@ -710,6 +912,8 @@ def funding(p, scenarios):
                'outside_money_to_nopat': round(outside / profit, 2) if outside > 0.5 and profit > 0 else None,
                'shares_m': det['shares_m'],
                'flag': bool(reasons), 'reasons': reasons}
+        if plan:
+            row.update(funding_plan=plan, outside_money_before_named_debt_m=round(outside_before))
         if det['val_raw'][0] <= 0:
             row['equity_wiped'] = True   # value today is zero or less: say 'equity wiped', never a negative price
         wiped = [y0 + t for t in range(1, 6) if det['val_raw'][t] <= 0]
@@ -956,7 +1160,18 @@ def _paid_out(p, det, rates):
     tax, cash, fcf = p['tax'], det['cash'], det['fcf']
     floor = max(cash[0], 0.0)   # today's net cash stays in the company; debt is repaid first, as in the model
     bal, paid = cash[0], []
-    for t in range(5):
+    if 'fin' in det:   # a funding plan: the same path as _run_funded, with the payout taken from the cash
+        rd, debt = det['debt_rate'], det['debt'][0]
+        gross = cash[0] + debt
+        for t in range(5):
+            rate = p['cash_yield'] if gross >= 0 else rd
+            gross += fcf[t] + (gross * rate - debt * rd) * (1 - tax) + det['fin'][t] + det['debt_in'][t]
+            debt += det['debt_in'][t]
+            out = max(gross - debt - floor, 0.0)
+            gross -= out
+            paid.append(out)
+        bal = gross - debt
+    for t in range(5 if 'fin' not in det else 0):
         rate = p['cash_yield'] if bal >= 0 else p.get('debt_rate', p['cash_yield'])
         bal += fcf[t] + bal * rate * (1 - tax)
         out = max(bal - floor, 0.0)
@@ -1061,6 +1276,197 @@ def add_reporting(p, res, inputs=None):
     return res
 
 
+# ---- worlds (engine upgrade P3b, 15.11.2026): weighted values over named variant files; new key "worlds" only ----
+
+WORLD_SAME = ('price', 'as_of', 'base_year', 'days_to_base_year_end', 'years_to_horizon')   # must equal the main file's
+WORLD_NOTE = ('rf', 'erp', 'buy_return', 'bands')   # may differ: the weighted ladder and bands use the main file's
+LENS_KEYS = ('bear', 'base', 'bull', 'base_calibrated')
+
+
+def _sha256(path):
+    with open(path, 'rb') as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
+
+
+def load_worlds(spec, base_dir=None):
+    """[(entry, params, path)] of a worlds spec ({"worlds": [...]} or the list). File paths are relative to base_dir
+    (None = as given). Raises ParamsError with every problem: names, weights that sum to 1, readable files."""
+    entries = spec.get('worlds') if isinstance(spec, dict) else spec
+    if not isinstance(entries, list) or not entries:
+        raise ParamsError(['worlds must be a non-empty list of {"name", "file", "weight"}'])
+    problems, names, out, total = [], set(), [], 0.0
+    for i, e in enumerate(entries):
+        tag = f'world {i + 1}'
+        if not isinstance(e, dict):
+            problems.append(f'{tag} must be an object {{name, file, weight}}')
+            continue
+        name = e.get('name')
+        if not (isinstance(name, str) and name.strip()):
+            problems.append(f'{tag}: name must be a non-empty text')
+        else:
+            tag = f'world {name!r}'
+            if name in names:
+                problems.append(f'{tag}: the name is used twice')
+            names.add(name)
+        w = e.get('weight')
+        if not (_num(w) and 0 <= w <= 1):
+            problems.append(f'{tag}: weight must be a number from 0 to 1 (got {w!r})')
+        else:
+            total += w
+        fn = e.get('file')
+        if not (isinstance(fn, str) and fn):
+            problems.append(f'{tag}: file must be the path of a params file (relative to the file that names the worlds)')
+            continue
+        path = fn if os.path.isabs(fn) or base_dir is None else os.path.join(base_dir, fn)
+        try:
+            with open(path) as fh:
+                wp = json.load(fh)
+        except (OSError, ValueError) as ex:
+            problems.append(f'{tag}: cannot read {fn} ({ex})')
+            continue
+        out.append((e, wp, path))
+    if not problems and abs(total - 1) > 1e-6:
+        problems.append(f'the world weights sum to {total:.6g}, not 1')
+    if problems:
+        raise ParamsError(problems)
+    return out
+
+
+def _lens_values(res):
+    """(today, year_ends, dated 'at' rows or None) of one run, in the convention of the new keys (wiped = 0)."""
+    dv = res['dated_values']
+    if dv.get('available'):
+        today = {k: v for k, v in dv['today'].items() if k in LENS_KEYS}
+        ye = {y: {k: v for k, v in row.items() if k in LENS_KEYS} for y, row in dv['year_ends'].items()}
+        return today, ye, dv['at']
+    fund, today, ye = res['funding']['scenarios'], {}, {}
+    for k, r in res['scenarios'].items():
+        today[k] = 0.0 if fund[k].get('equity_wiped') else r['value_today']
+        for y, v in r['year_end_values'].items():
+            ye.setdefault(y, {})[k] = 0.0 if y in fund[k].get('equity_wiped_year_ends', []) else v
+    cal = res['two_lens']['calibrated']
+    if 'value_today' in cal:
+        today['base_calibrated'] = cal['value_today']
+        for y, v in cal['year_end_values'].items():
+            ye[y]['base_calibrated'] = v
+    return today, ye, None
+
+
+def _calibrated_end_fn(p):
+    """The calibrated base's raw year-5 value per share as a function of the trial price (the multiple of that price
+    held), or a constant when calibrated.pe fixes it. (function, moves with the price) or (None, False): no lens."""
+    base = p['scenarios']['base']
+    cal, eps0, pe_today, pe, m = _calibrated_inputs(p, base)
+    if pe is None:
+        return None, False
+    if 'pe' in cal or not pe_today:
+        const = run_scenario(p, dict(base, pe=pe, m=m), detail=True)[1]['val_raw'][5]
+        return (lambda x: const), False
+    return (lambda x: run_scenario(p, dict(base, pe=x / eps0, m=m), detail=True)[1]['val_raw'][5]), True
+
+
+def worlds_report(p, raw, spec, base_dir=None, source=None):
+    """The "worlds" key. p: the main params as run (dates derived); raw: the main params as given (with "repriced"
+    when --price / --as-of were used, so every world is repriced the same way)."""
+    loaded = load_worlds(spec, base_dir)
+    rp = raw.get('repriced') if isinstance(raw.get('repriced'), dict) else None
+    problems, notes, worlds = [], [], []
+    for e, wp, path in loaded:
+        tag = f'world {e["name"]!r}'
+        try:
+            if rp:
+                wp = reprice(wp, raw['price'], rp.get('as_of_requested'))
+            q, _ = prepare(wp)
+        except ParamsError as ex:
+            problems += [f'{tag} ({e["file"]}): {x}' for x in ex.problems]
+            continue
+        if raw.get('ticker') and wp.get('ticker') and wp['ticker'] != raw['ticker']:
+            problems.append(f'{tag}: ticker {wp["ticker"]} is not the main file\'s {raw["ticker"]}')
+        for key in WORLD_SAME:
+            if q.get(key) != p.get(key):
+                problems.append(f'{tag}: {key} {q.get(key)!r} differs from the main file\'s {p.get(key)!r} (the worlds '
+                                'must share the price and the dates to be weighted)')
+        diff = [key for key in WORLD_NOTE if q.get(key) != p.get(key)]
+        if diff:
+            notes.append(f'{tag}: {", ".join(diff)} differ from the main file; the weighted ladder and bands use the main file\'s')
+        worlds.append((e, wp, q, path))
+    if problems:
+        raise ParamsError(problems)
+    price, years, last, bands = p['price'], p['years_to_horizon'], p['base_year'] + 5, p.get('bands')
+    rows, vals = [], []
+    for e, wp, q, path in worlds:
+        wres = _run_single(wp)
+        today, ye, at = _lens_values(wres)
+        vals.append((e['weight'], today, ye, at, wres))
+        bt, lad = wres['buy_test'], wres['price_ladder']['rungs']
+        rows.append({
+            'name': e['name'], 'file': e['file'], 'weight': e['weight'], 'sha256': _sha256(path),
+            'same_inputs_as_main': wp == raw,
+            **{k: e[k] for k in e if k not in ('name', 'file', 'weight')},
+            'value_today': today, 'year_end_values': ye,
+            'annual_return_pct': {k: _pct(ye[last][k], price, years) for k in ye[last]},
+            'at': None if at is None else {n: {k: v for k, v in r.items() if k in LENS_KEYS + ('date', 'return_pct')}
+                                           for n, r in at.items()},
+            'weighted_value_today': wres['weighted_value_today'],
+            'base_band': wres['two_lens']['ours']['band'], 'two_lens_agree': wres['two_lens'].get('agree'),
+            'buy_test': {'pass': bt['pass'], 'max_price_passing': bt.get('max_price_passing'),
+                         'binding_leg': bt.get('binding_leg'),
+                         'rerun_max_price_passing': (bt.get('rerun') or {}).get('max_price_passing')},
+            'margin_of_safety_13': {'ours': lad['margin_of_safety_13']['ours'],
+                                    'calibrated': lad['margin_of_safety_13']['calibrated']}})
+    keys = [k for k in LENS_KEYS if all(k in v[1] for v in vals)]
+
+    def wsum(get):
+        return sum(w * get(t, y, a) for w, t, y, a, _ in vals)
+
+    w_today = {k: round(wsum(lambda t, y, a: t[k]), 2) for k in keys}
+    w_ye = {yr: {k: round(wsum(lambda t, y, a: y[yr][k]), 2) for k in keys} for yr in vals[0][2]}
+    w_ret = {k: _pct(w_ye[last][k], price, years) for k in keys}
+    w_at = None
+    if all(v[3] is not None for v in vals):
+        w_at = {}
+        for name, row in vals[0][3].items():
+            r = {'date': row['date'], 'years_from_today': row['years_from_today']}
+            r.update({k: round(wsum(lambda t, y, a: a[name][k]), 2) for k in keys})
+            r['return_pct'] = {k: _pct(r[k], price, row['years_from_today']) for k in keys}
+            w_at[name] = r
+    # the weighted ladder and buy test: the main file's functions on the weighted horizon values
+    out_w = {k: {'year_end_values': {last: w_ye[last][k]}, 'annual_return_pct': w_ret[k]}
+             for k in keys if k != 'base_calibrated'}
+    cal_w = ({'year_end_values': {last: w_ye[last]['base_calibrated']}, 'annual_return_pct': w_ret['base_calibrated']}
+             if 'base_calibrated' in keys else {})
+    fund_w = {'scenarios': {k: {'equity_wiped_year_ends': [last] if w_ye[last][k] <= 0 else []} for k in keys}}
+    ends = [_calibrated_end_fn(q) for _, _, q, _ in worlds]
+    moves = 'base_calibrated' in keys and any(mv for _, mv in ends)
+
+    def rerun(h):
+        def end(x):
+            return sum(e['weight'] * fn(x) for (e, _, _, _), (fn, _) in zip(worlds, ends))
+        return _solve_rerun(end, price, (1 + h / 100) ** years)
+
+    p_w = dict(p, calibrated=None if moves else {'pe': 'fixed in every world'})
+    bt_w = buy_test(p_w, out_w, cal_w, None, fund_w, bands, rerun=rerun)
+    if not moves and 'base_calibrated' in keys:
+        bt_w['note_rerun'] = 'every world fixes calibrated.pe: there is no rerun price'
+    weighted = {
+        'value_today': w_today, 'year_end_values': w_ye, 'annual_return_pct': w_ret, 'at': w_at,
+        'base_return_pct': w_ret.get('base'),
+        'probability_weighted_value_today': round(sum(w * r['weighted_value_today'] for w, _, _, _, r in vals), 2),
+        'two_lens': {'ours': None if w_ret.get('base') is None else band(w_ret['base'], bands),
+                     'calibrated': None if w_ret.get('base_calibrated') is None else band(w_ret['base_calibrated'], bands)},
+        'price_ladder': price_ladder(p, out_w, cal_w, bands) if 'base' in keys else None,
+        'buy_test': bt_w}
+    lens = weighted['two_lens']
+    lens['agree'] = None if None in (lens['ours'], lens['calibrated']) else lens['ours'] == lens['calibrated']
+    return {'source': source, 'price': price, 'as_of': p.get('as_of'),
+            'weights': {e['name']: e['weight'] for e, _, _, _ in worlds},
+            'worlds': rows, 'weighted': weighted, 'warnings': notes,
+            'note': ('weighted value = sum of weight x value of each world, per scenario and date (wiped = 0); the weighted '
+                     '5-year return is the weighted horizon year-end value against the price; the ladder and buy test are '
+                     'the model\'s on those weighted values, and the buy test\'s rerun price holds each world\'s own multiple '
+                     'at the trial price. The weights are judgement, not engine odds. The other keys describe the main file')}
+
+
 def _fmt(x, width=10, dec=2):
     return f'{"n/a":>{width}}' if x is None else f'{x + 0.0:>{width},.{dec}f}'
 
@@ -1162,9 +1568,51 @@ def summary(p, res):
           f'({_fmt(cd["pe_held_to_base_exit"], 0).strip()}{"" if cd["pe_held_to_base_exit"] is None else "x"}); {cd["reading"]}',
           'Lowest net cash ($M): ' + '; '.join(f'{k} {f["low_point_m"]:,} in {f["low_point_year"]}'
                                               for k, f in res['funding']['scenarios'].items()),
-          '', 'Warnings:' if res['warnings'] else 'Warnings: none']
+          '']
+    for k, r in res['scenarios'].items():
+        fp = r.get('funding')
+        if fp:
+            eq = ', '.join(f'{a:,.0f}M at {fp["issue_price"][y]:,.2f} (year-end {y})' for y, a in fp['equity_raise_m'].items())
+            dt = ', '.join(f'{a:,.0f}M (year-end {y})' for y, a in fp['debt_raise_m'].items())
+            L.append(f'Funding plan, {k}: equity {eq or "none"}; shares {fp["shares_m_before"]:,.1f}M -> {fp["shares_m"]:,.1f}M; '
+                     f'debt {dt or "none"}; debt rate {fp["debt_rate"]:g}')
+    if 'worlds' in res:
+        L += summary_worlds(res['worlds']) + ['']
+    L += ['Warnings:' if res['warnings'] else 'Warnings: none']
     L += ['  - ' + x for x in res['warnings']]
     return '\n'.join(L)
+
+
+def summary_worlds(wd):
+    """The worlds block of --summary."""
+    W = wd['weighted']
+    cols = [k for k in LENS_KEYS if k in W['value_today']]
+    head = ''.join(f'{("base (cal.)" if k == "base_calibrated" else k):>12}' for k in cols)
+    L = [f'Worlds ({wd["source"] or "given"}): weighted values (sum of weight x value; weights are judgement)',
+         f'{"  world":<36}{"weight":>7}' + head + '   base % a year, cal. %']
+    for r in wd['worlds']:
+        L.append(f'  {r["name"]:<34}{r["weight"]:>7.2f}' + ''.join(_fmt(r['value_today'].get(k), 12) for k in cols)
+                 + f'   {_fmt(r["annual_return_pct"].get("base"), 0, 1).strip()} / '
+                   f'{_fmt(r["annual_return_pct"].get("base_calibrated"), 0, 1).strip()}')
+    L.append(f'  {"weighted, today":<34}{"":>7}' + ''.join(_fmt(W['value_today'][k], 12) for k in cols))
+    last = max(W['year_end_values'])
+    L.append(f'  {"weighted, end " + str(last):<34}{"":>7}' + ''.join(_fmt(W['year_end_values'][last][k], 12) for k in cols))
+    L.append(f'  {"  return % a year":<34}{"":>7}' + ''.join(_fmt(W['annual_return_pct'][k], 12, 1) for k in cols))
+    if W.get('at'):
+        for key, name in (('one_year', 'in 1 year'), ('five_year', 'in 5 years')):
+            r = W['at'][key]
+            L.append(f'  {"weighted, " + name + " (" + r["date"] + ")":<34}{"":>7}' + ''.join(_fmt(r[k], 12) for k in cols))
+    bt, lad = W['buy_test'], W['price_ladder']
+    L.append(f'  weighted lenses: ours {W["two_lens"]["ours"]}, calibrated {W["two_lens"]["calibrated"]}; probability-weighted '
+             f'value today {W["probability_weighted_value_today"]:,.2f}')
+    if lad:
+        L.append(f'  weighted 13% price {_fmt(lad["rungs"]["margin_of_safety_13"]["ours"], 0).strip()} (calibrated '
+                 f'{_fmt(lad["rungs"]["margin_of_safety_13"]["calibrated"], 0).strip()}); buy test '
+                 f'{"PASS" if bt["pass"] else "FAIL"}, highest passing price {_fmt(bt.get("max_price_passing"), 0).strip()} '
+                 f'(binding: {bt.get("binding_leg")})'
+                 + (f'; on a rerun {bt["rerun"]["max_price_passing"]:,.2f}' if bt.get('rerun', {}).get('lower_than_stated') else ''))
+    L += ['  ! ' + x for x in wd['warnings']]
+    return L
 
 
 
@@ -1180,8 +1628,21 @@ def _reverse_growth(p, base):
     return dict(base, g=[base['g'][0]] + [g * f for g in base['g'][1:]])
 
 
-def run(p):
-    """The full result. The params are checked first (ParamsError) and the dates derived when base_year_end is given."""
+def run(p, worlds=None, base_dir=None, source=None):
+    """The full result. The params are checked first (ParamsError) and the dates derived when base_year_end is given.
+
+    worlds: a worlds spec ({"worlds": [...]}); None = the params' own "worlds" key, if any. base_dir: the folder the
+    world files are relative to (None = as given). Without worlds the result is _run_single's, unchanged."""
+    res = _run_single(p)
+    spec = worlds if worlds is not None else p.get('worlds')
+    if spec is not None:
+        q, _ = prepare(p)
+        res['worlds'] = worlds_report(q, p, spec, base_dir, source or ('params' if worlds is None else None))
+    return res
+
+
+def _run_single(p):
+    """The result of one params file (every key but "worlds")."""
     p, inputs = prepare(p)
     out = {k: run_scenario(p, d) for k, d in p['scenarios'].items()}
     pr = p['probabilities']
@@ -1232,12 +1693,19 @@ def main():
     ap.add_argument('--as-of', dest='as_of', help='reprice: run at this date (YYYY-MM-DD); the dates are recomputed only '
                     'when the params hold base_year_end')
     ap.add_argument('--params-out', help='write the repriced params (with a "repriced" record) to this file')
+    ap.add_argument('--worlds', help='a worlds file {"worlds": [{"name", "file", "weight"}]} (files relative to it): adds '
+                    'the "worlds" key with the weighted values; the other keys describe the params file')
     a = ap.parse_args()
     p = json.load(open(a.params))
+    spec, wdir, src = None, None, None
+    if a.worlds:
+        spec, wdir, src = json.load(open(a.worlds)), os.path.dirname(os.path.abspath(a.worlds)), a.worlds
+    elif p.get('worlds') is not None:
+        wdir, src = os.path.dirname(os.path.abspath(a.params)), a.params
     try:
         if a.price is not None or a.as_of is not None:
             p = reprice(p, a.price, a.as_of)
-        res = run(p)
+        res = run(p, worlds=spec, base_dir=wdir, source=src)
     except ParamsError as e:
         print(f'lean_model: {a.params} cannot be run ({len(e.problems)} problem(s)):', file=sys.stderr)
         for x in e.problems:

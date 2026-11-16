@@ -1,0 +1,570 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "UBER",
+ "company": null,
+ "as_of": "2026-11-13",
+ "price": {
+  "value": 69.27,
+  "time_utc": "2026-11-13 pre-open (IBKR last; exact minute not recorded)",
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 2050.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/UBER/2026-11-13/lean_params.json",
+   "sha256": "505718518d9af78cf36603b2aab889278ae840414831d579e3cf632cc5134c61"
+  },
+  "result": {
+   "path": "research/companies/UBER/2026-11-13/lean_result.json",
+   "sha256": "fe6181f9c0ab2cdefa5665a37a3ce773a490b5c13f6a914ce2feac6a7287339f"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": "מוניות בלי נהג פוגעות: צמיחה נעצרת, שיעור רווח יורד ל-12%, מכפיל 12",
+   "value_today": 45.33,
+   "annual_return_pct": -0.0,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 50.21
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 54.68
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 59.31
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 64.11
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 69.1
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 49.62,
+     "return_pct": -28.4
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 54.07,
+     "return_pct": -11.6
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 68.42,
+     "return_pct": -0.2
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה 15.5% שדועכת ל-8%, שיעור רווח עולה ל-18.5%, מכפיל 16",
+   "value_today": 114.14,
+   "annual_return_pct": 20.1,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 126.51
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 138.18
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 150.53
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 163.57
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 177.31
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 125.01,
+     "return_pct": 80.5
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 136.59,
+     "return_pct": 40.4
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 175.44,
+     "return_pct": 20.4
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": "ממשיכה לעקוף את התחזיות, צמיחה כ-20% לאורך זמן, שיעור רווח 22%",
+   "value_today": 181.04,
+   "annual_return_pct": 31.6,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 200.69
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 219.37
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 239.29
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 260.45
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 282.88
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-13",
+     "value": 198.3,
+     "return_pct": 186.3
+    },
+    "two_year": {
+     "date": "2028-11-13",
+     "value": 216.82,
+     "return_pct": 76.9
+    },
+    "five_year": {
+     "date": "2031-11-13",
+     "value": 279.82,
+     "return_pct": 32.2
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 106.88,
+  "end_value": 165.96,
+  "annual_return_pct": 18.6,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 118.61,
+  "annual_return_pct": 21.0,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": 17.9,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 131.47
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 143.61
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 156.47
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 170.07
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 184.43
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-13",
+    "value": 129.91,
+    "return_pct": 87.5
+   },
+   "two_year": {
+    "date": "2028-11-13",
+    "value": 141.96,
+    "return_pct": 43.2
+   },
+   "five_year": {
+    "date": "2031-11-13",
+    "value": 182.47,
+    "return_pct": 21.4
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": false,
+   "differs_from_base_only_by_multiple": true,
+   "pe_held": 17.9,
+   "pe_base_exit": 16,
+   "pe_held_to_base_exit": 1.12,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 57700.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 66644,
+    "op_margin": 0.155,
+    "eps_operating": 3.87
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 75307,
+    "op_margin": 0.165,
+    "eps_operating": 4.65
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 83591,
+    "op_margin": 0.172,
+    "eps_operating": 5.38
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 91950,
+    "op_margin": 0.178,
+    "eps_operating": 6.13
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 100226,
+    "op_margin": 0.182,
+    "eps_operating": 6.83
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 108244,
+    "op_margin": 0.185,
+    "eps_operating": 7.49
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.13,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 94.72,
+    "price_second_lens": 98.52,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 99.14,
+    "price_second_lens": 103.12,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 12.0,
+    "price": 99.14,
+    "price_second_lens": 103.12,
+    "label": "entry with a margin of safety: buy_return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.1,
+    "price": 113.42,
+    "price_second_lens": 117.98,
+    "label": "index return (rf + erp) 9.1% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 131.5,
+    "price_second_lens": 136.78,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 152.36,
+    "price_second_lens": 158.48,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 99.14,
+   "stated_price": 99.14,
+   "rerun_price": 99.14,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 20.1,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 99.14
+    },
+    "base_calibrated": {
+     "return_pct": 21.0,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 103.12
+    },
+    "bull": {
+     "return_pct": 31.6,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 126.42
+    },
+    "bear": {
+     "return_pct": -0.0,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 118.64
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 99.14,
+  "base_12_price": 99.14,
+  "margin_of_safety_price": 94.72,
+  "index_parity_price": 113.42,
+  "hold_floor_price": 131.5,
+  "sell_line_price": 152.36,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 94.72,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-99$ (התרחיש הבסיסי נותן 12% בשנה ומעלה)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "צמיחת ההזמנות לפחות באמצע טווח התחזית (רבעון 4: ‏63.25-65.25 מיליארד $)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c3",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "רווח פלח הנסיעות 8% מההזמנות שלו ומעלה (10-Q)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.add; not typed"
+  },
+  {
+   "id": "c4",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-113$ (התשואה הצפויה יורדת לרמת המדד, 9.1%)",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  },
+  {
+   "id": "c5",
+   "kind": "trim",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "צמיחת ההזמנות בנסיעות מתחת ל-10% בנטרול מטבע ברבעון אחד",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_trim; not typed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "צמיחת ההזמנות בנסיעות מתחת ל-10% בשני רבעונים ברצף",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "רווח פלח הנסיעות מתחת ל-7.0% מההזמנות",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "Waymo בהיקף משמעותי באפליקציה שלה בניו יורק או בלונדון",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  },
+  {
+   "id": "f4",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "Delivery Hero: הורדת תחזית הסינרגיות או מינוף מעל פי 2 בסגירה",
+   "state": "open",
+   "note": "imported from the v1 handoff key conditions.proposed_exit; not typed"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-01",
+   "to": "2027-02-07"
+  },
+  "confirmed": false,
+  "text": "~2027-02-04",
+  "check_he": "הזמנות מול התחזית, רווח פלח הנסיעות כאחוז מההזמנות, מספר הרכבים בלי נהג, Delivery Hero ותשלום המע\"מ בבריטניה"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "קנייה בגודל מוגבל: שתי העדשות כ-20% בשנה בתרחיש הבסיסי, אבל מוניות בלי נהג ו-Delivery Hero מגבילים את הגודל",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": true,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 1
+ },
+ "notes_he": [
+  "המחיר מגלם צמיחה של כ-5-8% בשנה אחרי 2027, מול תחזית הזמנות של ‎+18-22%‎ לרבעון 4",
+  "הסיכון המרכזי הוא מוניות בלי נהג (Waymo, Tesla); תרחיש קיצון כ-‎-11%‎ בשנה, בהסתברות כ-5% (שיקול דעת)",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "thesis_link": "research/companies/UBER/thesis_he.md",
+ "warnings": [],
+ "judgement_source": "imported from the v1 handoff of the same valuation (texts only)"
+}

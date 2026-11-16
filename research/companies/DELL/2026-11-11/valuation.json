@@ -1,0 +1,464 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "DELL",
+ "company": null,
+ "as_of": "2026-11-11",
+ "price": {
+  "value": 361.78,
+  "time_utc": null,
+  "source": null
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 643.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/DELL/2026-11-11/lean_params.json",
+   "sha256": "ae4bc7c54635b618f966e760ede972f1370355094b83bb4e6726ab7a37a14e67"
+  },
+  "result": {
+   "path": "research/companies/DELL/2026-11-11/lean_result.json",
+   "sha256": "f3abd1d46058fbaecdd76be028d58f40330b789167a0529557a385499480f681"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": null,
+   "value_today": 191.67,
+   "annual_return_pct": -2.1,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 220.75
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 245.28
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 270.75
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 297.02
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 324.03
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 215.29,
+     "return_pct": -40.5
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 239.76,
+     "return_pct": -18.6
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 317.98,
+     "return_pct": -2.5
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": null,
+   "value_today": 366.82,
+   "annual_return_pct": 11.2,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 422.9
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 471.59
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 522.3
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 574.96
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 629.49
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 412.35,
+     "return_pct": 14.0
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 460.63,
+     "return_pct": 12.8
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 617.27,
+     "return_pct": 11.3
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": null,
+   "value_today": 553.17,
+   "annual_return_pct": 20.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-29",
+     "value": 637.95
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-29",
+     "value": 712.27
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-29",
+     "value": 790.25
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-29",
+     "value": 871.77
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-29",
+     "value": 956.67
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-11",
+     "value": 621.98,
+     "return_pct": 71.9
+    },
+    "two_year": {
+     "date": "2028-11-11",
+     "value": 695.53,
+     "return_pct": 38.7
+    },
+    "five_year": {
+     "date": "2031-11-11",
+     "value": 937.62,
+     "return_pct": 21.0
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 351.55,
+  "end_value": 603.29,
+  "annual_return_pct": 10.3,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 395.76,
+  "annual_return_pct": 12.9,
+  "band": "buy",
+  "band_ours": "hold",
+  "agree": false,
+  "pe_held": 12.9,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2028,
+    "date": "2028-01-29",
+    "value": 456.29
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-01-29",
+    "value": 509.06
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-01-29",
+    "value": 564.18
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-01-29",
+    "value": 621.57
+   },
+   {
+    "fiscal_year": 2032,
+    "date": "2032-01-29",
+    "value": 681.15
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-11",
+    "value": 444.9,
+    "return_pct": 23.0
+   },
+   "two_year": {
+    "date": "2028-11-11",
+    "value": 497.18,
+    "return_pct": 17.2
+   },
+   "five_year": {
+    "date": "2031-11-11",
+    "value": 667.79,
+    "return_pct": 13.0
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": true,
+   "differs_from_base_only_by_multiple": false,
+   "pe_held": 12.93,
+   "pe_base_exit": 11,
+   "pe_held_to_base_exit": 1.18,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the lenses differ by the exit multiple and by the margin"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2027,
+  "base_year_end": "2027-01-29",
+  "base_year_revenue_m": 192000.0,
+  "years": {
+   "2028": {
+    "fiscal_year_end": "2028-01-29",
+    "revenue_m": 226560,
+    "op_margin": 0.098,
+    "eps_operating": 27.97
+   },
+   "2029": {
+    "fiscal_year_end": "2029-01-29",
+    "revenue_m": 233357,
+    "op_margin": 0.096,
+    "eps_operating": 28.22
+   },
+   "2030": {
+    "fiscal_year_end": "2030-01-29",
+    "revenue_m": 245025,
+    "op_margin": 0.095,
+    "eps_operating": 29.32
+   },
+   "2031": {
+    "fiscal_year_end": "2031-01-29",
+    "revenue_m": 257276,
+    "op_margin": 0.095,
+    "eps_operating": 30.79
+   },
+   "2032": {
+    "fiscal_year_end": "2032-01-29",
+    "revenue_m": 267567,
+    "op_margin": 0.095,
+    "eps_operating": 32.02
+   },
+   "2033": {
+    "fiscal_year_end": "2033-01-29",
+    "revenue_m": 278270,
+    "op_margin": 0.095,
+    "eps_operating": 33.3
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2032-01-29",
+  "years_to_horizon": 5.21,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 333.0,
+    "price_second_lens": 360.33,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 348.79,
+    "price_second_lens": 377.41,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 12.0,
+    "price": 348.79,
+    "price_second_lens": 377.41,
+    "label": "entry with a margin of safety: buy_return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.1,
+    "price": 399.87,
+    "price_second_lens": 432.69,
+    "label": "index return (rf + erp) 9.1% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 464.67,
+    "price_second_lens": 502.8,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 539.64,
+    "price_second_lens": 583.93,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 348.79,
+   "stated_price": 348.79,
+   "rerun_price": 348.79,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 11.2,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 348.79
+    },
+    "base_calibrated": {
+     "return_pct": 12.9,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 377.41
+    },
+    "bull": {
+     "return_pct": 20.5,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 422.2
+    },
+    "bear": {
+     "return_pct": -2.1,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 561.02
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null
+  },
+  "buy_test_price": 348.79,
+  "base_12_price": 348.79,
+  "margin_of_safety_price": 333.0,
+  "index_parity_price": 399.87,
+  "hold_floor_price": 464.67,
+  "sell_line_price": 539.64,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "entry_price": {
+   "value": 333.0,
+   "rung": "margin_of_safety_13",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2028-01-29",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2032-01-29",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": null,
+  "low": null,
+  "high": null,
+  "source": null,
+  "note": "not supplied: the historical-multiple report is not in this record"
+ },
+ "conditions": [],
+ "falsifiers": [],
+ "next_report": {
+  "date": null,
+  "window": null,
+  "confirmed": false,
+  "text": "דוח רבעון 3 FY27, בסביבות 24.11.2026",
+  "check_he": null,
+  "note": "no date could be read"
+ },
+ "last_fresh_pull": {
+  "date": null,
+  "note": "not recorded"
+ },
+ "verdict": {
+  "code": "not_buy",
+  "text_he": "לא לקנות במחיר הזה (קרוב); לחכות לדוח",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "buy",
+  "lenses_agree": false,
+  "buy_test_pass": false,
+  "moves_most": "operating margin",
+  "method_gap_warnings": 2
+ },
+ "notes_he": [],
+ "thesis_link": "research/companies/DELL/thesis_he.md",
+ "warnings": [
+  "lenses disagree (ours hold, calibrated buy): hold, or stage the trade around the next report"
+ ]
+}

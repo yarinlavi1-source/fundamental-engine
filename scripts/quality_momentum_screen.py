@@ -2,10 +2,14 @@
 
     SEC_USER_AGENT="app-name contact@example.com" python scripts/quality_momentum_screen.py runs/screens/2026-11-15 --as-of 2026-11-15 [--min-cap 5e9] [--reuse]
 
-Sources: the Nasdaq listing feed (symbol, market value, sector; an unofficial public API), the SEC ticker map, SEC XBRL
-companyfacts and submissions (SIC code) per company, Yahoo daily adjusted closes for the names that reach the trend
-gates. Only the extracted series are kept (facts/CIK*.json), not the raw companyfacts. --reuse reads the saved files and
-fetches only what is missing. The SEC User-Agent is read from the environment and never written to disk.
+Sources: the Nasdaq listing feed (symbol, market value, sector; an unofficial public API), the SEC ticker map, the SEC
+companyfacts API read per company (data.sec.gov/api/xbrl/companyfacts/CIK##########.json, one request per company above
+the floor; not the XBRL frames API) and its submissions file (SIC code), Yahoo daily adjusted closes for the names that
+reach the trend gates. Only the extracted series are kept (facts/CIK*.json), not the raw companyfacts. --reuse reads the
+saved files and fetches only what is missing. The SEC User-Agent is read from the environment and never written to disk.
+Saved valuations (15.11.2026): every listed name and every thesis-book name gets 'saved_valuation' (the buy test of its
+newest research/companies valuation or research/rejected.jsonl row at the screen's close); a failing name is marked in
+screen_he.md ('הערכה שמורה'), never dropped. --research points at another research folder (tests).
 The logic is in fundamental_engine/quality_momentum.py. The result is not a valuation and not a buy signal.
 """
 import argparse
@@ -167,9 +171,24 @@ def get_prices(symbol, out, reuse, throttle, as_of):
     return rec
 
 
-def thesis_book():
-    d = os.path.join(ROOT, 'research', 'companies')
+def thesis_book(research=None):
+    d = os.path.join(research or os.path.join(ROOT, 'research'), 'companies')
     return sorted(x for x in os.listdir(d) if os.path.isdir(os.path.join(d, x))) if os.path.isdir(d) else []
+
+
+def saved_summary(lists, book_rows):
+    """One row per listed or thesis-book name with a saved valuation: where it is listed and what the buy test says."""
+    out, seen = [], set()
+    for label, rows in lists + [('thesis_book', book_rows)]:
+        for r in rows:
+            sv = r.get('saved_valuation') or {}
+            if sv.get('state') in (None, 'none') or (label == 'thesis_book' and r['symbol'] in seen):
+                continue
+            seen.add(r['symbol'])
+            out.append({'symbol': r['symbol'], 'list': label, **{k: sv.get(k) for k in (
+                'state', 'date', 'kind', 'age_days', 'base_value', 'price_then', 'price', 'buy_test_price', 'buy_test_price_saved',
+                'binding_leg', 'basis', 'rejected')}})
+    return out
 
 
 def main(argv=None):
@@ -178,13 +197,14 @@ def main(argv=None):
     ap.add_argument('--as-of', required=True)
     ap.add_argument('--min-cap', type=float, default=5e9)
     ap.add_argument('--reuse', action='store_true', help='use the saved raw data; fetch only what is missing')
+    ap.add_argument('--research', default=os.path.join(ROOT, 'research'), help='the research folder (saved valuations, rejected.jsonl)')
     a = ap.parse_args(argv)
     if '@' not in os.environ.get('SEC_USER_AGENT', ''):
         raise SystemExit('set SEC_USER_AGENT to "application contact-email" (SEC fair-access policy)')
     for sub in ('raw', 'facts', 'prices'):
         os.makedirs(os.path.join(a.out, sub), exist_ok=True)
     t0 = time.time()
-    book = thesis_book()
+    book = thesis_book(a.research)
     listing, ciks = get_listing(a.out, a.reuse)
     universe, counts, no_cik = qm.build_universe(listing, ciks, a.min_cap, keep=book)
     print(json.dumps({'step': 'universe', **counts, 'no_cik': len(no_cik)}), flush=True)
@@ -262,11 +282,18 @@ def main(argv=None):
     ann = sorted([r for r in inu if r['route'] == 'annual_only' and r['status'] in ('pass', 'near_miss')],
                  key=lambda r: (r['status'] != 'pass', -r['market_cap']))
     by_sym = {r['symbol']: r for r in rows}
+    # saved valuations: marked on every listed and thesis-book name, read by no gate and no rank (the MSFT slip, 06.11)
+    lean = qm.lean_module()
+    saved = qm.saved_book(a.research)
+    listed = {id(r): r for r in passers + near + fins + fin_near + commodity + ann + unread}
+    listed.update({id(by_sym[qm.norm_symbol(t)]): by_sym[qm.norm_symbol(t)] for t in book if qm.norm_symbol(t) in by_sym})
+    qm.attach_saved(list(listed.values()), saved, a.as_of, last_day, lean)
     book_rows = []
     for t in book:
         r = by_sym.get(qm.norm_symbol(t))
         if r is None:
-            book_rows.append({'symbol': t, 'status': 'not_found', 'note': 'לא נמצאה ברשימת המניות או במפת ה-SEC'})
+            book_rows.append({'symbol': t, 'status': 'not_found', 'note': 'לא נמצאה ברשימת המניות או במפת ה-SEC',
+                              'saved_valuation': qm.saved_valuation(saved, t, None, a.as_of, None, lean)})
         else:
             book_rows.append(dict(r, note=None if r['in_universe'] else 'שווי שוק מתחת לסף'))
     gate_fails = {}
@@ -293,11 +320,22 @@ def main(argv=None):
                    'gaps': r['gaps']} for r in inu if r['status'] == 'incomplete']
     stale = sorted([r for r in inu if r['route'] == 'annual_only' and not r['basis']], key=lambda r: -r['market_cap'])
     counts['annual_only_stale'] = len(stale)
+    for key, lst in (('passers', passers), ('near_misses', near)):
+        for state in ('fail', 'pass', 'unknown'):
+            counts[f'{key}_saved_{state}'] = sum(1 for r in lst if r['saved_valuation']['state'] == state)
+    saved_list = saved_summary([('passers', passers), ('near_misses', near), ('financials', fins), ('financial_near_misses', fin_near),
+                                ('commodity', commodity), ('annual_only', ann), ('unread', unread)], book_rows)
     res = {
         'as_of': a.as_of, 'last_trading_day': last_day, 'min_cap': a.min_cap, 'generated_at_utc': _now(),
         'method': {'gates': qm.GATES, 'rank_keys': list(qm.RANK_KEYS), 'rank': 'plain sum of percentile ranks among the passers, no weights',
                    'trend_prices': 'Yahoo daily adjusted closes', 'market_cap': 'Nasdaq listing feed snapshot',
                    'fundamentals': 'SEC XBRL companyfacts as reported (no adjustment for one-offs or acquisitions)',
+                   'fundamentals_source': 'the companyfacts API read per company (one request per company above the floor) and its '
+                                          'submissions file for the SIC code; not the XBRL frames API',
+                   'saved_valuation': 'newest research/companies/<T>/<date> valuation (valuation_record.latest_valuation) or newer '
+                                      'research/rejected.jsonl row; lean params repriced to the screen close (lean_model.reprice) and '
+                                      'rerun; a custom model compared with its saved buy-test price; marked only, read by no gate '
+                                      'or rank',
                    'durability': 'revenue did not fall in any of the last 3 completed fiscal years; 3-year growth rate >= 10% a year',
                    'commodity_sic': {str(k): v for k, v in sorted(qm.COMMODITY_SIC.items())},
                    'coarse_pass': 'none: companyfacts were read for every company above the floor',
@@ -338,7 +376,7 @@ def main(argv=None):
                     'תזרים חופשי = תזרים מפעילות פחות רכישת רכוש קבוע; פיתוח תוכנה מהוון ותגמול במניות לא נוכו.',
                     'צמיחה כוללת רכישות; לא נעשתה התאמה לצמיחה אורגנית.'],
         'passers': passers, 'near_misses': near, 'commodity': commodity, 'financials': fins, 'financial_near_misses': fin_near, 'unread': unread,
-        'annual_only': ann, 'thesis_book': book_rows,
+        'annual_only': ann, 'thesis_book': book_rows, 'saved_valuations': saved_list,
         'rows': rows,
     }
     _save(os.path.join(a.out, 'screen.json'), res)

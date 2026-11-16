@@ -28,7 +28,22 @@ the file's, else USD (stated in the row as assumed). The filing check (monitor.c
 Expected return at today's price: the monitor's implied IRR of the frozen base-case flows when the casefile that made the
 thesis is available (the ledger stores the record without its flows); otherwise a rough proxy, (5-year base value /
 price)^(1/years) - 1 without distributions, labelled as such.
+
+Engine upgrade P9 (15.11.2026):
+- the valuation record: the newest dated folder of research/companies/<T>/ (valuation_record.latest_valuation: the saved
+  valuation.json, else a record built from the lean or custom model files) is read before the handoff when it is at
+  least as new; its dated values, both lenses and typed conditions go into value_comparison (source valuation_record).
+  A record that holds only the main file of several weighted variants (NVDA's worlds) gives way to the handoff of the
+  same date, whose published values are the weighted ones. Judgement the record lacks (verdict, conditions, next
+  report) is read from the handoff (valuation_record.inputs_from_handoff). The handoff is read under any dated key shape
+  (end_2031, end_fy2031_jan_2032, june_2032, calibrated_end_2031, ...), with its second lens;
+- the filing check is labelled for what it is: monitor.check against the heavy (old) engine's frozen thesis in the
+  forecast ledger (filing_check.basis = old_engine_ledger_thesis), not against the current valuation. Lean-ledger rows
+  (research/ledger.jsonl, lean_freeze) are not monitor theses and are skipped;
+- cannot_tell: a filer without quarterly XBRL facts (a foreign private issuer: 20-F / 6-K) whose companyfacts show no new
+  period: its quarterly results arrive as a 6-K that companyfacts does not carry, so "no new report" cannot be said.
 """
+import calendar
 import glob
 import json
 import os
@@ -37,11 +52,13 @@ from datetime import datetime, timezone
 
 from . import facts as F
 from . import monitor as M
+from . import valuation_record as VR
+from .lean_freeze import MONTHS
 from .ledger import Ledger, day, parse
 from .research_store import STORE, saved_folder
 
 STATUSES = ('new_holding', 'data_unavailable', 'no_new_report', 'light_update', 'full_rerun_needed', 'index_fund',
-            'valuation_only')
+            'valuation_only', 'cannot_tell')
 STOCK_TYPES = {'STK', 'STOCK', 'COMMON', 'EQUITY'}
 FUND_TYPES = {'ETF', 'FUND', 'INDEX'}
 # Broad index funds recognised when the row carries no fund type (the only place this list lives).
@@ -51,12 +68,15 @@ PRICE_SCALE_LIMIT = 1.8     # today's price vs the source's own price: beyond th
 TECHNICAL = os.path.join('research', 'technical')
 ACTION_HE = {'new_holding': 'הרצה מלאה', 'full_rerun_needed': 'הרצה מלאה', 'light_update': 'עדכון קל',
              'no_new_report': 'אין', 'data_unavailable': 'אין (חסרים נתונים)', 'index_fund': 'אין',
-             'valuation_only': 'אין'}
+             'valuation_only': 'אין', 'cannot_tell': 'אין (לבדוק את ה-6-K)'}
 STATUS_HE = {'new_holding': 'מניה חדשה בתיק, אין הערכה שמורה', 'data_unavailable': 'אין נתונים עדכניים',
              'no_new_report': 'אין דוח חדש', 'light_update': 'דוח חדש, בתוך התחזית',
              'full_rerun_needed': 'דוח חדש, סוטה מהתחזית', 'index_fund': 'קרן מדד',
-             'valuation_only': 'יש הערכה שמורה, אין תזה מוקפאת'}
-SOURCE_HE = {'fundamental_picture': 'הערכה שמורה', 'ledger_thesis': 'תזה מוקפאת'}
+             'valuation_only': 'יש הערכה שמורה, אין תזה מוקפאת', 'cannot_tell': 'אי אפשר לדעת אם יצא דוח'}
+SOURCE_HE = {'fundamental_picture': 'הערכה שמורה', 'ledger_thesis': 'תזה מוקפאת', 'valuation_record': 'רשומת הערכה'}
+VALUE_SOURCES = ('fundamental_picture', 'valuation_record')     # saved valuations newer than the old engine's thesis
+OLD_ENGINE_HE = 'המנוע הישן'
+LENS_PREFIX = {'calibrated_': 'calibrated'}     # dated handoff keys of the second lens; no prefix = our lens
 METRIC_HE = {'revenue': 'הכנסות', 'ebit': 'רווח תפעולי', 'operating_margin': 'שיעור רווח תפעולי', 'fcf': 'תזרים חופשי',
              'fcf_margin': 'שיעור תזרים חופשי', 'fcf_after_sbc': 'תזרים חופשי אחרי תגמול במניות',
              'fcf_after_sbc_margin': 'שיעור תזרים אחרי תגמול במניות', 'shares_outstanding': 'מספר מניות',
@@ -84,6 +104,8 @@ def latest_theses(ledger_paths):
     for r in (r for p in paths if p and os.path.exists(p) for r in Ledger(p).lines()):
         if r.get('type') != 'thesis' or not isinstance(r.get('record'), dict):
             continue
+        if str(r['record'].get('frozen_by') or '').startswith('lean_freeze'):
+            continue                    # a lean-ledger row (research/ledger.jsonl): not a monitor thesis
         t = str(r.get('entity') or r['record'].get('ticker') or '').upper()
         if t and (t not in out or parse(r['made_at'])[0] > parse(out[t]['_made_at'])[0]):
             out[t] = dict(r['record'], _made_at=r['made_at'])
@@ -116,10 +138,85 @@ def stock_rows(positions):
     return stocks, skipped
 
 
+def _month_end(year, month):
+    return f'{year:04d}-{month:02d}-{calendar.monthrange(year, month)[1]:02d}'
+
+
+def _month(word):
+    w = (word or '').lower()
+    m = MONTHS.get(w[:3])
+    return m if m and len(w) >= 3 and calendar.month_name[m].lower().startswith(w) else None
+
+
+def value_key_date(key, fy_dates=None):
+    """(lens, ISO date, fiscal year or None) of a dated value key of a handoff, or None for any other key.
+
+    lens: 'ours', or 'calibrated' for the calibrated_ prefix. Shapes read: end_2031 (31 Dec), end_fy2031_jan_2032 (end
+    of that month), june_2032 / jan_2028 (end of that month), end_fy2031 (the date of our lens's key of the same fiscal
+    year in fy_dates, else 31 Dec). Other prefixes (weighted_, depwave_, tail_, central_world_, ...) are not a lens."""
+    lens = 'ours'
+    for pre, name in LENS_PREFIX.items():
+        if key.startswith(pre):
+            lens, key = name, key[len(pre):]
+    m = re.fullmatch(r'end_(fy)?(\d{4})(?:_([a-z]+)_(\d{4}))?', key)
+    if m:
+        fy = int(m.group(2))
+        if m.group(3) and _month(m.group(3)):
+            return lens, _month_end(int(m.group(4)), _month(m.group(3))), fy
+        if m.group(3):
+            return None
+        if m.group(1) and fy_dates and fy in fy_dates:
+            return lens, fy_dates[fy], fy
+        return lens, f'{fy}-12-31', fy
+    m = re.fullmatch(r'([a-z]+)_(\d{4})', key)
+    if m and _month(m.group(1)):
+        return lens, _month_end(int(m.group(2)), _month(m.group(1))), None
+    return None
+
+
+def dated_handoff_values(vals):
+    """{'ours': [{date, bear, base, bull}], 'calibrated': [{date, value}], 'other_keys': [...]} from a handoff's values."""
+    out, fy_dates, later = {'ours': [], 'calibrated': [], 'other_keys': []}, {}, []
+    for k, v in vals.items():
+        if k == 'today' or k.startswith('calibrated_today'):
+            continue
+        got = value_key_date(k)
+        if got is None:
+            out['other_keys'].append(k)
+            continue
+        lens, d, fy = got
+        if lens == 'ours' and isinstance(v, dict):
+            if fy is not None:
+                fy_dates[fy] = d
+            out['ours'].append({'date': d, **{s: _num(v.get(s)) for s in ('bear', 'base', 'bull')}})
+        else:
+            later.append((k, v))
+    for k, v in later:                       # calibrated keys: a bare fiscal year takes our lens's date of that year
+        lens, d, _ = value_key_date(k, fy_dates)
+        x = _num(v) if not isinstance(v, dict) else _num(v.get('base') if 'base' in v else v.get('value'))
+        if x is not None:
+            out['calibrated'].append({'date': d, 'value': x})
+    out['ours'].sort(key=lambda r: r['date'])
+    out['calibrated'].sort(key=lambda r: r['date'])
+    return out
+
+
+def _judgement(raw):
+    """Verdict, typed conditions and the next report of a handoff (valuation_record.inputs_from_handoff)."""
+    try:
+        inp = VR.inputs_from_handoff(raw)
+    except (TypeError, ValueError, AttributeError):
+        return {'conditions': [], 'falsifiers': [], 'next_report': raw.get('next_report')}
+    return {'conditions': inp.get('conditions') or [], 'falsifiers': inp.get('falsifiers') or [],
+            'next_report': raw.get('next_report') if isinstance(raw.get('next_report'), dict) else None}
+
+
 def fundamental_picture(root, ticker, as_of=None):
     """The latest saved fundamental picture of a ticker (research/technical/<T>/<date>/fundamental.json, the folder
     name is its date; with as_of, not one dated after it), reduced to the keys the table needs; None when there is
-    none. The files are hand-written, so every key is optional: a missing base value is a visible gap, never a guess."""
+    none. The files are hand-written, so every key is optional: a missing base value is a visible gap, never a guess.
+    Dated values are read under any key shape (value_key_date), with the second lens (calibrated_today and
+    calibrated_<date> keys) and the typed conditions and next report."""
     if root is None:
         return None
     best = None
@@ -147,18 +244,97 @@ def fundamental_picture(root, ticker, as_of=None):
     bear, bull = _num(today.get('bear')), _num(today.get('bull'))
     if base is None and _num(vals.get('weighted_base_today')) is not None:
         base, basis = _num(vals['weighted_base_today']), 'values.weighted_base_today (weighted over the picture\'s scenarios)'
+    dated = dated_handoff_values(vals)
     five = None
-    for k, v in vals.items():
-        m = re.fullmatch(r'end_(\d{4})', k)
-        if m and isinstance(v, dict) and _num(v.get('base')) and (five is None or m.group(1) > five['date'][:4]):
-            five = {'date': f'{m.group(1)}-12-31', 'bear': _num(v.get('bear')), 'base': _num(v['base']), 'bull': _num(v.get('bull'))}
+    for r in dated['ours']:
+        if r['base'] and (five is None or r['date'] > five['date']):
+            five = dict(r)
     ret = raw.get('annual_return_pct') if isinstance(raw.get('annual_return_pct'), dict) else {}
-    return {'date': best[0], 'path': os.path.relpath(best[1], root), 'as_of_text': raw.get('as_of'),
+    cal_today = vals.get('calibrated_today')
+    cal_today = _num(cal_today if not isinstance(cal_today, dict) else cal_today.get('base'))
+    second = None
+    if cal_today is not None or dated['calibrated']:
+        second = {'value_today': cal_today, 'last_year': dated['calibrated'][-1] if dated['calibrated'] else None,
+                  'annual_return_pct_at_its_price': _num(ret.get('calibrated'))}
+    return {'source': 'fundamental_picture', 'date': best[0], 'path': os.path.relpath(best[1], root),
+            'as_of_text': raw.get('as_of'),
             'price': _num(raw.get('price')), 'currency': raw.get('currency'), 'unit': raw.get('unit') or raw.get('share_unit'),
             'share_basis': raw.get('share_basis'), 'base': base, 'base_basis': basis if base is not None else None,
-            'bear': bear, 'bull': bull, 'last_year': five, 'buy_test_price': raw.get('buy_test_price'),
+            'bear': bear, 'bull': bull, 'last_year': five, 'dated': dated, 'second_lens': second,
+            'buy_test_price': raw.get('buy_test_price'),
             'margin_of_safety_price': raw.get('margin_of_safety_price'), 'verdict_he': raw.get('verdict_he'),
-            'return_pct_at_its_price': _num(ret.get('base'))}
+            'return_pct_at_its_price': _num(ret.get('base')), **_judgement(raw)}
+
+
+def record_picture(root, ticker, as_of=None):
+    """The valuation record of the newest dated folder (valuation_record.latest_valuation over research/), in the shape
+    of fundamental_picture; None when there is no folder, no record (a heavy-engine or gather-only folder), or the folder
+    is dated after as_of (an older folder is not looked for: the newest one is the valuation in force)."""
+    if root is None or not os.path.isdir(os.path.join(root, STORE, ticker)):
+        return None
+    try:
+        lv = VR.latest_valuation(os.path.join(root, 'research'), ticker)
+    except Exception:                   # noqa: BLE001 (a record that cannot be built is a gap, the handoff still stands)
+        return None
+    if not lv or not lv.get('record') or (as_of and lv['as_of'] > as_of):
+        return None
+    rec = lv['record']
+    sc = rec.get('scenarios') or {}
+
+    def last(rows):
+        rows = [r for r in rows or [] if r.get('date')]
+        return max(rows, key=lambda r: r['date']) if rows else None
+
+    def today_of(k):
+        return _num((sc.get(k) or {}).get('value_today'))
+    ends = {k: last((sc.get(k) or {}).get('dated_values')) for k in ('bear', 'base', 'bull')}
+    ly = None
+    if ends['base']:
+        ly = {'date': ends['base']['date'], **{k: _num((ends[k] or {}).get('value')) for k in ('bear', 'base', 'bull')}}
+    lens = rec.get('second_lens') or {}
+    diag = lens.get('diagnostics') or {}
+    hur = rec.get('hurdles') or {}
+    verdict = rec.get('verdict') or {}
+    return {'source': 'valuation_record', 'date': lv['as_of'], 'path': os.path.relpath(lv['folder'], os.path.dirname(os.path.join(root, 'research'))),
+            'record_source': lv.get('record_source'), 'kind': (rec.get('model') or {}).get('kind'),
+            'price': _num((rec.get('price') or {}).get('value')), 'currency': rec.get('currency'), 'unit': None,
+            'share_basis': (rec.get('share_basis') or {}).get('basis'), 'base': today_of('base'),
+            'base_basis': 'record scenarios.base.value_today' if today_of('base') is not None else None,
+            'bear': today_of('bear'), 'bull': today_of('bull'), 'last_year': ly,
+            'second_lens': {'value_today': _num(lens.get('value_today')), 'last_year': last(lens.get('dated_values')),
+                            'annual_return_pct_at_its_price': _num(lens.get('annual_return_pct')), 'band_at_its_price': lens.get('band'),
+                            'not_second_opinion': bool(diag.get('inflated_multiple_warning')),
+                            'reading': lens.get('diagnostics_note')} if lens else None,
+            'buy_test_price': hur.get('buy_test_price'), 'margin_of_safety_price': hur.get('margin_of_safety_price'),
+            'verdict_he': verdict.get('text_he') or None, 'conditions': rec.get('conditions') or [],
+            'falsifiers': rec.get('falsifiers') or [],
+            'next_report': rec.get('next_report') if (rec.get('next_report') or {}).get('date') or (rec.get('next_report') or {}).get('window') else None,
+            'return_pct_at_its_price': _num((sc.get('base') or {}).get('annual_return_pct')),
+            'variants': rec.get('variants'), 'record_warnings': rec.get('warnings') or []}
+
+
+def saved_picture(root, ticker, as_of=None):
+    """The saved valuation compared with today's price: the record when it is at least as new as the handoff (with the
+    handoff's verdict, conditions and next report when the record has none), else the handoff. A record of the main file
+    of several variants (no weighted value) gives way to a handoff of the same date, which publishes the weighted one."""
+    pic = fundamental_picture(root, ticker, as_of)
+    rec = record_picture(root, ticker, as_of)
+    if rec is None or rec['base'] is None:
+        return pic
+    if pic is not None and pic['date'] > rec['date']:
+        return pic
+    if pic is not None and rec.get('variants') and pic['date'] == rec['date'] and pic['base'] is not None:
+        return dict(pic, record_note=f"the record of {rec['date']} holds the main file of {len(rec['variants'])} variant file(s) "
+                                     'without a weighted value: the handoff\'s published values are shown')
+    if pic is not None:
+        if not rec['verdict_he']:
+            rec['verdict_he'] = pic.get('verdict_he')
+        if not (rec['conditions'] or rec['falsifiers']):
+            rec['conditions'], rec['falsifiers'] = pic.get('conditions') or [], pic.get('falsifiers') or []
+        if not rec['next_report']:
+            rec['next_report'] = pic.get('next_report')
+        rec['judgement_from'] = pic['path']
+    return rec
 
 
 # ------------------------------------------------------------------ helpers
@@ -223,32 +399,62 @@ def _mismatch(pos_cur, pos_unit, pv, src_cur, src_unit, src_price, what):
     return None
 
 
+def _proxy_from(end, end_date, pv, pd):
+    """(end value / price)^(1/years) - 1 to a dated end value, or None (no value, not positive, under half a year)."""
+    if not (end and pv and end_date) or end <= 0:
+        return None
+    yrs = (day(end_date) - day(pd)).days / 365.25
+    return (end / pv) ** (1 / yrs) - 1 if yrs >= .5 else None
+
+
+def conditions_summary(conditions, falsifiers):
+    """Counts of the typed conditions and falsifiers by state, the ones fired and the exit texts (for the table)."""
+    rows = list(conditions or []) + list(falsifiers or [])
+    typed = [r for r in rows if r.get('metric') and r.get('op') and r.get('threshold') is not None]
+    return {'count': len(rows), 'typed': len(typed), 'untyped': len(rows) - len(typed),
+            'by_state': {st: sum((r.get('state') or 'open') == st for r in rows) for st in VR.STATES},
+            'hit': [r.get('text_he') or r.get('id') for r in rows if r.get('state') == 'hit'],
+            'exit_texts': [r.get('text_he') for r in falsifiers or [] if r.get('text_he')]}
+
+
 def _picture_comparison(pic, pv, pd):
-    """The saved fundamental picture against today's price; the return is a rough proxy from its last year-end value."""
+    """The saved valuation (the record or the handoff) against today's price; the return is a rough proxy from its last
+    year-end value, for our lens and for the second lens when the source has one."""
     base, ly = pic['base'], pic.get('last_year')
-    ret = None
-    if ly and pv and ly['base'] > 0:
-        yrs = (day(ly['date']) - day(pd)).days / 365.25
-        if yrs >= .5:
-            ret = (ly['base'] / pv) ** (1 / yrs) - 1
+    ret = _proxy_from(ly and ly['base'], ly and ly['date'], pv, pd)
     lo, hi = pic.get('bear'), pic.get('bull')
-    return {'source': 'fundamental_picture', 'date': pic['date'], 'path': pic['path'], 'price': pv, 'price_as_of': pd,
-            'base_value_today': base, 'base_basis': pic.get('base_basis'),
-            'base_is_weighted': 'weighted' in (pic.get('base_basis') or ''), 'bear_value_today': lo, 'bull_value_today': hi,
-            'discount_to_base': (1 - pv / base) if base and pv else None,
-            'outside_band': bool(pv and lo is not None and hi is not None and not min(lo, hi) <= pv <= max(lo, hi)),
-            'last_year': ly, 'buy_test_price': pic.get('buy_test_price'),
-            'margin_of_safety_price': pic.get('margin_of_safety_price'), 'verdict_he': pic.get('verdict_he'),
-            'share_basis': pic.get('share_basis'),
-            'expected_return': {'value': ret, 'kind': 'proxy',
-                                'meaning': '(last year-end base value of the picture / price)^(1/years) - 1, distributions '
-                                           'excluded: a rough proxy'},
-            'return_pct_at_its_price': pic.get('return_pct_at_its_price'), 'price_at_valuation': pic.get('price')}
+    out = {'source': pic.get('source') or 'fundamental_picture', 'date': pic['date'], 'path': pic['path'], 'price': pv,
+           'price_as_of': pd, 'base_value_today': base, 'base_basis': pic.get('base_basis'),
+           'base_is_weighted': 'weighted' in (pic.get('base_basis') or ''), 'bear_value_today': lo, 'bull_value_today': hi,
+           'discount_to_base': (1 - pv / base) if base and pv else None,
+           'outside_band': bool(pv and lo is not None and hi is not None and not min(lo, hi) <= pv <= max(lo, hi)),
+           'last_year': ly, 'buy_test_price': pic.get('buy_test_price'),
+           'margin_of_safety_price': pic.get('margin_of_safety_price'), 'verdict_he': pic.get('verdict_he'),
+           'share_basis': pic.get('share_basis'),
+           'expected_return': {'value': ret, 'kind': 'proxy',
+                               'meaning': '(last year-end base value of the picture / price)^(1/years) - 1, distributions '
+                                          'excluded: a rough proxy'},
+           'return_pct_at_its_price': pic.get('return_pct_at_its_price'), 'price_at_valuation': pic.get('price')}
+    sl = pic.get('second_lens')
+    if sl:
+        e = sl.get('last_year') or {}
+        out['second_lens'] = {'value_today': sl.get('value_today'), 'last_year': sl.get('last_year'),
+                              'expected_return': {'value': _proxy_from(e.get('value'), e.get('date'), pv, pd), 'kind': 'proxy'},
+                              'annual_return_pct_at_its_price': sl.get('annual_return_pct_at_its_price'),
+                              'not_second_opinion': sl.get('not_second_opinion'), 'reading': sl.get('reading')}
+    if pic.get('conditions') or pic.get('falsifiers'):
+        out['conditions'] = conditions_summary(pic.get('conditions'), pic.get('falsifiers'))
+    if pic.get('next_report'):
+        out['next_report'] = pic['next_report']
+    for k in ('kind', 'record_source', 'judgement_from', 'record_note'):
+        if pic.get(k):
+            out[k] = pic[k]
+    return out
 
 
 def _thesis_comparison(th, view):
     band = (view.get('monitor_price_view') or {}).get('value_band') or {}
-    return {'source': 'ledger_thesis', 'date': th['as_of'], 'thesis_id': th['thesis_id'], 'price': view['price'],
+    return {'source': 'ledger_thesis', 'engine': 'old', 'date': th['as_of'], 'thesis_id': th['thesis_id'], 'price': view['price'],
             'price_as_of': view['price_as_of'], 'base_value_today': view['base_value_today'],
             'bear_value_today': band.get('bear'), 'bull_value_today': band.get('bull'),
             'discount_to_base': view['discount_to_base'], 'outside_band': view.get('outside_band'),
@@ -317,7 +523,8 @@ def _line_he(row):
     if st == 'index_fund':
         return 'קרן מדד, לא חברה: לא מוערכת'
     vc = row.get('value_comparison') or {}
-    newer = vc.get('source') == 'fundamental_picture' and not vc.get('older_than_thesis')
+    newer = vc.get('source') in VALUE_SOURCES and not vc.get('older_than_thesis')
+    old = f"בדיקת הדוחות מול התזה של {OLD_ENGINE_HE} מ-{row.get('thesis_as_of')}, לא מול ההערכה הנוכחית" if newer else None
     if st == 'valuation_only':
         return f"הערכה שמורה מ-{vc.get('date') or row.get('picture_date')}; אין תזה מוקפאת, לכן אין בדיקת דוחות"
     if st == 'data_unavailable':
@@ -333,7 +540,11 @@ def _line_he(row):
         tail.append(f"יש הרצה חדשה יותר מ-{row['newer_saved_run']['date']} שלא נקראת כאן: "
                     + ('הערך בטבלה ישן' if vc.get('source') else 'לבדוק אותה'))
     if st == 'no_new_report':
-        return '; '.join([f"אין דוח חדש ב-SEC מאז {row['thesis_as_of']}" + ('' if newer else '; המסקנה בתוקף')] + tail)
+        return '; '.join([f"אין דוח חדש ב-SEC מאז {row['thesis_as_of']}" + ('' if newer else '; המסקנה בתוקף')] + tail
+                         + ([old] if old else []))
+    if st == 'cannot_tell':
+        return '; '.join([f"חברה זרה בלי דוחות רבעוניים ב-XBRL (20-F / 6-K): מכאן אי אפשר לדעת אם יצא דוח מאז "
+                          f"{row['thesis_as_of']}; לבדוק את ה-6-K"] + tail + ([old] if old else []))
     d = row['detail']
     bits = []
     for c in d['changes'][:2]:
@@ -351,7 +562,7 @@ def _line_he(row):
     if sig:
         bits.append(sig)
     bits.append(('התזה המוקפאת עומדת' if newer else 'המסקנה בתוקף') if st == 'light_update' else 'המסקנה עלולה להשתנות')
-    return '; '.join(list(dict.fromkeys(bits)) + tail)
+    return '; '.join(list(dict.fromkeys(bits)) + tail + ([old] if old else []))
 
 
 # ------------------------------------------------------------------ the update
@@ -382,19 +593,19 @@ def update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile
         pos_cur = str(cur_given or DEFAULT_POSITION_CURRENCY).upper()
         pos_unit = pos.get('unit') or pos.get('share_unit')
         row.update(position_currency=pos_cur, position_currency_assumed=not cur_given)
-        pic = fundamental_picture(root, t, as_of)
+        pic = saved_picture(root, t, as_of)
         skipped_src, pic_cmp = [], None
         if pic is not None:
             row['picture_date'] = pic['date']
-            bad = _mismatch(pos_cur, pos_unit, pv, pic.get('currency'), pic.get('unit'), pic.get('price'),
-                            f"the saved fundamental picture of {pic['date']}")
+            what = ('the valuation record' if pic.get('source') == 'valuation_record' else 'the saved fundamental picture') + f" of {pic['date']}"
+            bad = _mismatch(pos_cur, pos_unit, pv, pic.get('currency'), pic.get('unit'), pic.get('price'), what)
             if bad is None and pic['base'] is None:
-                bad = {'code': 'no_base_value', 'reason': f"the saved fundamental picture of {pic['date']} has no base value today "
+                bad = {'code': 'no_base_value', 'reason': f"{what} has no base value today "
                                                           'in its standard keys', 'reason_he': f"בהערכה מ-{pic['date']} אין שווי בסיסי להיום במבנה הרגיל"}
             if bad is None and pv:
                 pic_cmp = _picture_comparison(pic, pv, p_as_of if day(p_as_of) >= day(pic['date']) else as_of)
             elif bad is not None:
-                skipped_src.append(dict(bad, source='fundamental_picture', date=pic['date']))
+                skipped_src.append(dict(bad, source=pic.get('source') or 'fundamental_picture', date=pic['date']))
         th = theses.get(t)
         if th is None:
             if pic is None:
@@ -407,7 +618,11 @@ def update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile
             out_rows.append(row)
             continue
         row.update(thesis_id=th['thesis_id'], thesis_as_of=th['as_of'], thesis_made_at=th['_made_at'], verdict=th.get('verdict'),
-                   currency=th.get('currency'))
+                   currency=th.get('currency'),
+                   filing_check={'basis': 'old_engine_ledger_thesis', 'thesis_id': th['thesis_id'], 'thesis_as_of': th['as_of'],
+                                 'meaning': 'monitor.check of SEC companyfacts against the heavy (old) engine\'s frozen thesis in the '
+                                            'forecast ledger, not against the current valuation',
+                                 'label_he': f"בדיקת הדוחות מול התזה המוקפאת של {OLD_ENGINE_HE} מ-{th['as_of']}"})
         thesis = {k: v for k, v in th.items() if k != '_made_at'}
         if casefile_for:
             try:
@@ -453,6 +668,13 @@ def update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile
             out_rows.append(row)
             continue
         new = chk['new_data']
+        if not new['periods'] and not new['qualitative_ids'] and (fb.get('company') or {}).get('quarterly_xbrl') is False:
+            row.update(status='cannot_tell', action='none',
+                       reason='no new period in companyfacts, but this filer has no quarterly XBRL facts (a foreign private '
+                              'issuer: 20-F / 6-K): its quarterly results arrive as a 6-K that companyfacts does not carry, so '
+                              'whether a report came out cannot be told here; check the 6-K filings')
+            out_rows.append(row)
+            continue
         if not new['periods'] and not new['qualitative_ids']:
             row.update(status='no_new_report', action='none',
                        notes=[r for r in chk['rereview_reasons'] if 'scheduled review' in r or 'falsifier' in r])
@@ -481,8 +703,10 @@ def update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile
             'meaning': 'Frozen theses compared with filings after their cutoff (monitor.check). No revaluation and no orders: '
                        'light_update keeps the frozen values; full_rerun / new_holding go to the fast ticker procedure. '
                        'value_comparison names the source and date of the value shown against today\'s price (the newer '
-                       'saved fundamental picture, else the ledger thesis) or the reason no value is comparable; index '
-                       'funds are listed and never valued.'}
+                       'saved valuation: the valuation record or the fundamental picture, else the ledger thesis) or the '
+                       'reason no value is comparable; index funds are listed and never valued. The filing check is '
+                       'against the old (heavy) engine\'s frozen thesis (filing_check); cannot_tell: a filer without '
+                       'quarterly XBRL facts, whose 6-K reports companyfacts does not show.'}
 
 
 # ------------------------------------------------------------------ Hebrew table
@@ -507,7 +731,8 @@ def _value_cell(r):
         disc = vc.get('discount_to_base')
         rel = f" ({abs(disc):.0%} {'מתחת לשווי' if disc >= 0 else 'מעל השווי'})" if disc is not None else ''
         w = ' (משוקלל בין תרחישים)' if vc.get('base_is_weighted') else ''
-        return f"{_money(vc['base_value_today'])}{w} מול {vc['price']:,.2f}{rel}", f"{SOURCE_HE[vc['source']]} {vc['date']}", vc
+        eng = f' ({OLD_ENGINE_HE})' if vc['source'] == 'ledger_thesis' else ''
+        return f"{_money(vc['base_value_today'])}{w} מול {vc['price']:,.2f}{rel}", f"{SOURCE_HE[vc['source']]} {vc['date']}{eng}", vc
     if vc.get('reason_he'):
         return f"אין השוואה: {vc['reason_he']}", '—', vc
     return '—', '—', vc
@@ -524,8 +749,17 @@ def render_he(res):
         ret = (f"{er['value']:.1%} לשנה" + (' (הערכה גסה)' if er.get('kind') == 'proxy' else '')) if er.get('value') is not None else '—'
         lines.append(f"| {r['ticker']} | {_pct(r.get('weight'))} | {STATUS_HE[r['status']]} | {r['line_he']} | {val} | {src} | {ret} | "
                      f"{ACTION_HE[r['status']]} |")
-        if vc.get('source') == 'fundamental_picture':
+        if vc.get('source') in VALUE_SOURCES:
             bits = [f"דובי {_money(vc.get('bear_value_today'))} / בסיסי {_money(vc['base_value_today'])} / שורי {_money(vc.get('bull_value_today'))}"]
+            sl = vc.get('second_lens') or {}
+            sr = (sl.get('expected_return') or {}).get('value')
+            if sr is not None:
+                bits.append(f"עדשה שנייה {sr:.1%} לשנה במחיר של היום (הערכה גסה)"
+                            + (' — לא דעה שנייה כאן (המכפיל המוחזק מנופח)' if sl.get('not_second_opinion') else ''))
+            cs = vc.get('conditions')
+            if cs:
+                bits.append(f"תנאים ומפריכים: {cs['count']} ({cs['untyped']} בלי מספר לבדיקה)"
+                            + (f"; הופעל: {', '.join(cs['hit'])}" if cs['hit'] else ''))
             if vc.get('buy_test_price') is not None:
                 bits.append(f"מחיר מבחן הקנייה {_money(vc['buy_test_price'])}")
             if vc.get('margin_of_safety_price') is not None:
@@ -535,7 +769,10 @@ def render_he(res):
             notes.append(f"- {r['ticker']} ({vc['date']}): " + '; '.join(bits) + '.')
     c = res['counts']
     lines += ['', f"- הרצה מלאה: {', '.join(res['full_rerun']) or 'אף מניה'}; עדכון קל: {c['light_update']}; "
-                  f"בלי דוח חדש: {c['no_new_report']}; חסרים נתונים: {c['data_unavailable']}."]
+                  f"בלי דוח חדש: {c['no_new_report']}; חסרים נתונים: {c['data_unavailable']}"
+                  + (f"; אי אפשר לדעת (חברה זרה, 6-K): {c['cannot_tell']}" if c.get('cannot_tell') else '') + '.']
+    if any(r.get('filing_check') for r in res['rows']):
+        lines.append(f'- "מה השתנה" נבדק מול התזה המוקפאת של {OLD_ENGINE_HE} (הנתונים של SEC), לא מול ההערכה הנוכחית שבעמודת השווי.')
     if res.get('index_funds'):
         lines.append(f"- קרנות מדד (לא מוערכות): {', '.join(res['index_funds'])}.")
     if res['removed']:
@@ -576,6 +813,13 @@ def find_cik(root, ticker):
     return None
 
 
+def xbrl_forms(payload):
+    """The filing forms the companyfacts rows come from ({'10-K', '10-Q', ...}; a foreign private issuer shows 20-F or
+    40-F and no 10-Q, because its quarterly results are 6-K text without XBRL facts)."""
+    return {str(r.get('form')) for tax in (payload.get('facts') or {}).values() for v in tax.values()
+            for rs in (v.get('units') or {}).values() for r in rs if r.get('form')}
+
+
 def sec_factbook_for(root='.', refresh=False, ua=None, cache_dir=None):
     """factbook_for(ticker, as_of, thesis) from SEC companyfacts: --refresh refetches into cache_dir (SEC_USER_AGENT
     needed); otherwise the newest saved copy (cache_dir, or a prefetch's runs/tickers/<T>_*/companies/<T>/raw)."""
@@ -607,6 +851,8 @@ def sec_factbook_for(root='.', refresh=False, ua=None, cache_dir=None):
             raise Unavailable(f'companyfacts report in {rc}, the thesis in {cur}: foreign filer, needs the fast ticker procedure')
         fb = F.new({'ticker': ticker, 'currency': cur, 'cik': str(cik)}, as_of)
         F.from_sec_companyfacts(fb, payload, min(got, as_of))
+        forms = xbrl_forms(payload)
+        fb['company'].update(xbrl_forms=sorted(forms), quarterly_xbrl=any(f.startswith('10-Q') for f in forms))
         if not F.series(fb, 'revenue', 'annual'):
             raise Unavailable('no annual revenue in SEC companyfacts (foreign filer or no XBRL facts)')
         return fb

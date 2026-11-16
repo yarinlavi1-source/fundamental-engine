@@ -1,0 +1,21 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-12",
+ "kind": "lean_model worlds (run: python scripts/lean_model.py lean_params.json --worlds worlds.json [--price P])",
+ "note": "Written 15.11.2026 from the published thesis (research/companies/NVDA/thesis_he.md, entry of 12.11.2026 evening, and research/technical/NVDA/2026-11-12/fundamental.json); no params file was changed. The three files are the succession worlds in force after Jensen Huang resigned (8-K of 12.11.2026): lean_params.json is the orderly succession (its notes: 'CEO exit (12.11.2026): exit P/E base 18->15'), lean_params_B2_messy_succession.json the messy succession or an outside CEO (base exit P/E 13, FY29 +12%), lean_params_C_export_hit.json the export finding together with the exit (base exit P/E 11, FY28 +55%, 10B one-off). Weights 45% / 35% / 20% are the published subjective judgement, not engine odds. The published in-force figures were computed at the pre-open price 155.39 of 12.11.2026 (the files hold 161.5): rerun with --price 155.39 for the published returns. The weighted value today does not depend on the price.",
+ "worlds": [
+  {"name": "orderly_succession", "file": "lean_params.json", "weight": 0.45,
+   "label_he": "הואנג עוזב, מחליף מבפנים, מסודר"},
+  {"name": "messy_succession", "file": "lean_params_B2_messy_succession.json", "weight": 0.35,
+   "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ"},
+  {"name": "export_finding", "file": "lean_params_C_export_hit.json", "weight": 0.2,
+   "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה"}
+ ],
+ "superseded": [
+  {"date": "2026-11-12, before the resignation 8-K of the evening",
+   "weights": {"huang_stays (lean_params_A_huang_stays.json)": 0.3, "orderly_succession": 0.35, "messy_succession": 0.2,
+               "export_finding": 0.15},
+   "price": 161.47,
+   "note": "the four-state weighting behind the published 'about 185' (thesis table and index row); dropped when Huang resigned. Kept as data only: lean_model reads the 'worlds' list above, never this block."}
+ ]
+}

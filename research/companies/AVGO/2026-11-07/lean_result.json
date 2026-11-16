@@ -203,5 +203,788 @@
   },
   "agree": true,
   "rule": "both lenses in the same band: act on it"
+ },
+ "price_ladder": {
+  "method": "price today = year-end value at the horizon / (1 + return) ^ years_to_horizon; one return per rung",
+  "horizon_year": 2031,
+  "years_to_horizon": 4.98,
+  "price": 293.69,
+  "end_value": {
+   "ours": 509.89,
+   "calibrated": 481.05
+  },
+  "rungs": {
+   "margin_of_safety_13": {
+    "label": "margin of safety: fixed 13% a year for every company",
+    "return_pct": 13.0,
+    "ours": 277.43,
+    "calibrated": 261.73
+   },
+   "buy_test": {
+    "label": "buy test: base return 12% a year",
+    "return_pct": 12.0,
+    "ours": 289.98,
+    "calibrated": 273.58
+   },
+   "margin_of_safety": {
+    "label": "entry with a margin of safety: buy_return 12% a year",
+    "return_pct": 12.0,
+    "ours": 289.98,
+    "calibrated": 273.58,
+    "same_as": "buy_price",
+    "meaning": "company hurdle (buy_return): 12% a year",
+    "note": "not the fixed margin of safety: that is the margin_of_safety_13 rung"
+   },
+   "index": {
+    "label": "index return (rf + erp) 9.1% a year",
+    "return_pct": 9.1,
+    "ours": 330.45,
+    "calibrated": 311.76,
+    "same_as": "index_parity_price"
+   },
+   "hold_floor": {
+    "label": "hold floor: 6% a year",
+    "return_pct": 6.0,
+    "ours": 381.46,
+    "calibrated": 359.89
+   },
+   "sell_line": {
+    "label": "sell line: 3% a year",
+    "return_pct": 3.0,
+    "ours": 440.1,
+    "calibrated": 415.2
+   }
+  },
+  "calibrated_note": "the calibrated rungs hold the multiple of today's price (or calibrated.pe) to the horizon; after a price move a rerun holds the new multiple (see buy_test.rerun)"
+ },
+ "buy_test": {
+  "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+  "price": 293.69,
+  "legs": {
+   "base_ours": {
+    "return_pct": 11.7,
+    "threshold_pct": 12.0,
+    "pass": false,
+    "max_price": 289.98
+   },
+   "base_calibrated": {
+    "return_pct": 10.4,
+    "threshold_pct": 12.0,
+    "pass": false,
+    "max_price": 273.58
+   },
+   "bull": {
+    "return_pct": 33.0,
+    "threshold_pct": 17.0,
+    "pass": true,
+    "max_price": 556.65
+   },
+   "bear": {
+    "return_pct": -8.5,
+    "threshold_pct": -10.0,
+    "pass": true,
+    "max_price": 318.72
+   }
+  },
+  "complete": true,
+  "pass": false,
+  "binding_leg": "base_calibrated",
+  "max_price_passing": 273.58,
+  "max_price_vs_price_pct": -6.8,
+  "rerun": {
+   "calibrated_max_price": 261.48,
+   "max_price_passing": 261.48,
+   "binding_leg": "base_calibrated",
+   "lower_than_stated": true,
+   "note": "the calibrated leg with the multiple of its own price held, which is what a rerun at that price shows; calibrated_max_price null = holding the price's own multiple the lens never crosses the hurdle, so the leg is left out"
+  }
+ },
+ "ranges": {
+  "today": {
+   "bear": 110.35,
+   "base": 296.09,
+   "bull": 701.15,
+   "base_calibrated": 279.9
+  },
+  "two_year": {
+   "year": 2028,
+   "years_from_today": 1.98,
+   "bear": 139.68,
+   "base": 374.23,
+   "bull": 886.24,
+   "base_calibrated": 353.76,
+   "return_pct": {
+    "bear": -31.3,
+    "base": 13.0,
+    "bull": 74.7,
+    "base_calibrated": 9.9
+   }
+  },
+  "five_year": {
+   "year": 2031,
+   "years_from_today": 4.98,
+   "bear": 188.6,
+   "base": 509.89,
+   "bull": 1216.61,
+   "base_calibrated": 481.05,
+   "return_pct": {
+    "bear": -8.5,
+    "base": 11.7,
+    "bull": 33.0,
+    "base_calibrated": 10.4
+   }
+  },
+  "note": "the 1-2 year value is the noisiest number here: over one or two years the price follows the multiple and the news far more than the value; the 5-year value rests on the business path"
+ },
+ "calibrated_diagnostics": {
+  "margin_changed": true,
+  "margin_years_changed": [
+   2028,
+   2029,
+   2030,
+   2031,
+   2032
+  ],
+  "margin_floor_binds": true,
+  "differs_from_base_only_by_multiple": false,
+  "pe_held": 17.21,
+  "pe_base_exit": 22,
+  "pe_held_to_base_exit": 0.78,
+  "first_year_eps_operating": 17.07,
+  "first_year_eps_to_price_pct": 5.81,
+  "inflated_multiple_warning": false,
+  "warning_reasons": [],
+  "gap_to_base": {
+   "value_today": -16.19,
+   "value_today_from_multiple": -29.1,
+   "value_today_from_margin": 12.91,
+   "return_pts": -1.3,
+   "return_pts_from_multiple": -2.4,
+   "return_pts_from_margin": 1.1
+  },
+  "reading": "the lenses differ by the exit multiple and by the margin"
+ },
+ "funding": {
+  "note": "the model's own path: net cash at face at the base year-end, plus each year's free cash flow and the after-tax interest on the balance; shares are fixed in each scenario",
+  "scenarios": {
+   "bear": {
+    "net_cash_m": {
+     "2026": -28900,
+     "2027": 22197,
+     "2028": 70744,
+     "2029": 105769,
+     "2030": 150614,
+     "2031": 198468
+    },
+    "fcf_m": {
+     "2027": 52201,
+     "2028": 47883,
+     "2029": 32911,
+     "2030": 41685,
+     "2031": 43353
+    },
+    "low_point_m": -28900,
+    "low_point_year": 2026,
+    "low_year_nopat_m": 61413,
+    "low_year_nopat_year": 2027,
+    "net_debt_to_nopat_at_low": 0.47,
+    "outside_money_m": 0,
+    "outside_money_to_nopat": null,
+    "shares_m": 4890.0,
+    "flag": false,
+    "reasons": []
+   },
+   "base": {
+    "net_cash_m": {
+     "2026": -28900,
+     "2027": 36777,
+     "2028": 122789,
+     "2029": 210288,
+     "2030": 311514,
+     "2031": 420586
+    },
+    "fcf_m": {
+     "2027": 66781,
+     "2028": 84912,
+     "2029": 83830,
+     "2030": 94943,
+     "2031": 99764
+    },
+    "low_point_m": -28900,
+    "low_point_year": 2026,
+    "low_year_nopat_m": 83476,
+    "low_year_nopat_year": 2027,
+    "net_debt_to_nopat_at_low": 0.35,
+    "outside_money_m": 0,
+    "outside_money_to_nopat": null,
+    "shares_m": 4890.0,
+    "flag": false,
+    "reasons": []
+   },
+   "bull": {
+    "net_cash_m": {
+     "2026": -28900,
+     "2027": 42479,
+     "2028": 169459,
+     "2029": 343123,
+     "2030": 552146,
+     "2031": 785304
+    },
+    "fcf_m": {
+     "2027": 72483,
+     "2028": 125711,
+     "2029": 168600,
+     "2030": 198771,
+     "2031": 216660
+    },
+    "low_point_m": -28900,
+    "low_point_year": 2026,
+    "low_year_nopat_m": 90604,
+    "low_year_nopat_year": 2027,
+    "net_debt_to_nopat_at_low": 0.32,
+    "outside_money_m": 0,
+    "outside_money_to_nopat": null,
+    "shares_m": 4890.0,
+    "flag": false,
+    "reasons": []
+   }
+  }
+ },
+ "sensitivity": {
+  "note": "one input changed at a time on the base case, the others held: this is the model's own arithmetic (what moves the value most), not a forecast and not a probability",
+  "base": {
+   "value_today": 296.09,
+   "annual_return_pct": 11.7
+  },
+  "rows": [
+   {
+    "input": "revenue growth",
+    "change": "+/- 1 point every year",
+    "down": {
+     "value_today": 279.25,
+     "d_value": -16.84,
+     "d_value_pct": -5.7,
+     "annual_return_pct": 10.4,
+     "d_return_pts": -1.33
+    },
+    "up": {
+     "value_today": 313.93,
+     "d_value": 17.84,
+     "d_value_pct": 6.0,
+     "annual_return_pct": 13.1,
+     "d_return_pts": 1.34
+    },
+    "abs_effect_value": 17.84
+   },
+   {
+    "input": "exit P/E",
+    "change": "+/- 2 turns",
+    "down": {
+     "value_today": 283.95,
+     "d_value": -12.14,
+     "d_value_pct": -4.1,
+     "annual_return_pct": 10.8,
+     "d_return_pts": -0.96
+    },
+    "up": {
+     "value_today": 308.23,
+     "d_value": 12.14,
+     "d_value_pct": 4.1,
+     "annual_return_pct": 12.6,
+     "d_return_pts": 0.93
+    },
+    "abs_effect_value": 12.14
+   },
+   {
+    "input": "operating margin",
+    "change": "+/- 1 point every year",
+    "down": {
+     "value_today": 290.81,
+     "d_value": -5.28,
+     "d_value_pct": -1.8,
+     "annual_return_pct": 11.3,
+     "d_return_pts": -0.4
+    },
+    "up": {
+     "value_today": 301.37,
+     "d_value": 5.28,
+     "d_value_pct": 1.8,
+     "annual_return_pct": 12.1,
+     "d_return_pts": 0.39
+    },
+    "abs_effect_value": 5.28
+   },
+   {
+    "input": "beta",
+    "change": "+/- 0.1",
+    "down": {
+     "value_today": 300.88,
+     "d_value": 4.79,
+     "d_value_pct": 1.6,
+     "annual_return_pct": 11.8,
+     "d_return_pts": 0.04
+    },
+    "up": {
+     "value_today": 291.39,
+     "d_value": -4.7,
+     "d_value_pct": -1.6,
+     "annual_return_pct": 11.7,
+     "d_return_pts": -0.04
+    },
+    "abs_effect_value": 4.79
+   },
+   {
+    "input": "free-cash-flow conversion",
+    "change": "+/- 5 points every year",
+    "down": {
+     "value_today": 292.41,
+     "d_value": -3.68,
+     "d_value_pct": -1.2,
+     "annual_return_pct": 11.5,
+     "d_return_pts": -0.25
+    },
+    "up": {
+     "value_today": 299.77,
+     "d_value": 3.68,
+     "d_value_pct": 1.2,
+     "annual_return_pct": 12.0,
+     "d_return_pts": 0.24
+    },
+    "abs_effect_value": 3.68
+   }
+  ],
+  "moves_most": "revenue growth"
+ },
+ "reverse_reading": {
+  "base_growth_pct": [
+   58.3,
+   21.7,
+   -8.0,
+   6.0,
+   6.0,
+   5.0
+  ],
+  "base_end_revenue_m": 210873,
+  "base_margin_path": {
+   "growth_pct": [
+    58.3,
+    21.1,
+    -7.8,
+    5.8,
+    5.8,
+    4.9
+   ],
+   "end_revenue_m": 209616,
+   "solved": true
+  },
+  "flat_margin": {
+   "margin_held": 0.6,
+   "growth_pct": [
+    58.3,
+    17.4,
+    -6.4,
+    4.8,
+    4.8,
+    4.0
+   ],
+   "end_revenue_m": 202378,
+   "solved": true,
+   "value_today_at_base_growth": 310.53
+  },
+  "note": "the first (guided) year is held and the later years are scaled until the value today equals the price; solved false = no scaling between -1x and 4x reaches the price. A reading of the price, not a forecast"
+ },
+ "warnings": [
+  "buy test: at the stated highest passing price 273.58 a rerun would hold a lower multiple; with the multiple of its own price held the highest passing price is 261.48 (binding leg: base_calibrated)"
+ ],
+ "inputs": {
+  "as_of": "2026-11-07",
+  "base_year_end": "2026-11-01",
+  "base_year_end_source": "as_of + days_to_base_year_end",
+  "days_to_base_year_end": -6,
+  "years_to_horizon": 4.98,
+  "dates_derived": false,
+  "horizon_date": "2031-11-01",
+  "warnings": []
+ },
+ "dated_values": {
+  "available": true,
+  "as_of": "2026-11-07",
+  "base_year_end": "2026-11-01",
+  "base_year_end_source": "as_of + days_to_base_year_end",
+  "price": 293.69,
+  "today": {
+   "date": "2026-11-07",
+   "bear": 110.35,
+   "base": 296.09,
+   "bull": 701.15,
+   "base_calibrated": 279.9
+  },
+  "year_ends": {
+   "2027": {
+    "date": "2027-11-01",
+    "bear": 124.66,
+    "base": 333.6,
+    "bull": 789.25,
+    "base_calibrated": 315.38
+   },
+   "2028": {
+    "date": "2028-11-01",
+    "bear": 139.68,
+    "base": 374.23,
+    "bull": 886.24,
+    "base_calibrated": 353.76
+   },
+   "2029": {
+    "date": "2029-11-01",
+    "bear": 155.23,
+    "base": 417.14,
+    "bull": 990.1,
+    "base_calibrated": 394.17
+   },
+   "2030": {
+    "date": "2030-11-01",
+    "bear": 171.58,
+    "base": 462.4,
+    "bull": 1100.33,
+    "base_calibrated": 436.65
+   },
+   "2031": {
+    "date": "2031-11-01",
+    "bear": 188.6,
+    "base": 509.89,
+    "bull": 1216.61,
+    "base_calibrated": 481.05
+   }
+  },
+  "at": {
+   "one_year": {
+    "date": "2027-11-07",
+    "years_from_today": 1,
+    "bear": 124.89,
+    "base": 334.23,
+    "bull": 790.75,
+    "base_calibrated": 315.97,
+    "return_pct": {
+     "bear": -57.5,
+     "base": 13.8,
+     "bull": 169.2,
+     "base_calibrated": 7.6
+    }
+   },
+   "two_year": {
+    "date": "2028-11-07",
+    "years_from_today": 2,
+    "bear": 139.92,
+    "base": 374.9,
+    "bull": 887.86,
+    "base_calibrated": 354.39,
+    "return_pct": {
+     "bear": -31.0,
+     "base": 13.0,
+     "bull": 73.9,
+     "base_calibrated": 9.8
+    }
+   },
+   "five_year": {
+    "date": "2031-11-07",
+    "years_from_today": 5,
+    "bear": 188.89,
+    "beyond_last_year_end_days": 6,
+    "base": 510.71,
+    "bull": 1218.62,
+    "base_calibrated": 481.82,
+    "return_pct": {
+     "bear": -8.4,
+     "base": 11.7,
+     "bull": 32.9,
+     "base_calibrated": 10.4
+    }
+   }
+  },
+  "method": "log-linear (geometric) interpolation between today, the base year-end and the dated year-end values, the same rule as forecast_tracker.value_at; return_pct is the yearly rate from today's price to the value on that date",
+  "note": "conditional values on each path at a calendar date, not price forecasts; a wiped scenario is 0 with a null return; beyond_last_year_end_days = the date is after the last modelled year-end and the last year's rate was carried on. the 1-2 year value is the noisiest number here: over one or two years the price follows the multiple and the news far more than the value; the 5-year value rests on the business path"
+ },
+ "method_gap": {
+  "note": "each method alone, from the same inputs: return = that method's value at the horizon year-end against today's price; dcf_implied_exit_pe = the DCF's value of the business at the horizon (cash taken out) over the next year's after-tax operating profit, to read against the exit P/E. The published value is the plain average of the two; nothing here changes it",
+  "pe_gap_range": [
+   0.8,
+   1.25
+  ],
+  "scenarios": {
+   "bear": {
+    "dcf": {
+     "value_today": 115.86,
+     "end_value": 198.32,
+     "return_pct": -7.6,
+     "band": "sell"
+    },
+    "exit_multiple": {
+     "value_today": 104.85,
+     "end_value": 178.89,
+     "return_pct": -9.5,
+     "band": "sell"
+    },
+    "averaged": {
+     "value_today": 110.35,
+     "end_value": 188.6,
+     "return_pct": -8.5,
+     "band": "sell"
+    },
+    "exit_pe": 15,
+    "dcf_implied_exit_pe": 17.1,
+    "exit_pe_to_dcf_implied": 0.88,
+    "pe_gap_wide": false,
+    "bands_differ": false
+   },
+   "base": {
+    "dcf": {
+     "value_today": 269.23,
+     "end_value": 462.5,
+     "return_pct": 9.5,
+     "band": "hold"
+    },
+    "exit_multiple": {
+     "value_today": 322.95,
+     "end_value": 557.29,
+     "return_pct": 13.7,
+     "band": "buy"
+    },
+    "averaged": {
+     "value_today": 296.09,
+     "end_value": 509.89,
+     "return_pct": 11.7,
+     "band": "hold"
+    },
+    "exit_pe": 22,
+    "dcf_implied_exit_pe": 17.6,
+    "exit_pe_to_dcf_implied": 1.25,
+    "pe_gap_wide": true,
+    "bands_differ": true,
+    "warning": "base: the two methods land in different bands: DCF alone 9.5% a year (hold), exit multiple alone 13.7% a year (buy), averaged 11.7% a year (hold); the exit P/E 22 against 17.6 implied by the DCF (1.25x). Say which side is believed and why"
+   },
+   "bull": {
+    "dcf": {
+     "value_today": 601.07,
+     "end_value": 1040.02,
+     "return_pct": 28.9,
+     "band": "buy"
+    },
+    "exit_multiple": {
+     "value_today": 801.23,
+     "end_value": 1393.21,
+     "return_pct": 36.7,
+     "band": "buy"
+    },
+    "averaged": {
+     "value_today": 701.15,
+     "end_value": 1216.61,
+     "return_pct": 33.0,
+     "band": "buy"
+    },
+    "exit_pe": 26,
+    "dcf_implied_exit_pe": 18.6,
+    "exit_pe_to_dcf_implied": 1.4,
+    "pe_gap_wide": true,
+    "bands_differ": false
+   },
+   "base_calibrated": {
+    "dcf": {
+     "value_today": 282.26,
+     "end_value": 485.22,
+     "return_pct": 10.6,
+     "band": "hold"
+    },
+    "exit_multiple": {
+     "value_today": 277.53,
+     "end_value": 476.88,
+     "return_pct": 10.2,
+     "band": "hold"
+    },
+    "averaged": {
+     "value_today": 279.9,
+     "end_value": 481.05,
+     "return_pct": 10.4,
+     "band": "hold"
+    },
+    "exit_pe": 17.21,
+    "dcf_implied_exit_pe": 17.6,
+    "exit_pe_to_dcf_implied": 0.98,
+    "pe_gap_wide": false,
+    "bands_differ": false
+   }
+  },
+  "warnings": [
+   "base: the two methods land in different bands: DCF alone 9.5% a year (hold), exit multiple alone 13.7% a year (buy), averaged 11.7% a year (hold); the exit P/E 22 against 17.6 implied by the DCF (1.25x). Say which side is believed and why"
+  ]
+ },
+ "sensitivity_terminal": {
+  "note": "the terminal inputs, one changed at a time on the base case: model arithmetic, not a forecast; a null side means the input leaves no terminal value (discount rate or ROIC at or below the growth); at_3pct = terminal growth of 3% instead of the risk-free rate",
+  "base": {
+   "value_today": 296.09,
+   "annual_return_pct": 11.7,
+   "beta_mature": 1.1,
+   "roic_terminal": 0.3,
+   "terminal_growth": 0.049,
+   "mature_cost_of_equity_less_growth": 0.0462
+  },
+  "rows": [
+   {
+    "input": "mature beta",
+    "change": "+/- 0.1 (beta_mature)",
+    "down": {
+     "value_today": 307.04,
+     "d_value": 10.95,
+     "d_value_pct": 3.7,
+     "annual_return_pct": 12.5,
+     "d_return_pts": 0.76
+    },
+    "up": {
+     "value_today": 286.86,
+     "d_value": -9.23,
+     "d_value_pct": -3.1,
+     "annual_return_pct": 11.1,
+     "d_return_pts": -0.65
+    },
+    "abs_effect_value": 10.95
+   },
+   {
+    "input": "terminal growth",
+    "change": "+/- 0.5 point (the model uses the risk-free rate)",
+    "down": {
+     "value_today": 288.88,
+     "d_value": -7.21,
+     "d_value_pct": -2.4,
+     "annual_return_pct": 11.1,
+     "d_return_pts": -0.57
+    },
+    "up": {
+     "value_today": 305.02,
+     "d_value": 8.93,
+     "d_value_pct": 3.0,
+     "annual_return_pct": 12.4,
+     "d_return_pts": 0.68
+    },
+    "at_3pct": {
+     "value_today": 274.5,
+     "d_value": -21.59,
+     "d_value_pct": -7.3,
+     "annual_return_pct": 10.0,
+     "d_return_pts": -1.73
+    },
+    "abs_effect_value": 8.93
+   },
+   {
+    "input": "terminal ROIC",
+    "change": "+/- 5 points (roic_terminal)",
+    "down": {
+     "value_today": 292.12,
+     "d_value": -3.97,
+     "d_value_pct": -1.3,
+     "annual_return_pct": 11.4,
+     "d_return_pts": -0.31
+    },
+    "up": {
+     "value_today": 298.92,
+     "d_value": 2.83,
+     "d_value_pct": 1.0,
+     "annual_return_pct": 11.9,
+     "d_return_pts": 0.22
+    },
+    "abs_effect_value": 3.97
+   }
+  ],
+  "moves_most": "mature beta",
+  "moves_most_overall": {
+   "input": "revenue growth",
+   "abs_effect_value": 17.84
+  }
+ },
+ "return_with_distributions": {
+  "note": "a second line, never the headline: the model leaves each year's free cash in the company at the cash yield, while the index it is compared with reinvests its distributions. Here the cash above today's net cash (above zero for a company in net debt, which repays first) is paid out at each year-end and reinvested at the cost of equity to the horizon; return_with_distributions_at_index_pct reinvests it at the index return instead. Changing the headline needs a preregistered test",
+  "reinvestment_rate_pct": [
+   12.71,
+   12.39,
+   12.07,
+   11.75,
+   11.44
+  ],
+  "index_return_pct": 9.1,
+  "scenarios": {
+   "bear": {
+    "end_value": 188.6,
+    "return_pct": -8.5,
+    "end_value_with_distributions": 195.55,
+    "return_with_distributions_pct": -7.8,
+    "d_return_pts": 0.7,
+    "return_with_distributions_at_index_pct": -8.1,
+    "paid_out_m": {
+     "2027": 22197,
+     "2028": 47883,
+     "2029": 32911,
+     "2030": 41685,
+     "2031": 43353
+    },
+    "accumulated_cash_share_of_end_value_pct": 21.5,
+    "band": "sell",
+    "band_with_distributions": "sell"
+   },
+   "base": {
+    "end_value": 509.89,
+    "return_pct": 11.7,
+    "end_value_with_distributions": 523.3,
+    "return_with_distributions_pct": 12.3,
+    "d_return_pts": 0.6,
+    "return_with_distributions_at_index_pct": 12.1,
+    "paid_out_m": {
+     "2027": 36777,
+     "2028": 84912,
+     "2029": 83830,
+     "2030": 94943,
+     "2031": 99764
+    },
+    "accumulated_cash_share_of_end_value_pct": 16.9,
+    "band": "hold",
+    "band_with_distributions": "buy"
+   },
+   "bull": {
+    "end_value": 1216.61,
+    "return_pct": 33.0,
+    "end_value_with_distributions": 1238.07,
+    "return_with_distributions_pct": 33.5,
+    "d_return_pts": 0.5,
+    "return_with_distributions_at_index_pct": 33.4,
+    "paid_out_m": {
+     "2027": 42479,
+     "2028": 125711,
+     "2029": 168600,
+     "2030": 198771,
+     "2031": 216660
+    },
+    "accumulated_cash_share_of_end_value_pct": 13.2,
+    "band": "buy",
+    "band_with_distributions": "buy"
+   },
+   "base_calibrated": {
+    "end_value": 481.05,
+    "return_pct": 10.4,
+    "end_value_with_distributions": 494.73,
+    "return_with_distributions_pct": 11.0,
+    "d_return_pts": 0.6,
+    "return_with_distributions_at_index_pct": 10.8,
+    "paid_out_m": {
+     "2027": 36777,
+     "2028": 86352,
+     "2029": 86790,
+     "2030": 99071,
+     "2031": 105015
+    },
+    "accumulated_cash_share_of_end_value_pct": 18.5,
+    "band": "hold",
+    "band_with_distributions": "hold"
+   }
+  },
+  "band_changes": [
+   "base"
+  ]
  }
 }

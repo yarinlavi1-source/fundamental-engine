@@ -1,0 +1,304 @@
+{
+ "ticker": "MELI",
+ "as_of": "2026-11-06",
+ "price": 1532.29,
+ "price_time_utc": null,
+ "verdict_he": "קנייה בגודל מוגבל ובשלבים",
+ "buy_test_price": 1897.47,
+ "margin_of_safety_price": 1812.57,
+ "values": {
+  "today": {
+   "bear": 903.59,
+   "base": 2177.11,
+   "bull": 5341.37
+  },
+  "end_2027": {
+   "bear": 999.79,
+   "base": 2410.67,
+   "bull": 5916.24
+  },
+  "end_2028": {
+   "bear": 1091.98,
+   "base": 2631.65,
+   "bull": 6461.66
+  },
+  "end_2029": {
+   "bear": 1191.13,
+   "base": 2870.1,
+   "bull": 7051.47
+  },
+  "end_2030": {
+   "bear": 1297.39,
+   "base": 3126.53,
+   "bull": 7686.97
+  },
+  "end_2031": {
+   "bear": 1410.83,
+   "base": 3401.33,
+   "bull": 8368.9
+  },
+  "weighted_today_30_50_20": 2427.91,
+  "calibrated_today": 2270.62
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": null
+  },
+  "base": {
+   "prob": 0.5,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -1.6,
+  "base": 16.7,
+  "bull": 39.0,
+  "calibrated": 17.7,
+  "weighted": 19.3,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "דוח רבעון 4, פברואר 2027",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/MELI/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/MELI/2026-11-06/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 1897.47,
+   "stated_price": 1897.47,
+   "rerun_price": null,
+   "base_12_price": 1897.47,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 16.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 1897.47
+    },
+    "base_calibrated": {
+     "return_pct": 17.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 1979.83
+    },
+    "bull": {
+     "return_pct": 39.0,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 3728.3
+    },
+    "bear": {
+     "return_pct": -1.6,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 2427.31
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.15,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 1812.57,
+     "price_second_lens": 1891.24
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 1897.47,
+     "price_second_lens": 1979.83
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 1897.47,
+     "price_second_lens": 1979.83
+    },
+    {
+     "id": "index",
+     "return_pct": 9.1,
+     "price": 2171.96,
+     "price_second_lens": 2266.23
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 2519.55,
+     "price_second_lens": 2628.91
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 2921.04,
+     "price_second_lens": 3047.82
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 1812.57,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 2171.96,
+  "hold_floor_price": 2519.55,
+  "sell_line_price": 2921.04,
+  "values_dated": {
+   "today": {
+    "bear": 903.59,
+    "base": 2177.11,
+    "bull": 5341.37,
+    "date": "2026-11-06",
+    "base_calibrated": 2270.62
+   },
+   "year_ends": [
+    {
+     "bear": 999.79,
+     "base": 2410.67,
+     "bull": 5916.24,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 2514.27
+    },
+    {
+     "bear": 1091.98,
+     "base": 2631.65,
+     "bull": 6461.66,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 2744.88
+    },
+    {
+     "bear": 1191.13,
+     "base": 2870.1,
+     "bull": 7051.47,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 2993.82
+    },
+    {
+     "bear": 1297.39,
+     "base": 3126.53,
+     "bull": 7686.97,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 3261.69
+    },
+    {
+     "bear": 1410.83,
+     "base": 3401.33,
+     "bull": 8368.9,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 3548.96
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 986.66,
+     "base": 2378.74,
+     "bull": 5837.6,
+     "date": "2027-11-06",
+     "base_calibrated": 2480.96
+    },
+    "two_year": {
+     "bear": 1077.6,
+     "base": 2597.19,
+     "bull": 6376.6,
+     "date": "2028-11-06",
+     "base_calibrated": 2708.92
+    },
+    "five_year": {
+     "bear": 1393.12,
+     "base": 3358.43,
+     "bull": 8262.4,
+     "date": "2031-11-06",
+     "base_calibrated": 3504.11
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 999.79,
+     "base": 2410.67,
+     "bull": 5916.24,
+     "second_lens": 2514.27
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 1410.83,
+     "base": 3401.33,
+     "bull": 8368.9,
+     "second_lens": 3548.96
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 2270.62,
+   "annual_return_pct": 17.7,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "buy",
+   "text_he": "קנייה בגודל מוגבל ובשלבים",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}

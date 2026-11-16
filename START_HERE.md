@@ -4,31 +4,132 @@
 checkpoint workflow. Use the data connections already available in the user's
 session. Start working; do not ask the user to repeat setup that already exists.
 
-## Resuming in a fresh session — what is here and what to regenerate (21.10.2026)
+## Resuming in a fresh session — what is here and what to regenerate (16.11.2026)
 
 A new conversation re-clones this repo (default branch `main`) into a fresh, empty container, with the
-same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …). So:
+same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …). The daily path is the LEAN path:
+`docs/LEAN_PATH.md` is its runbook (a ticker question, results day, the portfolio check, the stock search). The heavy
+pipeline further down this file is a cross-check that runs only when the owner asks for it.
 
-- **In Git, always present:** all code, the `brain/`, `docs/`, `CLAUDE.md`, this file, the examples and
-  tests. The valuation method travels in full. Read `CLAUDE.md`, then this file.
-- **NOT in Git (regenerate on demand):** everything under `runs/` — ~4.4GB of generated data — except four
-  small, public, costly-to-rebuild files kept at their real paths so the engine finds them:
-  `runs/backtest/engine_v3/summary.json` and `rows.jsonl` (the walk-forward the conservatism diagnosis rests
-  on), `runs/universe_2026-10-20/calibration.json` (engine-consistent market return of engine 0.12.0: since 0.13.0
-  it is not picked by default, because it is another engine's market; rerun `scripts/calibrate.py` on a 0.13.0 sweep) and
-  `runs/macro/market_2026-10-20.json` (risk-free + ERP). A new session can value companies consistently from
-  these without re-fetching.
-- **Never in Git, re-supplied each session by the owner:** the read-only IBKR portfolio under
-  `runs/private_portfolio_<date>/` (positions, holdings_info). Ask the owner to re-save it when portfolio
-  work is needed; it is deliberately gitignored and must never be committed.
-- **Regenerate the rest** (research casefiles, the universe, the discovery DBs) with the scripts, e.g.:
+- **First commands of a new session:**
+  1. Read `CLAUDE.md`, then `docs/LEAN_PATH.md`. Check the branch and version: `git log -3 --oneline`;
+     `python -c "import fundamental_engine as f; print(f.__version__)"`.
+  2. `[ -n "$SEC_USER_AGENT" ]`. If it is missing, ask the owner once (CLAUDE.md step 0). Never write it to a file.
+  3. State checks, all read-only:
+     - `python -m unittest tests.test_saved_valuations`: every saved valuation still reproduces (under 2 seconds);
+     - `python scripts/lean_freeze.py --verify`: the ledger chain and the theses in force;
+     - `python scripts/publish_valuation.py --check`: the thesis book is consistent, 0 problems expected;
+     - `python scripts/due.py --days 14 --today <D>`: which reports are due.
+  4. On a ticker, `python -m fundamental_engine research-latest <T>` prints the valuation in force. It is the newest
+     dated folder of any kind, with its values, the two prices, the verdict and the next report. Start from that
+     folder.
+- **In Git, always present:**
+  - All code, the `brain/`, `docs/`, `CLAUDE.md`, this file, the examples and tests.
+  - The lean-path scripts in `scripts/`: `lean_model.py`, `lean_check.py`, `publish_valuation.py`, `lean_freeze.py`,
+    `locked_rules.py`, `forecast_tracker.py`, `portfolio_health.py`, `due.py`, `quality_momentum_screen.py` and
+    `ticker_prefetch.py`.
+  - The thesis book in `research/`, company research only:
+    - `research/THESES_he.md`: one row per company;
+    - `research/companies/<T>/thesis_he.md`: its numbers block is written by `publish_valuation.py`, the prose by hand.
+  - Every valuation's dated folder `research/companies/<T>/<date>/`. These are the baselines; a later valuation never
+    edits them. A folder holds:
+    - `lean_params*.json` with its `lean_result*.json`, or a custom model's code and inputs (BNY bank model, SPCX
+      segment model, META three-lane model in `model/`, NBIS checks);
+    - `valuation.json`, the one record that every published number comes from;
+    - optionally `worlds.json` (weighted variants), `lean_params_pre_review.json` and `review_findings.json` (what
+      the verification pass changed), `lean_check.json`, and `scorecard.json` (manual scoring for custom models).
+  - `research/technical/<T>/<date>/fundamental.json`: the handoff the TradingView session reads (spec
+    `research/technical/FUNDAMENTAL_HANDOFF_he.md`: v1 keys kept, `schema_version` 2 with a `v2` object).
+  - `research/ledger.jsonl`: the hash-chained ledger where every published base case is frozen before its next report,
+    and where the tracker writes outcomes. `research/forecast_ledger.jsonl` is the older heavy-engine ledger, kept as
+    it is.
+  - Other files in `research/`:
+    - `lessons.jsonl` (past errors, read by `lean_check`);
+    - `RULE_CHANGES_he.md` (how a check or a modelling rule may change);
+    - `market.json` (the rf and ERP in force for the lean path);
+    - `rejected.jsonl` (checks that ended "not a buy" without a folder);
+    - `FORECAST_TRACKER_he.md` with `forecast_tracker.json` (the scoring of frozen forecasts).
+  - Under `runs/`, only nine small heavy-engine files are tracked (`git ls-files runs`): the walk-forward and
+    price-path summaries, the 0.12.0 calibration and the dated macro files.
+- **NOT in Git (gitignored; regenerate on demand):**
+  - `runs/tickers/<T>_<D>/`: the prefetch caches and lane notes. `ticker_prefetch.py <T> <D> --reuse auto` rebuilds
+    them.
+  - `runs/sec_cache/` and `runs/forecast_tracker/`: SEC caches. `--refresh` on holdings-update, the tracker and `due.py`
+    refetches them.
+  - `runs/screens/<D>/`: screen output; rerun the screen.
+  - `runs/engine_upgrade_2026-11-15/`: the audit and package reports of the 15.11 upgrade.
+  - Heavy-engine data (universe, walk-forward rows, discovery DBs): only on the owner's request.
+- **Never in Git, private (the owner's portfolio):**
+  - `runs/portfolio_<D>/`: positions read from IBKR `get_account_positions` (READ-ONLY), plus holdings_update,
+    portfolio_health and due output.
+  - `runs/portfolio_rules.json`: bands, caps, role per holding, and drafted fields waiting for the owner. It is lost
+    with the container; without it `portfolio_health.py` uses the defaults and gives no roles. Ask the owner to
+    confirm the roles again.
+  - Nothing private goes under `research/`, which is public.
+- **Latest state (read these to catch up):**
+  - 16.11.2026: the lean-path upgrade of 15-16.11 (`docs/CHANGELOG.md`, Unreleased). It added:
+    - baselines in Git and a golden test;
+    - the frozen ledger;
+    - input validation, dated values and a fixed 13% rung in `lean_model`;
+    - weighted worlds and per-scenario funding;
+    - one record per valuation with `publish_valuation.py --check`;
+    - `lean_check` with `research/lessons.jsonl`;
+    - the locked rules as code;
+    - the tracker scoring frozen forecasts only;
+    - portfolio_health and due;
+    - the screen marking names whose saved valuation fails the buy test.
+  - The current book is `research/THESES_he.md`, `research/FORECAST_TRACKER_he.md`, `docs/LEAN_PATH.md` and the "lean
+    path" section of `docs/MODULE_CONTRACTS.md`.
+  - The heavy engine's state up to 02.11.2026 is listed under "Heavy pipeline" below.
+- **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
+  branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
+  branches is how a new session ends up on an old engine (it happened on 21.10.2026).
+
+## Saved research and the portfolio check (02.11.2026, updated 16.11.2026)
+
+- **The valuation in force:** `python -m fundamental_engine research-latest <T>`. It resolves the newest dated folder
+  of `research/companies/<T>/` of any kind: lean, custom or heavy engine. It prints the folder, its kind, a summary
+  from `valuation.json`, the handoff path and the superseded heavy-engine save; `--full` adds the whole record.
+  - A new lean valuation goes in a new dated folder and is published and frozen (`docs/LEAN_PATH.md` (a)).
+  - `research-load` is the older journal of research_checkpoint dossiers (non-ticker work).
+  - Company research only, never positions.
+- **Heavy-engine saves (cross-check only):** `python -m fundamental_engine research-save runs/tickers/<T>_<D>` copies a
+  heavy run's essentials into `research/companies/<T>/<D>/` and appends to `research/forecast_ledger.jsonl`. It keeps
+  `latest.json`, which no longer decides what is in force.
+- **The owner's holdings** (`docs/LEAN_PATH.md` (c)):
+  1. `python -m fundamental_engine holdings-update --positions runs/portfolio_<D>/positions.json --as-of <D> --refresh
+     --out runs/portfolio_<D>`. Positions are saved from IBKR get_account_positions, READ-ONLY. It reads each
+     holding's valuation record before the handoff and the older heavy-engine filing check. It writes
+     `holdings_update.json` and `holdings_update_he.md`.
+  2. `python scripts/portfolio_health.py` applies the owner's bands, caps and two-lens rule.
+  3. `python scripts/due.py` lists what reported and what is due.
+  4. Rows `new_holding` and `full_rerun_needed` go to the lean path.
+  None of these revalue a frozen valuation or give orders.
+
+## Heavy pipeline and older workflows (cross-check, on the owner's request)
+
+The sections from here to the end of this file describe the heavy engine and older workflows:
+- the casefile pipeline: `deep`, `pipeline`, the ticker stages and the Workflow `ticker`;
+- dossiers and checkpoints;
+- universe discovery, calibration and walk-forwards.
+
+Use them when the owner asks for the deepest pass, or as a second opinion next to a lean valuation. They are not the
+daily path. Universe tests and backtests run only when he asks (06.11.2026).
+
+- **Tracked heavy-engine files under `runs/`** (kept at their real paths so the engine finds them):
+  `runs/backtest/engine_v3/summary.json` and `rows.jsonl` (the walk-forward the conservatism diagnosis rests on),
+  `runs/universe_2026-10-20/calibration.json` (the engine-consistent market return of engine 0.12.0: since 0.13.0 it is
+  not picked by default, because it is another engine's market; rerun `scripts/calibrate.py` on a 0.13.0 sweep),
+  `runs/macro/market_2026-10-20.json` (risk-free + ERP of the heavy path; the lean path reads `research/market.json`),
+  plus the price-path summaries and the country-risk file.
+- **Regenerate heavy-engine data** (research casefiles, the universe, the discovery DBs) with the scripts, e.g.:
   the universe + calibration `SEC_USER_AGENT="app you@example.com" python scripts/collect_universe.py` then
   `scripts/calibrate.py`; the engine walk-forward `python scripts/backtest_engine.py runs/universe_<date>
   --name large500 --from 2016 --to 2025 --workers 4`; a single company end-to-end `python -m
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
-- **Latest state (read these to catch up):** 02.11.2026: 0.14.3 merged: engine stabilized (routing audit on 20 real runs, docs/ROUTING_HE.md = which company type goes to which model; bank revenue tag, residual-income honesty, MA fee platform, TSLA hardware not software, country-risk pack route); bank route uses diluted shares and a CET1 capital check (bank_drivers); holdings-update (light quarterly check of the owner's IBKR holdings) and the tracked research store (research/companies/<T>/<as_of>/, research-save / research-latest; 20 valuations saved). Known limits: REITs, pre-revenue biotech and conglomerates get no engine value; build-out companies need evidenced build_phase; TSM discounted at the US rate; APH and VRT saved valuations used an older type and need a rerun. Earlier: 01.11.2026 (later): 0.14.2 merged: the engine bugs from the 01.11 portfolio batch fixed over three reviewed rounds (split x25 dedupe, company_path ROIC linked into the DCF, contracted equity proceeds and issue price, options treasury method, honest valued()/not-valued reasons naming the scenario, build_phase only on the company's own load evidence, unit spellings); docs/CHANGELOG.md 0.14.2. Values moved: META 738, PLTR 114; NBIS/ASTS stay not valued until an evidenced rerun (NBIS needs analyst rework of its ROIC inputs). Earlier: 0.14.1 merged (ORCL debt fixes over six reviewed rounds:
+- **Heavy engine state up to 02.11.2026:** 0.14.3 merged: engine stabilized (routing audit on 20 real runs, docs/ROUTING_HE.md = which company type goes to which model; bank revenue tag, residual-income honesty, MA fee platform, TSLA hardware not software, country-risk pack route); bank route uses diluted shares and a CET1 capital check (bank_drivers); holdings-update (light quarterly check of the owner's IBKR holdings) and the tracked research store (research/companies/<T>/<as_of>/, research-save / research-latest; 20 valuations saved). Known limits: REITs, pre-revenue biotech and conglomerates get no engine value; build-out companies need evidenced build_phase; TSM discounted at the US rate; APH and VRT saved valuations used an older type and need a rerun. Earlier: 01.11.2026 (later): 0.14.2 merged: the engine bugs from the 01.11 portfolio batch fixed over three reviewed rounds (split x25 dedupe, company_path ROIC linked into the DCF, contracted equity proceeds and issue price, options treasury method, honest valued()/not-valued reasons naming the scenario, build_phase only on the company's own load evidence, unit spellings); docs/CHANGELOG.md 0.14.2. Values moved: META 738, PLTR 114; NBIS/ASTS stay not valued until an evidenced rerun (NBIS needs analyst rework of its ROIC inputs). Earlier: 0.14.1 merged (ORCL debt fixes over six reviewed rounds:
   LongTermNotesAndLoans read, more debt never raises equity value or the IRR, verdict-scale base IRR as the table's return row,
   separate convergence return with reinvested distributions; CHANGELOG Unreleased 0.14.1). The ten engine bugs of the 01.11
   portfolio batch are fixed in CHANGELOG 0.14.2 (branch eng-batch1101): split counted once, company_path ROIC
@@ -43,8 +144,8 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   company_path, draft tables with numbers, quarterly-guide current year, acquired step, stub draws, dataqa resolutions; measured
   fast-ticker times: NVDA 36, CRDO 30, APH ~30 minutes, GOOGL 60 minutes with an added adversarial verify layer; open engine
   items: investments valued below face, debt coupon after a debt jump, bear terminal-ROIC continuity, deferred tax on
-  unrealized gains) and (25.10.2026 fast ticker procedure, the
-  default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
+  unrealized gains) and (25.10.2026 fast ticker procedure, then the
+  default on a ticker and now a cross-check on request: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
   parts with the trace reviewer, `ticker-value`, two reviewers, `ticker-status`; each agent follows `python -m
   fundamental_engine ticker-stage <stage>`; a design estimate of 25-35 minutes for a new ticker, not yet measured; see
   CLAUDE.md "On a ticker")
@@ -67,9 +168,6 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   `docs/prereg_price_path_v2.md` (the registered second version: market class multiples, quantile band; `pricepath`
   spec_version 2 / `scripts/backtest_pricepath.py --spec 2`) and `docs/PRICE_PATH_V2_RESULTS_2026-10-25.md` (its single run
   FAILED: bias -0.05/-0.12/-0.21 at 1/3/5 years, worse than a 7% drift and the engine-IRR path; not shown in the table).
-- **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
-  branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
-  branches is how a new session ends up on an old engine (it happened on 21.10.2026).
 
 ## Which company type goes to which model (02.11.2026, 0.14.3)
 
@@ -77,26 +175,10 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
 must supply, and when the engine refuses or flags instead of giving a number. Read it before trusting a value on a bank,
 a REIT, a biotech, a conglomerate or a build-out company.
 
-## Saved research and the portfolio quarterly check (02.11.2026)
-
-- **Tracked research store `research/` (in Git):** every full valuation is saved with `python -m fundamental_engine
-  research-save runs/tickers/<T>_<D>` into `research/companies/<T>/<D>/` (inputs, evidence pack, position parts, reviews,
-  gather fragments, identity, Hebrew table and scenarios, casefile summary and a small casefile extract) plus
-  `research/forecast_ledger.jsonl` (the tracked copy of the ledger). `python -m fundamental_engine research-latest <T>`
-  prints the newest saved valuation (or an unsaved runs/ folder, labelled so, or "none"); start the next run from it with
-  `python scripts/ticker_prefetch.py <T> <D> --reuse <that folder>` and update only what happened since. For a company
-  valuation resume with research-latest; `research-load` is the older journal of research_checkpoint dossiers (non-ticker
-  work). Company research only, never positions.
-- **Quarterly check of the owner's holdings:** `python -m fundamental_engine holdings-update --positions
-  runs/portfolio_<D>/positions.json --as-of <D> --refresh` (positions saved from IBKR get_account_positions, READ-ONLY)
-  compares each holding's frozen thesis with the filings since its cutoff and writes `holdings_update.json` and
-  `holdings_update_he.md` (default `runs/portfolio_<D>/`): no new report / light update (the thesis stands) / full rerun
-  (fast ticker procedure) / new holding (fast ticker procedure) / data unavailable. Use it after earnings season or when
-  the owner asks how his holdings are doing; it does not revalue and gives no orders.
-
 ## The whole cycle (discover -> research -> calibrate -> propose), 20.10.2026
 
-Only when the owner asks to look for companies. Data comes from the collection scripts (SEC, with a contact e-mail in
+Older search path: the search in use is the 15.11.2026 quality + trend screen (`docs/LEAN_PATH.md` (d)), and this
+cycle runs only when the owner asks for it by name. Data comes from the collection scripts (SEC, with a contact e-mail in
 SEC_USER_AGENT, never stored) and from the session's connectors saved into the channels folder
 (`fundamental_engine.channels.plan` names each call and file). The portfolio file is read-only and stays outside Git.
 
@@ -138,7 +220,7 @@ applied automatically). Evidenced inputs for what the engine cannot see by itsel
 (one-offs), `debt_like_claims` (royalty financing and similar), `operating_funding` (deposits funding a loan book) and
 `cyclical` (structural or cyclical, also against a cycle the history shows).
 
-## v0.11 — one decision path (use this first)
+## v0.11 — one decision path (heavy pipeline)
 
 Sources -> data validation -> business understanding -> financial analysis -> forecast -> valuation ->
 risks and failure scenarios -> independent review -> investment decision. One module per step, one casefile.

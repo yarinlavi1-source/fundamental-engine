@@ -947,5 +947,297 @@ class LeanModelReportingTwoTest(unittest.TestCase):
                                                                        lean_model.run(load_fixture('lean_model_dated.json'))))
 
 
+
+# ---- P3b (15.11.2026): per-scenario funding and weighted worlds ----
+
+def _strip_funding(res):
+    """The result without the keys a funding plan adds, for comparing with a run without one."""
+    res = json.loads(json.dumps(res))
+    for r in res['scenarios'].values():
+        r.pop('funding', None)
+    return res
+
+
+class LeanModelFundingTest(unittest.TestCase):
+    def setUp(self):
+        self.p = load_fixture()
+
+    def funded(self, plan, names=('bear', 'base', 'bull'), p=None):
+        q = json.loads(json.dumps(p or self.p))
+        for k in names:
+            q['scenarios'][k]['funding'] = dict(plan)
+        return q
+
+    def test_absent_is_identical(self):
+        self.assertEqual(json.dumps(lean_model.run(self.p)), json.dumps(lean_model.run(json.loads(json.dumps(self.p)))))
+        res = lean_model.run(self.p)
+        self.assertNotIn('funding', res['scenarios']['base'])
+        self.assertNotIn('funding_plan', res['funding']['scenarios']['base'])
+
+    def test_empty_plan_gives_the_same_numbers(self):
+        # the funded path with no money and the file's debt rate is the plain path, to the cent
+        a = lean_model.run(self.p)
+        b = lean_model.run(self.funded({'debt_rate': self.p['debt_rate']}))
+        for k in ('bear', 'base', 'bull'):
+            for key in ('value_today', 'dcf_today', 'multiple_today', 'annual_return_pct', 'year_end_values', 'eps_operating',
+                        'eps_with_interest'):
+                self.assertEqual(a['scenarios'][k][key], b['scenarios'][k][key], (k, key))
+        self.assertEqual(a['buy_test']['max_price_passing'], b['buy_test']['max_price_passing'])
+        self.assertEqual(a['return_with_distributions']['scenarios']['base']['return_with_distributions_pct'],
+                         b['return_with_distributions']['scenarios']['base']['return_with_distributions_pct'])
+        self.assertIn('funding_plan', b['funding']['scenarios']['base'])
+
+    def test_plan_on_one_scenario_leaves_the_others(self):
+        a = lean_model.run(self.p)
+        b = lean_model.run(self.funded({'equity_raise_m': {'0': 5000}, 'issue_price': 150}, names=('bear',)))
+        self.assertEqual(a['scenarios']['base'], b['scenarios']['base'])
+        self.assertEqual(a['scenarios']['bull'], b['scenarios']['bull'])
+        self.assertNotEqual(a['scenarios']['bear']['value_today'], b['scenarios']['bear']['value_today'])
+
+    def test_equity_at_the_base_year_end_equals_the_hand_edit(self):
+        # what checks13.py did by hand: net cash + amount, shares + amount / price in every scenario
+        amount, px = 6000.0, 150.0
+        hand = json.loads(json.dumps(self.p))
+        hand['net_cash_m'] += amount
+        hand['shares_m'] += amount / px
+        r_hand = lean_model.run(hand)
+        r_plan = lean_model.run(self.funded({'equity_raise_m': {'0': amount}, 'issue_price': px}))
+        for k in ('bear', 'base', 'bull'):
+            for key in ('value_today', 'annual_return_pct', 'year_end_values', 'eps_operating'):
+                self.assertEqual(r_hand['scenarios'][k][key], r_plan['scenarios'][k][key], (k, key))
+        self.assertEqual(r_hand['two_lens']['calibrated']['value_today'], r_plan['two_lens']['calibrated']['value_today'])
+        plan = r_plan['scenarios']['base']['funding']
+        self.assertEqual(plan['equity_raise_m'], {2026: amount})
+        self.assertAlmostEqual(plan['new_shares_m'], 40.0, places=2)
+
+    def test_model_price_moves_no_value_today(self):
+        a = lean_model.run_scenario(self.p, self.p['scenarios']['base'], detail=True)
+        d = dict(self.p['scenarios']['base'], funding={'equity_raise_m': {'0': 20000}, 'issue_price': 'model'})
+        r, det = lean_model.run_scenario(self.p, d, detail=True)
+        self.assertAlmostEqual(r['value_today'], a[0]['value_today'], places=2)   # cash at face today: neutral
+        self.assertAlmostEqual(r['funding']['issue_price'][2026], a[1]['val_raw'][0], places=2)   # the base year-end value
+        self.assertEqual(r['funding']['issue_price_basis'], 'model')
+
+    def test_later_raise_is_discounted_and_dilutes_eps_from_its_year(self):
+        p = self.p
+        base = p['scenarios']['base']
+        r0, d0 = lean_model.run_scenario(p, base, detail=True)
+        amount, px = 10000.0, 100.0
+        r1, d1 = lean_model.run_scenario(p, dict(base, funding={'equity_raise_m': {'2': amount}, 'issue_price': px}),
+                                         detail=True)
+        sh = p['shares_m'] + amount / px
+        pv = amount / ((1 + d0['ke'][0]) * (1 + d0['ke'][1]))
+        stub = (1 + d0['ke'][0]) ** (p['days_to_base_year_end'] / 365)
+        self.assertAlmostEqual(r1['value_today'], (d0['val_raw'][0] * p['shares_m'] + pv) / sh / stub, places=2)
+        self.assertEqual(r1['eps_operating'][2027], r0['eps_operating'][2027])   # before the raise: today's shares
+        self.assertAlmostEqual(r1['eps_operating'][2029], d0['nopat'][2] / sh, places=2)
+        self.assertAlmostEqual(d1['cash'][2] - d0['cash'][2], amount, places=6)   # lands at the start of model year 2
+        self.assertEqual(r1['funding']['equity_raise_m'], {2028: amount})
+
+    def test_named_debt_keeps_net_cash_and_charges_the_carry(self):
+        p, base = self.p, self.p['scenarios']['base']
+        _, d0 = lean_model.run_scenario(p, base, detail=True)
+        r1, d1 = lean_model.run_scenario(p, dict(base, funding={'debt_raise_m': {'0': 5000}, 'debt_rate': 0.08}), detail=True)
+        self.assertEqual(d1['cash'][0], d0['cash'][0])   # cash and debt rise together
+        carry = 5000 * (0.08 - p['cash_yield']) * (1 - p['tax'])
+        self.assertAlmostEqual(d0['cash'][1] - d1['cash'][1], carry, places=6)
+        self.assertEqual(r1['funding']['debt_m'][2026], 5000)
+        self.assertEqual(r1['value_today'], lean_model.run_scenario(p, base)['value_today'])   # today: cash at face
+
+    def test_named_debt_is_not_flagged_as_outside_money(self):
+        q = json.loads(json.dumps(self.p))
+        q['net_cash_m'] = -1000.0
+        q['scenarios']['base']['conv'] = [-1.0, -1.0, 0.9, 0.9, 0.9, 0.9]   # burns cash for two years
+        open_need = lean_model.run(q)['funding']['scenarios']['base']['outside_money_m']
+        self.assertGreater(open_need, 1000)
+        # named debt while cash is still positive costs the carry (debt rate against cash yield), so the fall is a bit deeper
+        q['scenarios']['base']['funding'] = {'debt_raise_m': {'0': 2 * open_need}, 'debt_rate': q['debt_rate']}
+        row = lean_model.run(q)['funding']['scenarios']['base']
+        self.assertEqual(row['outside_money_m'], 0)
+        self.assertGreater(row['outside_money_before_named_debt_m'], open_need)
+        self.assertFalse(any('outside money' in x for x in row['reasons']))
+        q['scenarios']['base']['funding'] = {'debt_raise_m': {'0': open_need / 2}, 'debt_rate': q['debt_rate']}
+        row = lean_model.run(q)['funding']['scenarios']['base']
+        self.assertAlmostEqual(row['outside_money_m'], row['outside_money_before_named_debt_m'] - open_need / 2, delta=1)
+        self.assertTrue(any('beyond the funding plan' in x for x in row['reasons']))
+
+    def test_bad_plans_are_rejected(self):
+        for plan, words in (({'equity_raise_m': {'2027': 100}, 'issue_price': 10}, 'not a year index'),
+                            ({'equity_raise_m': {'0': 100}}, 'needs issue_price'),
+                            ({'equity_raise_m': {'0': -100}, 'issue_price': 10}, 'zero or more'),
+                            ({'equity_raise_m': {'0': 100}, 'issue_price': 'market'}, 'issue_price must be'),
+                            ({'debt_rate': 8.5}, 'debt_rate must be'),
+                            ({'equity': {'0': 100}}, 'unknown key')):
+            with self.subTest(plan=plan):
+                with self.assertRaises(lean_model.ParamsError) as cm:
+                    lean_model.run(self.funded(plan, names=('base',)))
+                self.assertTrue(any(words in x for x in cm.exception.problems), cm.exception.problems)
+        r = lean_model.run(self.funded({}, names=('base',)))   # an empty plan is ignored
+        self.assertNotIn('funding', r['scenarios']['base'])
+        r = lean_model.run(self.funded({'why': 'nothing yet'}, names=('base',)))
+        self.assertTrue(any('changes nothing' in x for x in r['inputs']['warnings']))
+
+    def test_nbis_variant_reproduces_the_financing_realistic_case(self):
+        fp = os.path.join(ROOT, 'research', 'companies', 'NBIS', '2026-11-13', 'lean_params_funding_variant.json')
+        q = load_fixture(os.path.relpath(fp, os.path.join(ROOT, 'tests', 'fixtures')))
+        saved = load_fixture(os.path.relpath(fp.replace('lean_params_funding_variant', 'lean_params'),
+                                             os.path.join(ROOT, 'tests', 'fixtures')))
+        self.assertEqual({k: v for k, v in q.items() if k not in ('scenarios', 'notes')},
+                         {k: v for k, v in saved.items() if k not in ('scenarios', 'notes')})
+        for k, d in q['scenarios'].items():
+            self.assertEqual({a: b for a, b in d.items() if a != 'funding'}, saved['scenarios'][k])
+        published = {'base_today': 68.44, 'ours_pct': 7.4, 'cal_today': 89.16, 'cal_pct': 12.2, 'buy_price_ours': 88.93,
+                     'buy_price_cal': 111.64, 'bull_today': 215.36}
+
+        def read(r):
+            b, c = r['scenarios']['base'], r['two_lens']['calibrated']
+            return {'base_today': b['value_today'], 'ours_pct': b['annual_return_pct'], 'cal_today': c['value_today'],
+                    'cal_pct': c['annual_return_pct'], 'buy_price_ours': r['buy_price'],
+                    'buy_price_cal': r['price_ladder']['rungs']['buy_test']['calibrated'],
+                    'bull_today': r['scenarios']['bull']['value_today']}
+
+        got = read(lean_model.run(q))
+        for key, v in published.items():
+            self.assertAlmostEqual(got[key], v, delta=0.05, msg=key)
+        # with the share counts rounded to 0.1M as checks13.py rounded them, every figure is the published one
+        for k, total in (('base', 387.3), ('bull', 444.9), ('bear', 435.9)):
+            sh0 = q['scenarios'][k].get('shares_m', q['shares_m'])
+            q['scenarios'][k]['funding']['issue_price'] = 6000 / (total - sh0)
+        self.assertEqual(read(lean_model.run(q)), published)
+
+
+class LeanModelWorldsTest(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory(prefix='lean_worlds_')
+        self.dir = self.tmp.name
+        self.p = load_fixture()
+        self.q = json.loads(json.dumps(self.p))   # a second world: lower exit multiple and margins
+        for d in self.q['scenarios'].values():
+            d['pe'] = d['pe'] - 5
+            d['m'] = [x - 0.03 for x in d['m']]
+        for name, p in (('main.json', self.p), ('other.json', self.q)):
+            with open(os.path.join(self.dir, name), 'w') as f:
+                json.dump(p, f)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def spec(self, *pairs):
+        return {'worlds': [{'name': n, 'file': f, 'weight': w} for n, f, w in pairs]}
+
+    def test_absent_adds_nothing(self):
+        self.assertNotIn('worlds', lean_model.run(self.p))
+
+    def test_one_world_equals_the_main_file(self):
+        res = lean_model.run(self.p, worlds=self.spec(('only', 'main.json', 1.0)), base_dir=self.dir)
+        w = res['worlds']
+        self.assertTrue(w['worlds'][0]['same_inputs_as_main'])
+        dv = res['dated_values']
+        self.assertEqual(w['weighted']['value_today'], {k: v for k, v in dv['today'].items() if k != 'date'})
+        self.assertEqual(w['weighted']['at']['five_year']['base'], dv['at']['five_year']['base'])
+        self.assertEqual(w['weighted']['price_ladder']['rungs'], res['price_ladder']['rungs'])
+        self.assertEqual(w['weighted']['buy_test']['max_price_passing'], res['buy_test']['max_price_passing'])
+        self.assertEqual(w['weighted']['buy_test']['rerun']['max_price_passing'], res['buy_test']['rerun']['max_price_passing'])
+        self.assertEqual(w['weighted']['annual_return_pct']['base'], res['scenarios']['base']['annual_return_pct'])
+        # the other keys still describe the main file
+        self.assertEqual({k: v for k, v in res.items() if k != 'worlds'}, lean_model.run(self.p))
+
+    def test_weighted_values_and_return(self):
+        res = lean_model.run(self.p, worlds=self.spec(('a', 'main.json', 0.6), ('b', 'other.json', 0.4)), base_dir=self.dir)
+        a, b = lean_model.run(self.p), lean_model.run(self.q)
+        W, last = res['worlds']['weighted'], 2031
+        self.assertAlmostEqual(W['value_today']['base'], 0.6 * a['scenarios']['base']['value_today']
+                               + 0.4 * b['scenarios']['base']['value_today'], places=2)
+        end = 0.6 * a['scenarios']['base']['year_end_values'][last] + 0.4 * b['scenarios']['base']['year_end_values'][last]
+        self.assertAlmostEqual(W['year_end_values'][last]['base'], end, places=2)
+        self.assertEqual(W['base_return_pct'], round(((W['year_end_values'][last]['base'] / self.p['price'])
+                                                      ** (1 / self.p['years_to_horizon']) - 1) * 100, 1))
+        self.assertAlmostEqual(W['price_ladder']['rungs']['margin_of_safety_13']['ours'],
+                               W['year_end_values'][last]['base'] / 1.13 ** self.p['years_to_horizon'], places=2)
+        self.assertAlmostEqual(W['probability_weighted_value_today'],
+                               0.6 * a['weighted_value_today'] + 0.4 * b['weighted_value_today'], places=2)
+        self.assertEqual([r['name'] for r in res['worlds']['worlds']], ['a', 'b'])
+        self.assertEqual(res['worlds']['worlds'][1]['value_today']['base'], b['scenarios']['base']['value_today'])
+
+    def test_weighted_rerun_price_holds_each_worlds_own_multiple(self):
+        res = lean_model.run(self.p, worlds=self.spec(('a', 'main.json', 0.5), ('b', 'other.json', 0.5)), base_dir=self.dir)
+        x = res['worlds']['weighted']['buy_test']['rerun']['calibrated_max_price']
+        self.assertIsNotNone(x)
+        ends = []
+        for p in (self.p, self.q):   # rerun each world at x: the calibrated lens holds the multiple of x
+            r = lean_model.run(lean_model.reprice(p, x))
+            ends.append(r['two_lens']['calibrated']['year_end_values'][2031])
+        weighted = 0.5 * ends[0] + 0.5 * ends[1]
+        self.assertAlmostEqual(weighted / x, 1.12 ** self.p['years_to_horizon'], delta=0.002)
+
+    def test_reprice_moves_every_world(self):
+        spec = self.spec(('a', 'main.json', 0.5), ('b', 'other.json', 0.5))
+        res = lean_model.run(lean_model.reprice(self.p, 150.0), worlds=spec, base_dir=self.dir)
+        self.assertEqual(res['worlds']['price'], 150.0)
+        self.assertTrue(res['worlds']['worlds'][0]['same_inputs_as_main'])
+        b = lean_model.run(lean_model.reprice(self.q, 150.0))
+        self.assertEqual(res['worlds']['worlds'][1]['annual_return_pct']['base'], b['scenarios']['base']['annual_return_pct'])
+
+    def test_bad_worlds_are_rejected(self):
+        moved = dict(self.q, price=self.q['price'] + 1)
+        with open(os.path.join(self.dir, 'moved.json'), 'w') as f:
+            json.dump(moved, f)
+        cases = ((self.spec(('a', 'main.json', 0.6), ('b', 'other.json', 0.5)), 'sum to'),
+                 (self.spec(('a', 'main.json', 0.5), ('a', 'other.json', 0.5)), 'used twice'),
+                 (self.spec(('a', 'main.json', 0.5), ('b', 'missing.json', 0.5)), 'cannot read'),
+                 (self.spec(('a', 'main.json', 0.5), ('b', 'moved.json', 0.5)), 'price'),
+                 ({'worlds': []}, 'non-empty'))
+        for spec, words in cases:
+            with self.subTest(words=words):
+                with self.assertRaises(lean_model.ParamsError) as cm:
+                    lean_model.run(self.p, worlds=spec, base_dir=self.dir)
+                self.assertTrue(any(words in x for x in cm.exception.problems), cm.exception.problems)
+
+    def test_params_key_and_command_line(self):
+        import subprocess
+        with open(os.path.join(self.dir, 'with_worlds.json'), 'w') as f:
+            json.dump(dict(self.p, worlds=self.spec(('a', 'main.json', 0.5), ('b', 'other.json', 0.5))['worlds']), f)
+        with open(os.path.join(self.dir, 'worlds.json'), 'w') as f:
+            json.dump(self.spec(('a', 'main.json', 0.5), ('b', 'other.json', 0.5)), f)
+        script = os.path.join(ROOT, 'scripts', 'lean_model.py')
+        one = subprocess.run([sys.executable, script, os.path.join(self.dir, 'with_worlds.json')], capture_output=True,
+                             text=True, cwd=ROOT)
+        two = subprocess.run([sys.executable, script, os.path.join(self.dir, 'main.json'), '--worlds',
+                              os.path.join(self.dir, 'worlds.json'), '--summary'], capture_output=True, text=True, cwd=ROOT)
+        self.assertEqual(one.returncode, 0, one.stderr)
+        self.assertEqual(two.returncode, 0, two.stderr)
+        w = json.loads(one.stdout)['worlds']
+        self.assertEqual(w['weights'], {'a': 0.5, 'b': 0.5})
+        self.assertIn('weighted, today', two.stdout)
+        bad = subprocess.run([sys.executable, script, os.path.join(self.dir, 'main.json'), '--worlds',
+                              os.path.join(self.dir, 'nope.json')], capture_output=True, text=True, cwd=ROOT)
+        self.assertNotEqual(bad.returncode, 0)
+
+    def test_nvda_worlds_reproduce_the_published_figures(self):
+        folder = os.path.join(ROOT, 'research', 'companies', 'NVDA', '2026-11-12')
+        with open(os.path.join(folder, 'lean_params.json')) as f:
+            main = json.load(f)
+        with open(os.path.join(folder, 'worlds.json')) as f:
+            spec = json.load(f)
+        res = lean_model.run(lean_model.reprice(main, 155.39), worlds=spec, base_dir=folder)
+        W = res['worlds']['weighted']
+        self.assertEqual(res['worlds']['weights'], {'orderly_succession': 0.45, 'messy_succession': 0.35, 'export_finding': 0.2})
+        self.assertEqual(round(W['value_today']['base']), 169)   # the published weighted base (handoff, thesis 12.11 evening)
+        rows = {r['name']: r for r in res['worlds']['worlds']}
+        self.assertEqual(round(rows['orderly_succession']['value_today']['base']), 182)   # the central world's base
+        self.assertEqual([rows[n]['annual_return_pct']['base'] for n in ('orderly_succession', 'messy_succession',
+                                                                         'export_finding')], [14.8, 12.2, 10.4])
+        self.assertEqual([round(rows[n]['buy_test']['max_price_passing']) for n in rows], [176, 157, 144])
+        self.assertEqual([round(rows[n]['margin_of_safety_13']['ours']) for n in rows], [168, 150, 138])
+        # the superseded four-state weighting (before the resignation) gives the published 'about 185'
+        old = spec['superseded'][0]['weights']
+        files = {r['name']: r['file'] for r in spec['worlds']}
+        files['huang_stays'] = 'lean_params_A_huang_stays.json'
+        four = {'worlds': [{'name': k.split(' ')[0], 'file': files[k.split(' ')[0]], 'weight': w} for k, w in old.items()]}
+        res4 = lean_model.run(lean_model.reprice(main, 161.47), worlds=four, base_dir=folder)
+        self.assertEqual(round(res4['worlds']['weighted']['value_today']['base']), 185)
+
+
 if __name__ == '__main__':
     unittest.main()

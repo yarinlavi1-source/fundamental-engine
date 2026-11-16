@@ -1,0 +1,304 @@
+{
+ "ticker": "CRDO",
+ "as_of": "2026-11-09",
+ "price": 132.83,
+ "price_time_utc": null,
+ "verdict_he": "לא לקנות עכשיו; תלוי באי-עיכול ובשמירה על הלקוחות",
+ "buy_test_price": 95.29,
+ "margin_of_safety_price": 115.55,
+ "values": {
+  "today": {
+   "bear": 26.99,
+   "base": 108.37,
+   "bull": 225.42
+  },
+  "end_2028": {
+   "bear": 33.13,
+   "base": 134.99,
+   "bull": 281.5
+  },
+  "end_2029": {
+   "bear": 37.75,
+   "base": 155.22,
+   "bull": 324.9
+  },
+  "end_2030": {
+   "bear": 42.72,
+   "base": 177.03,
+   "bull": 372.32
+  },
+  "end_2031": {
+   "bear": 48.0,
+   "base": 200.49,
+   "bull": 423.54
+  },
+  "end_2032": {
+   "bear": 53.55,
+   "base": 225.48,
+   "bull": 478.31
+  },
+  "weighted_today_30_45_25": 113.22,
+  "calibrated_today": 111.85
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": null
+  },
+  "base": {
+   "prob": 0.45,
+   "he": null
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": null
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -15.3,
+  "base": 10.2,
+  "bull": 26.4,
+  "calibrated": 10.8,
+  "weighted": 11.2,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [],
+  "proposed_trim": [],
+  "proposed_exit": []
+ },
+ "next_report": {
+  "date": "דוח רבעון 2, תחילת דצמבר 2026",
+  "confirmed": false,
+  "check": null
+ },
+ "thesis_link": "research/companies/CRDO/thesis_he.md",
+ "notes_he": [],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/CRDO/2026-11-09/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 95.29,
+   "stated_price": 95.29,
+   "rerun_price": 95.29,
+   "base_12_price": 121.31,
+   "binding_leg": "bear",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 10.2,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 121.31
+    },
+    "base_calibrated": {
+     "return_pct": 10.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 125.3
+    },
+    "bull": {
+     "return_pct": 26.4,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 202.64
+    },
+    "bear": {
+     "return_pct": -15.3,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 95.29
+    }
+   },
+   "note": null
+  },
+  "price_ladder": {
+   "horizon_date": "2032-05-01",
+   "years_to_horizon": 5.47,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 115.55,
+     "price_second_lens": 119.35
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 121.31,
+     "price_second_lens": 125.3
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 121.31,
+     "price_second_lens": 125.3
+    },
+    {
+     "id": "index",
+     "return_pct": 9.1,
+     "price": 140.03,
+     "price_second_lens": 144.63
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 163.94,
+     "price_second_lens": 169.33
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 191.82,
+     "price_second_lens": 198.13
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 115.55,
+   "rung": "margin_of_safety_13",
+   "note": null
+  },
+  "index_parity_price": 140.03,
+  "hold_floor_price": 163.94,
+  "sell_line_price": 191.82,
+  "values_dated": {
+   "today": {
+    "bear": 26.99,
+    "base": 108.37,
+    "bull": 225.42,
+    "date": "2026-11-09",
+    "base_calibrated": 111.85
+   },
+   "year_ends": [
+    {
+     "bear": 33.13,
+     "base": 134.99,
+     "bull": 281.5,
+     "fiscal_year": 2028,
+     "date": "2028-05-01",
+     "base_calibrated": 139.34
+    },
+    {
+     "bear": 37.75,
+     "base": 155.22,
+     "bull": 324.9,
+     "fiscal_year": 2029,
+     "date": "2029-05-01",
+     "base_calibrated": 160.27
+    },
+    {
+     "bear": 42.72,
+     "base": 177.03,
+     "bull": 372.32,
+     "fiscal_year": 2030,
+     "date": "2030-05-01",
+     "base_calibrated": 182.84
+    },
+    {
+     "bear": 48.0,
+     "base": 200.49,
+     "bull": 423.54,
+     "fiscal_year": 2031,
+     "date": "2031-05-01",
+     "base_calibrated": 207.07
+    },
+    {
+     "bear": 53.55,
+     "base": 225.48,
+     "bull": 478.31,
+     "fiscal_year": 2032,
+     "date": "2032-05-01",
+     "base_calibrated": 232.9
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 31.1,
+     "base": 125.85,
+     "bull": 262.13,
+     "date": "2027-11-09",
+     "base_calibrated": 129.9
+    },
+    "two_year": {
+     "bear": 35.49,
+     "base": 145.28,
+     "bull": 303.55,
+     "date": "2028-11-09",
+     "base_calibrated": 149.98
+    },
+    "five_year": {
+     "bear": 50.84,
+     "base": 213.23,
+     "bull": 451.44,
+     "date": "2031-11-09",
+     "base_calibrated": 220.24
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-11-09",
+     "source": "as_of_plus_one_year",
+     "bear": 31.1,
+     "base": 125.85,
+     "bull": 262.13,
+     "second_lens": 129.9
+    },
+    "five_year": {
+     "date": "2032-05-01",
+     "source": "horizon_year_end",
+     "bear": 53.55,
+     "base": 225.48,
+     "bull": 478.31,
+     "second_lens": 232.9
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 111.85,
+   "annual_return_pct": 10.8,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the lenses differ by the exit multiple and by the margin"
+  },
+  "historical_multiple": {
+   "value": null,
+   "low": null,
+   "high": null,
+   "basis": null,
+   "company_type": null,
+   "note": "not supplied: the historical-multiple report is not in this record"
+  },
+  "conditions_typed": [],
+  "falsifiers": [],
+  "last_fresh_pull": {
+   "date": null,
+   "note": "not recorded"
+  },
+  "verdict": {
+   "code": "not_buy",
+   "text_he": "לא לקנות עכשיו; תלוי באי-עיכול ובשמירה על הלקוחות",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": null,
+   "confirmed": false
+  }
+ }
+}
