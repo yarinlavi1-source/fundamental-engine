@@ -1,6 +1,6 @@
 {
  "forecast_tracker_version": 2,
- "as_of": "2026-11-16",
+ "as_of": "2026-11-17",
  "rows": [
   {
    "ticker": "APH",
@@ -13,29 +13,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 78.23,
-    "date": "2026-11-13",
-    "value_path": 70.1,
-    "vs_value_path": 0.11597803545596452,
+    "price": 76.36,
+    "date": "2026-11-17",
+    "value_path": 70.19,
+    "vs_value_path": 0.08796976952611346,
     "price_at_valuation": 74.09,
     "gap_at_valuation": 0.05918513223731248,
-    "age_days": 7,
+    "age_days": 11,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 820313,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "APP",
@@ -48,29 +50,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 409.1,
-    "date": "2026-11-13",
-    "value_path": 416.14,
-    "vs_value_path": -0.016926000665318575,
+    "price": 398.94,
+    "date": "2026-11-17",
+    "value_path": 416.71,
+    "vs_value_path": -0.04264934015330624,
     "price_at_valuation": 348.0,
     "gap_at_valuation": -0.16174876550644346,
-    "age_days": 7,
+    "age_days": 11,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1751008,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "AVGO",
@@ -83,29 +87,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 347.01,
-    "date": "2026-11-13",
-    "value_path": 296.68,
-    "vs_value_path": 0.16964070445605328,
+    "price": 341.6,
+    "date": "2026-11-17",
+    "value_path": 297.08,
+    "vs_value_path": 0.1498764009101381,
     "price_at_valuation": 293.69,
     "gap_at_valuation": -0.008105643554324637,
-    "age_days": 6,
+    "age_days": 10,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1730168,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "BNY",
@@ -118,13 +124,13 @@
    "in_progress": null,
    "notes": [],
    "price": {
-    "price": 153.41,
-    "date": "2026-11-13",
-    "value_path": 157.86,
-    "vs_value_path": -0.02816418419589184,
+    "price": 149.79,
+    "date": "2026-11-17",
+    "value_path": 157.97,
+    "vs_value_path": -0.0517682127355894,
     "price_at_valuation": 152.7,
     "gap_at_valuation": -0.0323193916349811,
-    "age_days": 2,
+    "age_days": 6,
     "split_adjusted": null
    },
    "custom": true,
@@ -138,7 +144,7 @@
    },
    "current": true,
    "cik": 1390777,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "CRDO",
@@ -151,29 +157,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 131.51,
-    "date": "2026-11-13",
-    "value_path": 108.55,
-    "vs_value_path": 0.21155122804151616,
+    "price": 123.95,
+    "date": "2026-11-17",
+    "value_path": 108.72,
+    "vs_value_path": 0.14004399991667293,
     "price_at_valuation": 132.83,
     "gap_at_valuation": 0.22570822183261052,
-    "age_days": 4,
+    "age_days": 8,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1807794,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "DELL",
@@ -186,12 +194,49 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 344.53,
-    "date": "2026-11-13",
-    "value_path": 367.06,
-    "vs_value_path": -0.061367195827027654,
+    "price": 322.79,
+    "date": "2026-11-17",
+    "value_path": 367.53,
+    "vs_value_path": -0.12172173102901829,
     "price_at_valuation": 361.78,
     "gap_at_valuation": -0.013739708849026866,
+    "age_days": 6,
+    "split_adjusted": null
+   },
+   "read": "no_report",
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
+   "annual_filer": false,
+   "mode": "test",
+   "descriptive_reason": null,
+   "file_check": {
+    "params": "same",
+    "result": "rewritten",
+    "holds": true,
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
+   },
+   "current": true,
+   "cik": 1571996,
+   "data_note": "fetched"
+  },
+  {
+   "ticker": "FIVE",
+   "valuation_date": "2026-11-15",
+   "params_path": "research/companies/FIVE/2026-11-15/lean_params.json",
+   "thesis_id": "lean:FIVE:2026-11-15:99a7aefeb3b6",
+   "path_source": "ledger",
+   "status": "no_report_since",
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": {
+    "price": 232.07,
+    "date": "2026-11-17",
+    "value_path": 263.19,
+    "vs_value_path": -0.11824798944818671,
+    "price_at_valuation": 246.68,
+    "gap_at_valuation": -0.06223151492111767,
     "age_days": 2,
     "split_adjusted": null
    },
@@ -207,34 +252,8 @@
     "note": null
    },
    "current": true,
-   "cik": 1571996,
-   "data_note": "cached copy"
-  },
-  {
-   "ticker": "FIVE",
-   "valuation_date": "2026-11-15",
-   "params_path": "research/companies/FIVE/2026-11-15/lean_params.json",
-   "thesis_id": "lean:FIVE:2026-11-15:e59ede6d469e",
-   "path_source": "ledger",
-   "status": "no_report_since",
-   "reported": [],
-   "completed": null,
-   "in_progress": null,
-   "price": null,
-   "read": "no_report",
-   "notes": [],
-   "annual_filer": false,
-   "mode": "test",
-   "descriptive_reason": null,
-   "file_check": {
-    "params": "same",
-    "result": "same",
-    "holds": true,
-    "note": null
-   },
-   "current": true,
    "cik": 1177609,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "GOOGL",
@@ -247,29 +266,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 295.77,
-    "date": "2026-11-13",
-    "value_path": 239.97,
-    "vs_value_path": 0.2325347367275008,
+    "price": 280.2,
+    "date": "2026-11-17",
+    "value_path": 240.22,
+    "vs_value_path": 0.16644187790443343,
     "price_at_valuation": 290.75,
     "gap_at_valuation": 0.21444384110939385,
-    "age_days": 9,
+    "age_days": 13,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1652044,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "LLY",
@@ -281,21 +302,32 @@
    "reported": [],
    "completed": null,
    "in_progress": null,
-   "price": null,
+   "price": {
+    "price": 1415.55,
+    "date": "2026-11-17",
+    "value_path": 818.43,
+    "vs_value_path": 0.7295897527547752,
+    "price_at_valuation": 1443.5,
+    "gap_at_valuation": 0.7644542232000977,
+    "age_days": 2,
+    "split_adjusted": null
+   },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 59478,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "MELI",
@@ -308,29 +340,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 1491.49,
-    "date": "2026-11-13",
-    "value_path": 2180.81,
-    "vs_value_path": -0.31608465187361745,
+    "price": 1436.83,
+    "date": "2026-11-17",
+    "value_path": 2182.93,
+    "vs_value_path": -0.34178785348032714,
     "price_at_valuation": 1532.29,
     "gap_at_valuation": -0.2961816352871468,
-    "age_days": 7,
+    "age_days": 11,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1099590,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "META",
@@ -343,13 +377,13 @@
    "in_progress": null,
    "notes": [],
    "price": {
-    "price": 641.69,
-    "date": "2026-11-13",
-    "value_path": 513.2,
-    "vs_value_path": 0.25037022603273607,
+    "price": 618.87,
+    "date": "2026-11-17",
+    "value_path": 513.77,
+    "vs_value_path": 0.2045667155281059,
     "price_at_valuation": 634.68,
     "gap_at_valuation": 0.23671083398285253,
-    "age_days": 0,
+    "age_days": 4,
     "split_adjusted": null
    },
    "custom": true,
@@ -363,7 +397,7 @@
    },
    "current": true,
    "cik": 1326801,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "MSFT",
@@ -376,29 +410,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 523.88,
-    "date": "2026-11-13",
-    "value_path": 434.82,
-    "vs_value_path": 0.20481858584973045,
+    "price": 506.24,
+    "date": "2026-11-17",
+    "value_path": 435.26,
+    "vs_value_path": 0.16307049743505964,
     "price_at_valuation": 554.51,
     "gap_at_valuation": 0.2781734780904963,
-    "age_days": 9,
+    "age_days": 13,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 789019,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NBIS",
@@ -565,7 +601,7 @@
     "The two later valuations (12.11 and 13.11) were made after this report and are not scored against it."
    ],
    "cik": 1513845,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NBIS",
@@ -578,31 +614,32 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 115.88,
-    "date": "2026-11-13",
-    "value_path": 63.6,
-    "vs_value_path": 0.8220125786163524,
+    "price": 106.035,
+    "date": "2026-11-17",
+    "value_path": 63.72,
+    "vs_value_path": 0.6639577226498459,
     "price_at_valuation": 110.46,
     "gap_at_valuation": 0.7367924528301886,
-    "age_days": 0,
+    "age_days": 4,
     "split_adjusted": null
    },
    "read": "no_report",
    "notes": [
-    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one; fill a scorecard.json for the quarter"
+    "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one; fill a scorecard.json for the quarter",
+    "result file rewritten with extra keys; the frozen values are unchanged"
    ],
    "annual_filer": true,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1513845,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NET",
@@ -615,13 +652,13 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 305.81,
-    "date": "2026-11-13",
-    "value_path": 95.08,
-    "vs_value_path": 2.2162519865017027,
+    "price": 284.8,
+    "date": "2026-11-17",
+    "value_path": 95.19,
+    "vs_value_path": 1.99199591741769,
     "price_at_valuation": 275.7,
     "gap_at_valuation": 1.905163329820864,
-    "age_days": 7,
+    "age_days": 11,
     "split_adjusted": null
    },
    "read": "no_report",
@@ -637,7 +674,7 @@
    },
    "current": true,
    "cik": 1477333,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NOW",
@@ -650,29 +687,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 102.25,
-    "date": "2026-11-13",
-    "value_path": 87.45,
-    "vs_value_path": 0.16923084245042497,
+    "price": 92.9,
+    "date": "2026-11-17",
+    "value_path": 87.55,
+    "vs_value_path": 0.06112127977805959,
     "price_at_valuation": 108.35,
     "gap_at_valuation": 0.24211853720050436,
-    "age_days": 9,
+    "age_days": 13,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1373715,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NU",
@@ -921,7 +960,7 @@
     "No item has a model value: the 01.11 heavy-engine thesis froze share-count and return forecasts only, and the 13.11 valuation came after the report."
    ],
    "cik": 1691493,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NU",
@@ -932,15 +971,17 @@
    "reported": [],
    "completed": null,
    "in_progress": null,
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "price": {
-    "price": 13.22,
-    "date": "2026-11-13",
-    "value_path": 13.38,
-    "vs_value_path": -0.01195814648729443,
+    "price": 12.33,
+    "date": "2026-11-17",
+    "value_path": 13.4,
+    "vs_value_path": -0.07974098768798987,
     "price_at_valuation": 12.08,
     "gap_at_valuation": -0.09715994020926766,
-    "age_days": 0,
+    "age_days": 4,
     "split_adjusted": null
    },
    "custom": true,
@@ -948,36 +989,216 @@
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1691493,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "NVDA",
    "valuation_date": "2026-11-12",
-   "params_path": "research/companies/NVDA/2026-11-12/lean_params.json",
-   "thesis_id": "lean:NVDA:2026-11-12:8f0762821d89",
+   "thesis_id": "lean:NVDA:2026-11-12:23d65c1b86a9",
+   "status": "scorecard",
+   "read": "scorecard",
+   "mode": "test",
+   "descriptive_reason": null,
+   "reported_on": "2026-11-17",
+   "period": "Q3 FY2027",
+   "period_end": "2026-10-25",
+   "sources": [
+    {
+     "title": "Q3 FY2027 results release (8-K exhibit 99.1, 17.11.2026, acc. 0001045810-26-000088)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27pr.htm"
+    },
+    {
+     "title": "Q3 FY2027 CFO commentary (8-K exhibit 99.2, 17.11.2026)",
+     "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
+    },
+    {
+     "title": "BIS interim final rule 'Addressing Remote Access to Advanced Semiconductors' (Federal Register doc. 2026-23529, public inspection 16.11.2026, publication 19.11.2026)",
+     "url": "https://www.federalregister.gov/public-inspection/2026-23529/addressing-remote-access-to-advanced-semiconductors"
+    }
+   ],
+   "scorecard_path": "research/companies/NVDA/2026-11-12/scorecard.json",
+   "items": [
+    {
+     "metric": "revenue Q3 FY2027 against the Q3 guide inside the frozen FY2027 base",
+     "kind": "partial",
+     "unit": "USD",
+     "model_value": 108000000000.0,
+     "actual": 115844000000.0,
+     "note": "release: 115,844M (+20% q/q, +103% y/y), +7.3% over the 108.0B guide the frozen rev0 used; includes about 2.4B of Hopper shipped to China (CFO commentary). Data Center 107.6B. No ahead/behind word on a partial year.",
+     "error": null,
+     "diff_pts": null,
+     "share": 1.0726296296296296
+    },
+    {
+     "metric": "gross margin Q3 FY2027 (GAAP)",
+     "kind": "partial",
+     "unit": "ratio",
+     "model_value": 0.74,
+     "actual": 0.748,
+     "note": "release: 74.8% GAAP, 74.9% non-GAAP; the frozen notes carried the Q3 guide of 74.0% +-0.5; the model has no gross-margin line",
+     "error": null,
+     "diff_pts": null,
+     "share": 1.010810810810811
+    },
+    {
+     "metric": "operating margin Q3 FY2027 (GAAP)",
+     "kind": "partial",
+     "unit": "ratio",
+     "model_value": 0.65,
+     "actual": 0.669,
+     "note": "release: operating income 77,520M on 115,844M. Model value = the roughly 65% FY2027 level the frozen notes assumed (FY2027 is not a model year); the frozen FY2028 weighted base margin is 60.45% (ledger)",
+     "error": null,
+     "diff_pts": null,
+     "share": 1.0292307692307692
+    },
+    {
+     "metric": "revenue FY2027, nine months actual + Q4 guide midpoint (reported, 53 weeks)",
+     "kind": "guidance",
+     "unit": "USD",
+     "model_value": 410000000000.0,
+     "actual": 423681000000.0,
+     "note": "293,681M (release, 9M) + 130,000M Q4 guide (+-3%, a 14-week quarter): 423.7B (range 419.8-427.6B), +3.3% over the frozen 410.0B, which used the 14-week consensus 124.5B for Q4. On a 52-week basis (13/14 of the Q4 guide) 414.4B, +1.1%. Guidance, not a reported number; the period ends 31.1.2027.",
+     "error": 0.03336829268292685,
+     "diff_pts": null
+    },
+    {
+     "metric": "operating margin FY2027 (GAAP), nine months actual + Q4 guide",
+     "kind": "guidance",
+     "unit": "ratio",
+     "model_value": 0.65,
+     "actual": 0.653,
+     "note": "9M operating income 194,791M + Q4 about 81,950M (130.0B x 71.5% - 11.0B opex) on 423.7B; model value = the roughly 65% the frozen notes assumed",
+     "error": null,
+     "diff_pts": 0.0030000000000000027
+    }
+   ],
+   "falsifiers": [
+    {
+     "id": "c1",
+     "text": "Add blocked: Q4 FY2027 revenue guide below 122B",
+     "state": "not_fired",
+     "note": "guide 130.0B (14 weeks); on 13 weeks 120.7B against a 13-week bar of 113.3B; the 14-week Q4 was disclosed in the Q2 FY27 10-Q, so the 124.5B consensus behind the bar was a 14-week figure",
+     "action_if_fired": "add_blocked",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "research/companies/NVDA/thesis_he.md (12.11.2026, section 'מה ישנה את הדעה') and valuation.json of research/companies/NVDA/2026-11-12 (condition c1, text only, not typed); ledger thesis 23d65c1b86a9 of 16.11",
+     "needs_reason": false
+    },
+    {
+     "id": "c2",
+     "text": "Add blocked: Q4 gross-margin guide below 72%",
+     "state": "fired",
+     "note": "guide 71.0-72.0% (midpoint 71.5%), the Rubin ramp; the extra week does not change a margin",
+     "action_if_fired": "add_blocked",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "same as c1 (condition c2)",
+     "needs_reason": false
+    },
+    {
+     "id": "c3",
+     "text": "Add blocked: management comments on FY2028 do not fit about 60%+ growth",
+     "state": "not_measurable",
+     "note": "no call transcript when scored (call 22:00 UTC 17.11); the release and CFO commentary give no FY2028 figure; the 13-week guided step slowed to +4.2% (+6.4% without China) from +11.5-14.5%; FY2028 supply commitments 203B",
+     "action_if_fired": "add_blocked",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "same as c1 (condition c3)",
+     "needs_reason": false
+    },
+    {
+     "id": "c4",
+     "text": "Add blocked: no permanent internal successor named by 8-K, or senior exits",
+     "state": "not_measurable",
+     "note": "Colette Kress interim CEO (and CFO) since the 8-K of 12.11; the search includes outside candidates; no senior exit found; the add stays blocked until a decision",
+     "action_if_fired": "add_blocked",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "same as c1 (condition c4)",
+     "needs_reason": false
+    },
+    {
+     "id": "c5",
+     "text": "Add blocked: a public DOJ or BIS step, a licence revocation or a government investigation the company reports",
+     "state": "fired",
+     "note": "BIS interim final rule 2026-23529 (filed 16.11, effective 19.11.2026): licences for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil (except US-headquartered buyers) and for data centers supplying significant compute to D:5/Macau-headquartered companies; no action names NVIDIA itself",
+     "action_if_fired": "add_blocked",
+     "acted_on": true,
+     "reason_not_acted": null,
+     "on_file": "same as c1 (condition c5)",
+     "needs_reason": false
+    },
+    {
+     "id": "f1",
+     "text": "A finding that hurts NVIDIA's export licences or government contracts",
+     "state": "not_fired",
+     "note": "no finding against NVIDIA; the new BIS rule is a general rule, read under c5 and in the export world's weight (20% -> 30% in the 17.11 valuation)",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f1, text only)",
+     "needs_reason": false
+    },
+    {
+     "id": "f2",
+     "text": "A Q4 guide clearly below 115B or a gross margin below 70%",
+     "state": "not_fired",
+     "note": "130.0B (120.7B on 13 weeks); gross-margin guide 71-72%",
+     "action_if_fired": "review",
+     "acted_on": null,
+     "reason_not_acted": null,
+     "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f2, text only)",
+     "needs_reason": false
+    }
+   ],
+   "problems": [],
+   "reported": [],
+   "completed": null,
+   "in_progress": null,
+   "price": null,
+   "notes": [
+    "Scored by hand on 2026-11-17 from the 8-K of the same day (acc. 0001045810-26-000088), read in runs/tickers/NVDA_2026-11-17/reading/, and the Federal Register public-inspection copy of BIS rule 2026-23529.",
+    "The 17.11 valuation (research/companies/NVDA/2026-11-17) was made after this report and is not scored against it.",
+    "The 10-Q of Q3 FY2027 was not yet filed: period-end shares, the legal note and the Hugging Face terms are open."
+   ],
+   "cik": 1045810,
+   "data_note": "fetched"
+  },
+  {
+   "ticker": "NVDA",
+   "valuation_date": "2026-11-17",
+   "params_path": "research/companies/NVDA/2026-11-17/lean_params.json",
+   "thesis_id": "lean:NVDA:2026-11-17:0a710b544805",
    "path_source": "ledger",
    "status": "no_report_since",
    "reported": [],
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 162.85,
-    "date": "2026-11-13",
-    "value_path": 182.45,
-    "vs_value_path": -0.10742316240081928,
-    "price_at_valuation": 161.5,
-    "gap_at_valuation": -0.11453478809145234,
-    "age_days": 1,
+    "price": 155.46,
+    "date": "2026-11-17",
+    "value_path": 167.6,
+    "vs_value_path": -0.07243436754176569,
+    "price_at_valuation": 155.46,
+    "gap_at_valuation": -0.07243436754176602,
+    "age_days": 0,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "the base path is the weighted worlds path of the frozen thesis (weight x each world's path; weights orderly_succession 0.4, messy_succession 0.3, export_finding 0.3, judgement): the published values"
+   ],
+   "weighted_worlds": {
+    "orderly_succession": 0.4,
+    "messy_succession": 0.3,
+    "export_finding": 0.3
+   },
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
@@ -989,7 +1210,7 @@
    },
    "current": true,
    "cik": 1045810,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "ORCL",
@@ -1002,29 +1223,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 125.35,
-    "date": "2026-11-13",
-    "value_path": 156.34,
-    "vs_value_path": -0.19824400029022315,
+    "price": 115.0,
+    "date": "2026-11-17",
+    "value_path": 156.56,
+    "vs_value_path": -0.26545089106653663,
     "price_at_valuation": 116.4,
     "gap_at_valuation": -0.25370263512213886,
-    "age_days": 7,
+    "age_days": 11,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1341439,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "PANW",
@@ -1037,13 +1260,13 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 322.24,
-    "date": "2026-11-13",
-    "value_path": 173.63,
-    "vs_value_path": 0.8558903976060865,
+    "price": 309.29,
+    "date": "2026-11-17",
+    "value_path": 173.81,
+    "vs_value_path": 0.7794544685261522,
     "price_at_valuation": 315.74,
     "gap_at_valuation": 0.8222427425405436,
-    "age_days": 8,
+    "age_days": 12,
     "split_adjusted": null
    },
    "read": "no_report",
@@ -1059,7 +1282,7 @@
    },
    "current": true,
    "cik": 1327567,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "RDDT",
@@ -1072,29 +1295,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 98.45,
-    "date": "2026-11-13",
-    "value_path": 155.0,
-    "vs_value_path": -0.3648250540208502,
+    "price": 94.48,
+    "date": "2026-11-17",
+    "value_path": 155.19,
+    "vs_value_path": -0.3912023505420087,
     "price_at_valuation": 103.03,
     "gap_at_valuation": -0.333398033126294,
-    "age_days": 9,
+    "age_days": 13,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1713445,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "SPCX",
@@ -1107,13 +1332,13 @@
    "in_progress": null,
    "notes": [],
    "price": {
-    "price": 139.11,
-    "date": "2026-11-13",
-    "value_path": 70.06,
-    "vs_value_path": 0.9855837853268632,
+    "price": 141.7,
+    "date": "2026-11-17",
+    "value_path": 70.15,
+    "vs_value_path": 1.0199084116040105,
     "price_at_valuation": 140.66,
     "gap_at_valuation": 1.0077076791321722,
-    "age_days": 0,
+    "age_days": 4,
     "split_adjusted": null
    },
    "custom": true,
@@ -1127,7 +1352,7 @@
    },
    "current": true,
    "cik": 1181412,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "TSM",
@@ -1147,7 +1372,7 @@
     "6-K filed 2026-11-10 (foreign filer current report (results or other news)): no XBRL period and no scorecard.json yet; if it is a results report, fill a scorecard.json"
    ],
    "cik": 1046179,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "TSM",
@@ -1160,29 +1385,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 398.73,
-    "date": "2026-11-13",
-    "value_path": 428.54,
-    "vs_value_path": -0.06955931851584563,
+    "price": 359.69,
+    "date": "2026-11-17",
+    "value_path": 428.99,
+    "vs_value_path": -0.16155010744523846,
     "price_at_valuation": 362.13,
     "gap_at_valuation": -0.15316979631924799,
-    "age_days": 8,
+    "age_days": 12,
     "split_adjusted": null
    },
    "read": "not_scorable",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "reason": "SEC facts are in TWD, the model in USD: scored by hand",
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1046179,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "UBER",
@@ -1195,29 +1422,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 69.69,
-    "date": "2026-11-13",
-    "value_path": 114.14,
-    "vs_value_path": -0.38943402838619257,
+    "price": 68.81,
+    "date": "2026-11-17",
+    "value_path": 114.25,
+    "vs_value_path": -0.39774434597662967,
     "price_at_valuation": 69.27,
     "gap_at_valuation": -0.39311371999299105,
-    "age_days": 0,
+    "age_days": 4,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1543151,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "V",
@@ -1230,29 +1459,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 425.76,
-    "date": "2026-11-13",
-    "value_path": 460.78,
-    "vs_value_path": -0.07601031822895798,
+    "price": 416.77,
+    "date": "2026-11-17",
+    "value_path": 461.19,
+    "vs_value_path": -0.0963142645389754,
     "price_at_valuation": 425.52,
     "gap_at_valuation": -0.07572005734393328,
-    "age_days": 4,
+    "age_days": 8,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 1403161,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   },
   {
    "ticker": "WSM",
@@ -1265,29 +1496,31 @@
    "completed": null,
    "in_progress": null,
    "price": {
-    "price": 254.05,
-    "date": "2026-11-13",
-    "value_path": 187.4,
-    "vs_value_path": 0.355628112887012,
+    "price": 250.05,
+    "date": "2026-11-17",
+    "value_path": 187.59,
+    "vs_value_path": 0.332947022003639,
     "price_at_valuation": 262.2,
     "gap_at_valuation": 0.39981848272916554,
-    "age_days": 2,
+    "age_days": 6,
     "split_adjusted": null
    },
    "read": "no_report",
-   "notes": [],
+   "notes": [
+    "result file rewritten with extra keys; the frozen values are unchanged"
+   ],
    "annual_filer": false,
    "mode": "test",
    "descriptive_reason": null,
    "file_check": {
     "params": "same",
-    "result": "same",
+    "result": "rewritten",
     "holds": true,
-    "note": null
+    "note": "result file rewritten with extra keys; the frozen values are unchanged"
    },
    "current": true,
    "cik": 719955,
-   "data_note": "cached copy"
+   "data_note": "fetched"
   }
  ],
  "custom_model": [
@@ -1325,10 +1558,10 @@
   }
  ],
  "summary": {
-  "rows": 28,
+  "rows": 29,
   "scored_rows": 0,
   "scored_companies": 0,
-  "scorecard_tests": 0,
+  "scorecard_tests": 1,
   "descriptive_only": 2,
   "no_report_since": 24,
   "custom_model": 0,
@@ -1381,11 +1614,11 @@
    "price_vs_value_path": {
     "label_he": "מחיר מול מסלול השווי הבסיסי",
     "unit": "pct",
-    "n": 23,
-    "companies": 23,
-    "median": 0.11597803545596452,
+    "n": 25,
+    "companies": 25,
+    "median": 0.06112127977805959,
     "median_gap_at_valuation": -0.008105643554324637,
-    "median_age_days": 6,
+    "median_age_days": 8,
     "conclusion": "too few to conclude",
     "note": "a gap in level between price and value, mostly the gap that existed on the valuation day; it tests the path only as the valuations age (median age under 90 days: too early)"
    }
@@ -1617,6 +1850,111 @@
    "reason_not_acted": null,
    "on_file": "04.11 lean valuation, private run folder, never frozen (descriptive only)",
    "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "c1",
+   "text": "Add blocked: Q4 FY2027 revenue guide below 122B",
+   "state": "not_fired",
+   "note": "guide 130.0B (14 weeks); on 13 weeks 120.7B against a 13-week bar of 113.3B; the 14-week Q4 was disclosed in the Q2 FY27 10-Q, so the 124.5B consensus behind the bar was a 14-week figure",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "research/companies/NVDA/thesis_he.md (12.11.2026, section 'מה ישנה את הדעה') and valuation.json of research/companies/NVDA/2026-11-12 (condition c1, text only, not typed); ledger thesis 23d65c1b86a9 of 16.11",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "c2",
+   "text": "Add blocked: Q4 gross-margin guide below 72%",
+   "state": "fired",
+   "note": "guide 71.0-72.0% (midpoint 71.5%), the Rubin ramp; the extra week does not change a margin",
+   "action_if_fired": "add_blocked",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c2)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "c3",
+   "text": "Add blocked: management comments on FY2028 do not fit about 60%+ growth",
+   "state": "not_measurable",
+   "note": "no call transcript when scored (call 22:00 UTC 17.11); the release and CFO commentary give no FY2028 figure; the 13-week guided step slowed to +4.2% (+6.4% without China) from +11.5-14.5%; FY2028 supply commitments 203B",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c3)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "c4",
+   "text": "Add blocked: no permanent internal successor named by 8-K, or senior exits",
+   "state": "not_measurable",
+   "note": "Colette Kress interim CEO (and CFO) since the 8-K of 12.11; the search includes outside candidates; no senior exit found; the add stays blocked until a decision",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c4)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "c5",
+   "text": "Add blocked: a public DOJ or BIS step, a licence revocation or a government investigation the company reports",
+   "state": "fired",
+   "note": "BIS interim final rule 2026-23529 (filed 16.11, effective 19.11.2026): licences for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil (except US-headquartered buyers) and for data centers supplying significant compute to D:5/Macau-headquartered companies; no action names NVIDIA itself",
+   "action_if_fired": "add_blocked",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c5)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "f1",
+   "text": "A finding that hurts NVIDIA's export licences or government contracts",
+   "state": "not_fired",
+   "note": "no finding against NVIDIA; the new BIS rule is a general rule, read under c5 and in the export world's weight (20% -> 30% in the 17.11 valuation)",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f1, text only)",
+   "needs_reason": false
+  },
+  {
+   "ticker": "NVDA",
+   "period": "Q3 FY2027",
+   "reported_on": "2026-11-17",
+   "mode": "test",
+   "id": "f2",
+   "text": "A Q4 guide clearly below 115B or a gross margin below 70%",
+   "state": "not_fired",
+   "note": "130.0B (120.7B on 13 weeks); gross-margin guide 71-72%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f2, text only)",
+   "needs_reason": false
   }
  ],
  "review_bias": {
@@ -1645,6 +1983,16 @@
     "ticker": "FIVE",
     "as_of": "2026-11-15",
     "thesis_id": "lean:FIVE:2026-11-15:e59ede6d469e",
+    "pre": 267.92,
+    "post": 263.05,
+    "change": -4.87,
+    "change_pct": -0.01817706778142736,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
+    "ticker": "FIVE",
+    "as_of": "2026-11-15",
+    "thesis_id": "lean:FIVE:2026-11-15:99a7aefeb3b6",
     "pre": 267.92,
     "post": 263.05,
     "change": -4.87,
@@ -1752,6 +2100,16 @@
     "source": "pre-review params rerun at freeze"
    },
    {
+    "ticker": "NVDA",
+    "as_of": "2026-11-17",
+    "thesis_id": "lean:NVDA:2026-11-17:0a710b544805",
+    "pre": 185.93,
+    "post": 167.6,
+    "change": -18.33,
+    "change_pct": -0.09858548916258814,
+    "source": "pre-review params rerun at freeze"
+   },
+   {
     "ticker": "ORCL",
     "as_of": "2026-11-06",
     "thesis_id": "lean:ORCL:2026-11-06:cc6d1a590da1",
@@ -1803,8 +2161,8 @@
    }
   ],
   "median_change_pct": -0.022120592080368873,
-  "n": 18,
-  "companies": 16,
+  "n": 20,
+  "companies": 17,
   "conclusion": "median over the theses",
   "meaning": "the reviewed base minus the first draft: a positive median means the first drafts ran low. Warning row only."
  },
@@ -1818,10 +2176,10 @@
   "path": "research/ledger.jsonl",
   "verify": {
    "ok": true,
-   "entries": 507,
+   "entries": 567,
    "legacy_entries": 0
   },
-  "theses": 28,
+  "theses": 31,
   "outcomes_on_file": 0
  },
  "sources": {

@@ -1,0 +1,667 @@
+{
+ "check_version": 1,
+ "ticker": "NVDA",
+ "as_of": "2026-11-17",
+ "price": 155.46,
+ "base_value_today": 183.44,
+ "base_return_pct": 14.9,
+ "buy_test_pass": true,
+ "buy_test_pass_at_quote": null,
+ "buy_test_price": 177.22,
+ "counts": {
+  "pass": 28,
+  "fail": 0,
+  "open": 0,
+  "not_applicable": 5
+ },
+ "blocking": [],
+ "would_block_a_buy": [],
+ "exit_code": 0,
+ "verdict": "buy test passes and no blocking item is failed or open",
+ "model_warnings": [],
+ "answers_given": [
+  "L11",
+  "L12",
+  "L15",
+  "L16",
+  "L18",
+  "L19",
+  "L21",
+  "L25",
+  "L27",
+  "P06",
+  "S04"
+ ],
+ "inputs_supplied": {
+  "previous_params": true,
+  "facts": false,
+  "price": 155.46,
+  "today": "2026-11-17",
+  "market_file": true
+ },
+ "items": [
+  {
+   "id": "inputs",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the input checks raise nothing",
+   "lessons": [
+    "P01"
+   ],
+   "function": "check_inputs"
+  },
+  {
+   "id": "lenses_agree",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "ours buy (14.9% a year), calibrated buy (16.1%)",
+   "lessons": [
+    "L08"
+   ],
+   "function": "check_lenses_agree"
+  },
+  {
+   "id": "calibrated_lens",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the lenses differ by the exit multiple and by the margin (held 11.24 against the base exit 15)",
+   "lessons": [
+    "L03"
+   ],
+   "function": "check_calibrated_lens"
+  },
+  {
+   "id": "funding",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the net-cash path stays funded in every scenario",
+   "lessons": [
+    "L02"
+   ],
+   "function": "check_funding"
+  },
+  {
+   "id": "equity_wiped",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "no scenario wipes the equity",
+   "lessons": [
+    "L05"
+   ],
+   "function": "check_equity_wiped"
+  },
+  {
+   "id": "method_gap",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "base: DCF and exit multiple land in the same band",
+   "lessons": [
+    "P05"
+   ],
+   "function": "check_method_gap"
+  },
+  {
+   "id": "on_the_line",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the buy test passes at the exact price",
+   "lessons": [
+    "P08"
+   ],
+   "function": "check_on_the_line"
+  },
+  {
+   "id": "rerun_price",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "a rerun confirms the highest passing price 177.22",
+   "lessons": [
+    "L04"
+   ],
+   "function": "check_rerun_price"
+  },
+  {
+   "id": "reverse_reading",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "growth the price needs: [62.0, 7.0, 2.8, 1.9, 1.9, 1.9] on the base margin path, [62.0, 0.1, 0.0, 0.0, 0.0, 0.0] at a flat margin",
+   "lessons": [
+    "L07"
+   ],
+   "function": "check_reverse_reading"
+  },
+  {
+   "id": "distributions_band",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "the base stays in its band with distributions reinvested",
+   "lessons": [
+    "P03"
+   ],
+   "function": "check_distributions_band"
+  },
+  {
+   "id": "probabilities_label",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "labelled subjective",
+   "lessons": [
+    "S03"
+   ],
+   "function": "check_probabilities_label"
+  },
+  {
+   "id": "reconcile_revenue",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_shares",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_net_cash",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "guidance",
+   "group": "path",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "2027 revenue 414,395 against the guide 410774-418017",
+   "lessons": [
+    "L14"
+   ],
+   "function": "check_guidance"
+  },
+  {
+   "id": "digestion_year",
+   "group": "path",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: No down year in the base by design (FY29 +15%, FY30 +6%, a fade, unchanged from the reviewed 04.11/12.11 files); the capex-cycle digestion is the bear (FY29 -20%, FY30 -8%) inside every world; the Q3 report gives no digestion evidence (FY28 supply commitments 203B, Q4 guide +12% q/q on 14 weeks, +4% on 13); re-ask when the call transcript is read (not available when this was written)",
+   "lessons": [
+    "L21"
+   ],
+   "function": "check_digestion_year"
+  },
+  {
+   "id": "price",
+   "group": "price",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the price is of 2026-11-17, 0 trading day(s) before as_of; as_of is 0 trading day(s) before 2026-11-17; the quote 155.46 is +0.0% from the params price 155.46",
+   "lessons": [
+    "L22"
+   ],
+   "move_pct": 0.0,
+   "function": "check_price"
+  },
+  {
+   "id": "judgement",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the judgement block follows the locked rules or states why",
+   "lessons": [
+    "L17"
+   ],
+   "rule": {
+    "beta": 1.5278,
+    "exit_pe": 23.1,
+    "rf": 0.0494,
+    "erp": 0.042
+   },
+   "function": "check_judgement"
+  },
+  {
+   "id": "market_rates",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "rf 0.0494 and ERP 0.042 are the entry in force on 2026-11-17",
+   "lessons": [
+    "P04"
+   ],
+   "function": "check_market_rates"
+  },
+  {
+   "id": "prev_inputs",
+   "group": "previous",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "17 changed input(s); base value 182.39 -> 183.44 (+1.05), weighted +1.32; largest alone: rev0_m +1.95, tax -1.08, shares_m +0.97, scenarios.base.charge.0 -0.28: state each in the answer",
+   "lessons": [
+    "L26"
+   ],
+   "diff": {
+    "base_value_before": 182.39,
+    "base_value_after": 183.44,
+    "base_value_change": 1.05,
+    "weighted_value_before": 184.82,
+    "weighted_value_after": 186.14,
+    "weighted_value_change": 1.32,
+    "sum_of_single_effects": 0.96,
+    "changes": [
+     {
+      "input": "as_of",
+      "before": "2026-11-12",
+      "after": "2026-11-17",
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "base_year_end",
+      "before": null,
+      "after": "2027-01-31",
+      "base_value_effect": -0.12,
+      "weighted_value_effect": -0.12
+     },
+     {
+      "input": "days_to_base_year_end",
+      "before": 78,
+      "after": 75,
+      "base_value_effect": 0.18,
+      "weighted_value_effect": 0.18
+     },
+     {
+      "input": "net_cash_m",
+      "before": 45000.0,
+      "after": 38000.0,
+      "base_value_effect": -0.27,
+      "weighted_value_effect": -0.27
+     },
+     {
+      "input": "one_off_revenue_m",
+      "before": null,
+      "after": 9286.0,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "price",
+      "before": 161.5,
+      "after": 155.46,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "rev0_m",
+      "before": 410000.0,
+      "after": 414395.0,
+      "base_value_effect": 1.95,
+      "weighted_value_effect": 1.98
+     },
+     {
+      "input": "scenarios.base.charge.0",
+      "before": 8000,
+      "after": 16000,
+      "base_value_effect": -0.28,
+      "weighted_value_effect": -0.14
+     },
+     {
+      "input": "scenarios.base.charge.1",
+      "before": 8000,
+      "after": 16000,
+      "base_value_effect": -0.25,
+      "weighted_value_effect": -0.13
+     },
+     {
+      "input": "scenarios.base.charge.2",
+      "before": 5000,
+      "after": 10000,
+      "base_value_effect": -0.14,
+      "weighted_value_effect": -0.07
+     },
+     {
+      "input": "scenarios.bear.charge.1",
+      "before": 40000,
+      "after": 48000,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -0.06
+     },
+     {
+      "input": "scenarios.bear.charge.2",
+      "before": 25000,
+      "after": 27189,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -0.02
+     },
+     {
+      "input": "scenarios.bear.charge.3",
+      "before": 10000,
+      "after": 10876,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -0.01
+     },
+     {
+      "input": "scenarios.bear.charge.4",
+      "before": 10000,
+      "after": 10876,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -0.01
+     },
+     {
+      "input": "shares_m",
+      "before": 24700.0,
+      "after": 24570.0,
+      "base_value_effect": 0.97,
+      "weighted_value_effect": 0.98
+     },
+     {
+      "input": "tax",
+      "before": 0.165,
+      "after": 0.17,
+      "base_value_effect": -1.08,
+      "weighted_value_effect": -1.1
+     },
+     {
+      "input": "years_to_horizon",
+      "before": 5.2,
+      "after": 5.21,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "dates (as_of, days_to_base_year_end, years_to_horizon, base_year_end)",
+      "before": null,
+      "after": null,
+      "group_of": [
+       "as_of",
+       "base_year_end",
+       "days_to_base_year_end",
+       "years_to_horizon"
+      ],
+      "base_value_effect": 0.18,
+      "weighted_value_effect": 0.18
+     }
+    ]
+   },
+   "function": "check_prev_inputs"
+  },
+  {
+   "id": "prev_levels",
+   "group": "previous",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "revenue and operating profit within 3% of the previous path in every year",
+   "lessons": [
+    "L23"
+   ],
+   "levels": {
+    "rebased": false,
+    "base_year_before": 2027,
+    "base_year_after": 2027,
+    "years": [
+     {
+      "year": 2027,
+      "revenue_before_m": 410000,
+      "revenue_after_m": 414395,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": null,
+      "operating_profit_after_m": null,
+      "operating_profit_change_pct": null,
+      "growth_before": null,
+      "growth_after": null,
+      "growth_unchanged": false
+     },
+     {
+      "year": 2028,
+      "revenue_before_m": 664200,
+      "revenue_after_m": 671320,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 405162,
+      "operating_profit_after_m": 409505,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.62,
+      "growth_after": 0.62,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2029,
+      "revenue_before_m": 763830,
+      "revenue_after_m": 772018,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 450660,
+      "operating_profit_after_m": 455491,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.15,
+      "growth_after": 0.15,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2030,
+      "revenue_before_m": 809660,
+      "revenue_after_m": 818339,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 461506,
+      "operating_profit_after_m": 466453,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.06,
+      "growth_after": 0.06,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2031,
+      "revenue_before_m": 842046,
+      "revenue_after_m": 851073,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 463125,
+      "operating_profit_after_m": 468090,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.04,
+      "growth_after": 0.04,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2032,
+      "revenue_before_m": 875728,
+      "revenue_after_m": 885115,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 464136,
+      "operating_profit_after_m": 469111,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.04,
+      "growth_after": 0.04,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2033,
+      "revenue_before_m": 910757,
+      "revenue_after_m": 920520,
+      "revenue_change_pct": 1.1,
+      "operating_profit_before_m": 464486,
+      "operating_profit_after_m": 469465,
+      "operating_profit_change_pct": 1.1,
+      "growth_before": 0.04,
+      "growth_after": 0.04,
+      "growth_unchanged": true
+     }
+    ],
+    "hidden_level_change_years": [],
+    "largest_revenue_change_pct": 1.1,
+    "largest_operating_profit_change_pct": 1.1
+   },
+   "function": "check_prev_levels"
+  },
+  {
+   "id": "ask.L11",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: The 14th week of Q4 (about 9,286 = 130,000 x 1/14) is out of rev0 (one_off_revenue_m); no partnership or other one-time revenue named in the release; receivables 81,033 (DSO 64 vs 60, extended terms on large multi-quarter deals) cannot be read against deferred revenue, which the release does not give (gap until the 10-Q): noted as a cash-conversion risk, not taken out of revenue",
+   "lessons": [
+    "L11"
+   ],
+   "question": "Is one-off revenue taken out of the base year, and are receivables read against deferred revenue? Name the amount or say there is none.",
+   "category": "inputs"
+  },
+  {
+   "id": "ask.L12",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: No converts, puts or warrants in the release; long-term debt 32,371 is in net cash; Hugging Face (about 12.9B incl. retention, agreed 3.9.2026, closing H1 2027) is now taken out of net cash (review 17.11); leases not commenced 74B, cloud agreements 28B and guarantees 118.0B (SB Energy/OpenAI 105.0 from FY2029) are not in net cash and sit in the bear charges (scaled to 118.0/108.5 in the review) and the base charges (doubled to 16/16/10B); the 107M legal settlement is an opex one-off; no legal judgment",
+   "lessons": [
+    "L12"
+   ],
+   "question": "Are converts (and their caps), puts, warrants, leases and legal judgments from the notes in net cash, shares or a charge? Name each or say there is none.",
+   "category": "capital structure"
+  },
+  {
+   "id": "ask.L13",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no tags, and free cash stays above half of operating profit in the base",
+   "lessons": [
+    "L13"
+   ],
+   "question": "For an asset-heavy business: is the margin after depreciation consistent with D&A as a share of revenue, the useful life and assets not yet in use?"
+  },
+  {
+   "id": "ask.L15",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Bull FY28 +72% unchanged and above the attributed consensus (~+70%, CNBC); beat record: Q3 revenue 115.8B vs guide 108.0B (+7.3%), non-GAAP EPS +7.6% vs AV consensus (Q2 +6.2%, Q1 +5.6%)",
+   "lessons": [
+    "L15"
+   ],
+   "question": "Does the bull reflect the guidance-beat record? State the record (beats of the last quarters) in one line.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L16",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: Yes: bear FY28 18B, FY29 48B (40B +8B for the new commitments: supply 279B->390B, guarantees 108.5B->118.0B), FY30-32 x 118.0/108.5 (27.2B, 10.9B, 10.9B), FY29 revenue -20%, margins to low-40s; applied in the review pass of 17.11 (weighted bear today 69.27)",
+   "lessons": [
+    "L16"
+   ],
+   "question": "Does the bear carry the company-specific hit (inventory and commitments, puts, patent cliff, dilution, customer loss, credit cycle)? Name it.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L18",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: Not a buy answer: the verdict is hold (the owner's add conditions are not met: GM guide 71.5% < 72%, no permanent successor, a BIS interim final rule filed 16.11). Company numbers checked against the 8-K EX-99.1/99.2/99.3 copies (runs/tickers/NVDA_2026-11-17/reading/); the BIS rule read in the Federal Register public-inspection copy (doc. 2026-23529); consensus, Hugging Face price and the after-hours ~159 are web-attributed; the review (numbers and red team) is deep/review.md, answered in deep/review_answers.md",
+   "lessons": [
+    "L18"
+   ],
+   "question": "For a buy: is every number and event in the answer checked against a primary source, with nothing \"from memory\"? Name the verification files.",
+   "category": "publishing"
+  },
+  {
+   "id": "ask.L19",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: No: the own 5-year median 23.1 was paid for 100%+ growth; the worlds use 15/13/11 (orderly/messy/export), unchanged; direct peers at today's growth not re-measured on 17.11 (gap)",
+   "lessons": [
+    "L19"
+   ],
+   "question": "Does the own-history multiple belong to today's growth rate? If growth changed, say so and show direct peers at today's growth.",
+   "category": "multiple"
+  },
+  {
+   "id": "ask.L24",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "no tags, and free cash stays above half of operating profit in the base",
+   "lessons": [
+    "L24"
+   ],
+   "question": "For an asset-heavy or fast-growing business: does stock-based pay scale with revenue, and does capex after the surge follow commitments and the pre-surge share?"
+  },
+  {
+   "id": "ask.L25",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Typed in the published record (thesis inputs of 17.11): add conditions c1-c5 with states (c1 pass, c2 fail, c3 open until the transcript, c4 open, c5 fail: BIS rule 2026-23529) and the falsifiers f1 (a finding against NVDA's licences or government contracts) and f2 (a guide clearly below 115B or GM below 70%); weighted sell line (3%/yr) 250.00 as of 17.11",
+   "lessons": [
+    "L25"
+   ],
+   "question": "Is every falsifier measurable and dated, and is the sell line quoted with its date?",
+   "category": "dates and hurdles"
+  },
+  {
+   "id": "ask.L27",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: No IBKR snapshot in this step: 155.46 is the NVDA Nasdaq close of 17.11 given by the lead (also in the lead's task text), after hours about 159 at 21:24 UTC (lead; Yahoo +2% via trendingtopics agrees); symbol NVDA, NASDAQ",
+   "lessons": [
+    "L27"
+   ],
+   "question": "Does the contract of the price snapshot belong to the params ticker and exchange (state the symbol and exchange the quote came from)?",
+   "category": "data source"
+  },
+  {
+   "id": "ask.S04",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "answered: Capex 4.4B in Q3 (9M 8.9B) is in conversion (base FY28 0.80); announced: supply and capacity commitments 390B (inventory purchases), leases not commenced 74B and cloud 28B (inside margins), capex commitments 6B, equity investments (Q4 at about the Q3 pace: 10B taken out of year-end net cash, about 5B more than the committed amount, the rest in the base charges 16/16/10B), Hugging Face about 13B out of net cash; all funded from FCF (Q3 43.8B): no share or debt funding needed",
+   "lessons": [
+    "S04"
+   ],
+   "question": "Is every announced capex plan in the model (conversion, charges), and is its funding in shares or net debt? Name the plan or say there is none.",
+   "category": "funding"
+  },
+  {
+   "id": "ask.P06",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Yes, recorded before any change (deep/update.md, then deep/review.md and deep/review_answers.md): Q4 guide >= 122B PASSES on both bases (130.0B vs 122B; 13-week 120.7B vs a 13-week bar of 113.3B, the 14-week Q4 was disclosed in the Q2 10-Q); GM guide >= 72% FAILS (71.5% midpoint); FY28 ~60%+ OPEN (no transcript); internal successor NOT MET (interim CEO only); no DOJ/BIS action FAILS (BIS interim final rule 2026-23529 filed 16.11, effective 19.11); no threshold changed",
+   "lessons": [
+    "P06"
+   ],
+   "question": "Did a pre-set condition fire in this report? If yes, is the hit recorded before any threshold is changed?",
+   "category": "process"
+  }
+ ],
+ "files": {
+  "params": "research/companies/NVDA/2026-11-17/lean_params.json",
+  "previous": "research/companies/NVDA/2026-11-12/lean_params.json",
+  "facts": null,
+  "answers": "research/companies/NVDA/2026-11-17/lean_check_answers.json"
+ }
+}

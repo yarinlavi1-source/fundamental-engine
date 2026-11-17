@@ -1,0 +1,550 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-17",
+ "price": 155.46,
+ "price_time_utc": "2026-11-17 21:00 UTC (Nasdaq close); after hours about 159 at 21:24 UTC, before the 22:00 UTC call",
+ "verdict_he": "להחזיק; לא להוסיף עכשיו. רק תנאי אחד מחמשת התנאים להוספה מתקיים, ומבחן הקנייה עובר בקושי (12.8% בשנה). בודקים שוב אחרי תמליל השיחה",
+ "buy_test_price": {
+  "orderly_succession": 177.22,
+  "messy_succession": 157.72,
+  "export_finding": 144.58
+ },
+ "margin_of_safety_price": {
+  "orderly_succession": 169.2,
+  "messy_succession": 150.58,
+  "export_finding": 138.04
+ },
+ "values": {
+  "today": {
+   "bear": 69.27,
+   "base": 167.6,
+   "bull": 282.21
+  },
+  "end_2028": {
+   "bear": 79.84,
+   "base": 193.37,
+   "bull": 325.7
+  },
+  "end_2029": {
+   "bear": 88.9,
+   "base": 216.25,
+   "bull": 364.85
+  },
+  "end_2030": {
+   "bear": 98.51,
+   "base": 240.3,
+   "bull": 406.38
+  },
+  "end_2031": {
+   "bear": 108.67,
+   "base": 265.44,
+   "bull": 450.18
+  },
+  "end_2032": {
+   "bear": 119.28,
+   "base": 291.62,
+   "bull": 496.18
+  },
+  "weighted_today_25_50_25": 171.67,
+  "calibrated_today": 186.41,
+  "today_base_by_world": {
+   "orderly_succession_40pct": 183.44,
+   "messy_succession_30pct": 163.72,
+   "export_finding_30pct": 150.36
+  },
+  "weighted_base_today": 167.6,
+  "today_note": "bear, base and bull = the weighted values over the worlds (weight x value, weights are judgement): see today_base_by_world and v2.worlds for each world"
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "האטה חדה בהשקעות ב-AI: ההכנסות בשנת הכספים 2029 יורדות ב-20%, הרווחיות יורדת לכ-42%, ומחיקות על ההשקעות, הערבויות (118 מיליארד $) וההתחייבויות לספקים"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה של כ-62% בשנת הכספים 2028 ואחר כך האטה, רווחיות תפעולית של 61% שיורדת לאט, מכפיל 15 (ממוצע של שלושה עולמות: 40/30/30)"
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": "צמיחה של כ-72% ב-2028 ו-30% ב-2029, רווחיות סביב 63%, מכפיל 20"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -5.0,
+  "base": 12.8,
+  "bull": 25.0,
+  "calibrated": 15.2,
+  "weighted": null,
+  "index": 9.1,
+  "at_price": 155.46,
+  "weighted_base": 12.8,
+  "orderly_succession": {
+   "bear": -4.2,
+   "base": 14.9,
+   "bull": 26.9,
+   "calibrated": 16.1
+  },
+  "messy_succession": {
+   "bear": -4.7,
+   "base": 12.3,
+   "bull": 25.2,
+   "calibrated": 14.9
+  },
+  "export_finding": {
+   "bear": -6.2,
+   "base": 10.5,
+   "bull": 21.8,
+   "calibrated": 14.4
+  }
+ },
+ "conditions": {
+  "add": [
+   "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+   "רווח גולמי צפוי 72% ומעלה",
+   "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+   "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+   "אין צעד פומבי של משרד המשפטים או של רשות הייצוא"
+  ],
+  "proposed_trim": [],
+  "proposed_exit": [
+   "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+   "תחזית נמוכה בבירור מ-115 מיליארד $ (13 שבועות) או רווח גולמי מתחת ל-70%",
+   "החברה מדווחת שכללי הייצוא החדשים פוגעים ביותר מ-10% מההכנסות"
+  ]
+ },
+ "next_report": {
+  "date": "דוח רבעון 4 של שנת הכספים 2027, סוף פברואר 2027 (משוער)",
+  "confirmed": false,
+  "check": "קודם: תמליל השיחה של 17.11 ודוח ה-10-Q (מספר מניות, הערה משפטית, תנאי Hugging Face), והשפעת כלל הייצוא של BIS (בתוקף מ-19.11)"
+ },
+ "thesis_link": "research/companies/NVDA/thesis_he.md",
+ "notes_he": [
+  "דוח רבעון 3 (17.11): הכנסות 115.8 מיליארד $, תחזית לרבעון 4 של 130 מיליארד $ (14 שבועות)",
+  "קולט קרס מנכ\"לית זמנית; אין מחליף קבוע",
+  "כלל ייצוא חדש של BIS (בתוקף מ-19.11) על מדינות בדרום-מזרח אסיה ועל מרכזי נתונים שמשרתים חברות סיניות"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": "diluted, FY2027 year-end projection (Q3 weighted diluted 24,186M less the Q4 buyback, plus a 500M margin)",
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/NVDA/2026-11-17/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 161.58,
+   "stated_price": 161.58,
+   "rerun_price": 161.58,
+   "base_12_price": 161.58,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 12.8,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 161.58
+    },
+    "base_calibrated": {
+     "return_pct": 15.2,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 180.27
+    },
+    "bull": {
+     "return_pct": 25.0,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 218.97
+    },
+    "bear": {
+     "return_pct": -5.0,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 206.52
+    }
+   },
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 154.27,
+    "stated_price": 154.27,
+    "rerun_price": 154.27,
+    "rerun_used": false,
+    "binding_leg": "base_ours",
+    "base_13_price": 154.27,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
+  },
+  "price_ladder": {
+   "horizon_date": "2032-01-31",
+   "years_to_horizon": 5.21,
+   "rungs": [
+    {
+     "id": "company_hurdle",
+     "return_pct": 13.0,
+     "price": 154.27,
+     "price_second_lens": 172.11
+    },
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 154.27,
+     "price_second_lens": 172.11
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 161.58,
+     "price_second_lens": 180.27
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 184.89,
+     "price_second_lens": 206.27
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 215.27,
+     "price_second_lens": 240.16
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 250.0,
+     "price_second_lens": 278.9
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 154.27,
+   "rung": "buy_test.margin_of_safety_price",
+   "note": null
+  },
+  "index_parity_price": 184.89,
+  "hold_floor_price": 215.27,
+  "sell_line_price": 250.0,
+  "values_dated": {
+   "today": {
+    "bear": 69.27,
+    "base": 167.6,
+    "bull": 282.21,
+    "date": "2026-11-17",
+    "base_calibrated": 186.41
+   },
+   "year_ends": [
+    {
+     "bear": 79.84,
+     "base": 193.37,
+     "bull": 325.7,
+     "fiscal_year": 2028,
+     "date": "2028-01-31",
+     "base_calibrated": 215.09
+    },
+    {
+     "bear": 88.9,
+     "base": 216.25,
+     "bull": 364.85,
+     "fiscal_year": 2029,
+     "date": "2029-01-31",
+     "base_calibrated": 240.67
+    },
+    {
+     "bear": 98.51,
+     "base": 240.3,
+     "bull": 406.38,
+     "fiscal_year": 2030,
+     "date": "2030-01-31",
+     "base_calibrated": 267.64
+    },
+    {
+     "bear": 108.67,
+     "base": 265.44,
+     "bull": 450.18,
+     "fiscal_year": 2031,
+     "date": "2031-01-31",
+     "base_calibrated": 295.9
+    },
+    {
+     "bear": 119.28,
+     "base": 291.62,
+     "bull": 496.18,
+     "fiscal_year": 2032,
+     "date": "2032-01-31",
+     "base_calibrated": 325.34
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 77.93,
+     "base": 188.72,
+     "bull": 317.85,
+     "date": "2027-11-17",
+     "base_calibrated": 209.91
+    },
+    "two_year": {
+     "bear": 86.96,
+     "base": 211.35,
+     "bull": 356.46,
+     "date": "2028-11-17",
+     "base_calibrated": 235.19
+    },
+    "five_year": {
+     "bear": 117.02,
+     "base": 286.03,
+     "bull": 486.36,
+     "date": "2031-11-17",
+     "base_calibrated": 319.06
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2028-01-31",
+     "source": "fiscal_year_end",
+     "bear": 79.84,
+     "base": 193.37,
+     "bull": 325.7,
+     "second_lens": 215.09
+    },
+    "five_year": {
+     "date": "2032-01-31",
+     "source": "horizon_year_end",
+     "bear": 119.28,
+     "base": 291.62,
+     "bull": 496.18,
+     "second_lens": 325.34
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 186.41,
+   "annual_return_pct": 15.2,
+   "band": "buy",
+   "band_ours": "buy",
+   "agree": true,
+   "inflated_multiple_warning": null,
+   "note": "per world: the second lens of each world holds its own multiple"
+  },
+  "historical_multiple": {
+   "value": 368,
+   "low": 301,
+   "high": 524,
+   "basis": null,
+   "company_type": null,
+   "note": "the old multiple was paid for 100%+ growth; at 15x about 239"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": "q4_fy27_revenue_guide_bn",
+    "op": ">=",
+    "threshold": 122,
+    "by_date": "2026-11-17",
+    "text_he": "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+    "state": "met",
+    "note": "130.0B (14 weeks); on 13 weeks 120.7B against a 13-week bar of 113.3B: passes on both bases (the 14-week Q4 was disclosed in the Q2 FY27 10-Q)"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": "q4_fy27_gross_margin_guide_pct",
+    "op": ">=",
+    "threshold": 72,
+    "by_date": "2026-11-17",
+    "text_he": "רווח גולמי צפוי 72% ומעלה",
+    "state": "not_met",
+    "note": "guide 71.0-72.0%, midpoint 71.5% (Rubin ramp); the extra week does not change a margin"
+   },
+   {
+    "id": "c3",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+    "state": "open",
+    "note": "no call transcript when published; the 13-week guided step slowed to +4.2% (+6.4% without China) from +11.5-14.5%; FY2028 supply commitments 203B"
+   },
+   {
+    "id": "c4",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+    "state": "open",
+    "note": "Colette Kress is interim CEO (and CFO); no permanent successor named; no senior exit found"
+   },
+   {
+    "id": "c5",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "אין צעד פומבי של משרד המשפטים או של רשות הייצוא",
+    "state": "not_met",
+    "note": "BIS interim final rule 'Addressing Remote Access to Advanced Semiconductors' (Federal Register doc. 2026-23529), filed 16.11.2026, effective 19.11.2026; no action names NVIDIA itself"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+    "state": "open"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "תחזית נמוכה בבירור מ-115 מיליארד $ (13 שבועות) או רווח גולמי מתחת ל-70%",
+    "state": "open",
+    "note": "not hit on 17.11: 130.0B (120.7B on 13 weeks), gross margin 71-72%"
+   },
+   {
+    "id": "f3",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "החברה מדווחת שכללי הייצוא החדשים פוגעים ביותר מ-10% מההכנסות",
+    "state": "open",
+    "note": "added 17.11.2026 with the BIS rule 2026-23529; UBS worst case about 10% (press)"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": "2026-11-17",
+   "note": "8-K of 17.11.2026 (acc. 0001045810-26-000088: release, CFO commentary, supplemental); Federal Register public-inspection copy of BIS rule 2026-23529; press on the call and the CEO search; no call transcript"
+  },
+  "verdict": {
+   "code": "hold",
+   "text_he": "להחזיק; לא להוסיף עכשיו. רק תנאי אחד מחמשת התנאים להוספה מתקיים, ומבחן הקנייה עובר בקושי (12.8% בשנה). בודקים שוב אחרי תמליל השיחה",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-22",
+    "to": "2027-02-28"
+   },
+   "confirmed": false
+  },
+  "worlds": {
+   "weights_label": "subjective (judgement, not engine odds)",
+   "source": null,
+   "weighted": {
+    "value_today": 167.6,
+    "annual_return_pct": 12.8,
+    "buy_test_price": 161.58,
+    "margin_of_safety_price": 154.27
+   },
+   "worlds": [
+    {
+     "name": "orderly_succession",
+     "label_he": "הואנג עוזב, מחליף מבפנים, מסודר",
+     "weight": 0.4,
+     "params": {
+      "path": "lean_params.json",
+      "sha256": "e6c7995629ad7123a930591bd846182e449c25148918b2544766cf39f73a3e1d"
+     },
+     "value_today": {
+      "bear": 72.01,
+      "base": 183.44,
+      "bull": 305.68,
+      "base_calibrated": 193.79
+     },
+     "annual_return_pct": {
+      "bear": -4.2,
+      "base": 14.9,
+      "bull": 26.9,
+      "base_calibrated": 16.1
+     },
+     "buy_test_price": 177.22,
+     "buy_test_pass": true,
+     "margin_of_safety_price": 169.2,
+     "base_13_price": 169.2,
+     "base_13_price_second_lens": 178.9,
+     "base_band": "buy",
+     "two_lens_agree": true
+    },
+    {
+     "name": "messy_succession",
+     "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ",
+     "weight": 0.3,
+     "params": {
+      "path": "lean_params_B2_messy_succession.json",
+      "sha256": "543fd78816786d65ba0f746c78e1443ce9ee9e4b0e150e452b665315d6c71f5a"
+     },
+     "value_today": {
+      "bear": 70.17,
+      "base": 163.72,
+      "bull": 285.87,
+      "base_calibrated": 183.65
+     },
+     "annual_return_pct": {
+      "bear": -4.7,
+      "base": 12.3,
+      "bull": 25.2,
+      "base_calibrated": 14.9
+     },
+     "buy_test_price": 157.72,
+     "buy_test_pass": true,
+     "margin_of_safety_price": 150.58,
+     "base_13_price": 150.58,
+     "base_13_price_second_lens": 169.5,
+     "base_band": "buy",
+     "two_lens_agree": true
+    },
+    {
+     "name": "export_finding",
+     "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה",
+     "weight": 0.3,
+     "params": {
+      "path": "lean_params_C_export_hit.json",
+      "sha256": "cbe3e6292e7aa5644a62e1c9ad29dfecab5673818d68ceef4e641381fc4c872d"
+     },
+     "value_today": {
+      "bear": 64.72,
+      "base": 150.36,
+      "bull": 247.25,
+      "base_calibrated": 179.33
+     },
+     "annual_return_pct": {
+      "bear": -6.2,
+      "base": 10.5,
+      "bull": 21.8,
+      "base_calibrated": 14.4
+     },
+     "buy_test_price": 144.58,
+     "buy_test_pass": false,
+     "margin_of_safety_price": 138.04,
+     "base_13_price": 138.04,
+     "base_13_price_second_lens": 165.66,
+     "base_band": "hold",
+     "two_lens_agree": false
+    }
+   ]
+  }
+ }
+}

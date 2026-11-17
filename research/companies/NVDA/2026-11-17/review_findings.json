@@ -1,0 +1,65 @@
+{
+ "ticker": "NVDA",
+ "valuation_date": "2026-11-17",
+ "built_on": "2026-11-17",
+ "note": "Built on 2026-11-17 from the reviewer file of the private run folder (runs/tickers/NVDA_2026-11-17/deep/review.md, not copied) and the answers (deep/review_answers.md): verdict, finding titles and the base value before and after the review pass. Company research only.",
+ "pre_review": {
+  "base_today": 172.33,
+  "price": 155.46,
+  "file": "lean_params_pre_review.json",
+  "note": "weighted base of the three worlds at 45/35/20 (the main file alone: 185.93); results-day inputs of the Q3 FY2027 8-K, before the review"
+ },
+ "final": {
+  "base_today": 167.6,
+  "file": "lean_params.json",
+  "note": "weighted base of the three worlds at 40/30/30 (worlds.json); the main file alone (orderly succession): 183.44"
+ },
+ "base_changed_by_review": true,
+ "bridge": "tax 16.5% -> 17% (-1.02); net cash 56,000 -> 38,000: Hugging Face about -13B and Q4 equity investments at the Q3 pace -5B (-0.72); base investment charges doubled to 16/16/10B (-0.67); bear charges scaled to the new commitments (bear -0.35, base 0); world weights 45/35/20 -> 40/30/30 after the BIS interim final rule 2026-23529 (-2.32); total -4.73",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers and red team",
+   "run_file": "runs/tickers/NVDA_2026-11-17/deep/review.md",
+   "verdict": "arithmetic reproduced; inputs match the release; hold-and-wait reading right; buy-test pass fragile",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "Add condition 1 (Q4 guide >= 122B) passes on both bases; the update's 13-week fail compared mismatched bases.",
+     "outcome": "accepted: condition 1 = pass; no value effect"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "The Q4 guided step is understated (guide vs guide, China out); FY2028 +62% needs the slowed pace to hold all year.",
+     "outcome": "accepted as analysis; no FY2028 change before the call transcript (the gate); condition 3 open"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "World weights: the week's export news fits the letter of world C.",
+     "outcome": "applied: BIS interim final rule 2026-23529 read on the Federal Register public-inspection copy; weights 40/30/30 (-2.32); condition 5 = fail"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "Strongest bear: NVIDIA increasingly finances its own demand (equity purchases 58.1B in 9M, guarantees 118.0B, DSO 64).",
+     "outcome": "applied: base charges doubled (-0.67), bear charges scaled (bear -0.35), circular-financing numbers in the bear text"
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "Known items left as gaps or set too low: Hugging Face price, Q4 investment pace, tax below the guide midpoint.",
+     "outcome": "applied: net cash -18B (-0.72), tax 17% (-1.02)"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "Items on the low-bias side: beta 1.84 vs the locked rule's 1.53; FY2028 margin below the Blackwell-ramp analog.",
+     "outcome": "no change on results day; beta stays an owner decision, recorded in judgement.beta"
+    }
+   ]
+  }
+ ]
+}

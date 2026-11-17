@@ -1,0 +1,147 @@
+{
+ "scorecard_version": 1,
+ "ticker": "NVDA",
+ "period": "Q3 FY2027",
+ "period_end": "2026-10-25",
+ "reported_on": "2026-11-17",
+ "sources": [
+  {
+   "title": "Q3 FY2027 results release (8-K exhibit 99.1, 17.11.2026, acc. 0001045810-26-000088)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27pr.htm"
+  },
+  {
+   "title": "Q3 FY2027 CFO commentary (8-K exhibit 99.2, 17.11.2026)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000088/q3fy27cfocommentary.htm"
+  },
+  {
+   "title": "BIS interim final rule 'Addressing Remote Access to Advanced Semiconductors' (Federal Register doc. 2026-23529, public inspection 16.11.2026, publication 19.11.2026)",
+   "url": "https://www.federalregister.gov/public-inspection/2026-23529/addressing-remote-access-to-advanced-semiconductors"
+  }
+ ],
+ "against": {
+  "thesis_id": "lean:NVDA:2026-11-12:23d65c1b86a9",
+  "ledger": "research/ledger.jsonl",
+  "as_of": "2026-11-12",
+  "folder": "research/companies/NVDA/2026-11-12",
+  "note": "The 12.11 valuation (three worlds 45/35/20, weighted base 169.02 at 161.50) was frozen in the ledger on 2026-11-16 08:37 UTC (thesis 23d65c1b86a9, which superseded the 15.11 row 8f0762821d89 of the same valuation), before the report of 17.11. FY2027 is the base year, not a model year: the model's only FY2027 figure is rev0 (410,000 = H1 actual + the Q3 guide 108.0B + the Q4 consensus 124.5B), so the quarter is scored as partial and guidance rows."
+ },
+ "items": [
+  {
+   "metric": "revenue Q3 FY2027 against the Q3 guide inside the frozen FY2027 base",
+   "kind": "partial",
+   "unit": "USD",
+   "model_value": 108000000000.0,
+   "actual": 115844000000.0,
+   "note": "release: 115,844M (+20% q/q, +103% y/y), +7.3% over the 108.0B guide the frozen rev0 used; includes about 2.4B of Hopper shipped to China (CFO commentary). Data Center 107.6B. No ahead/behind word on a partial year."
+  },
+  {
+   "metric": "gross margin Q3 FY2027 (GAAP)",
+   "kind": "partial",
+   "unit": "ratio",
+   "model_value": 0.74,
+   "actual": 0.748,
+   "note": "release: 74.8% GAAP, 74.9% non-GAAP; the frozen notes carried the Q3 guide of 74.0% +-0.5; the model has no gross-margin line"
+  },
+  {
+   "metric": "operating margin Q3 FY2027 (GAAP)",
+   "kind": "partial",
+   "unit": "ratio",
+   "model_value": 0.65,
+   "actual": 0.669,
+   "note": "release: operating income 77,520M on 115,844M. Model value = the roughly 65% FY2027 level the frozen notes assumed (FY2027 is not a model year); the frozen FY2028 weighted base margin is 60.45% (ledger)"
+  },
+  {
+   "metric": "revenue FY2027, nine months actual + Q4 guide midpoint (reported, 53 weeks)",
+   "kind": "guidance",
+   "unit": "USD",
+   "model_value": 410000000000.0,
+   "actual": 423681000000.0,
+   "note": "293,681M (release, 9M) + 130,000M Q4 guide (+-3%, a 14-week quarter): 423.7B (range 419.8-427.6B), +3.3% over the frozen 410.0B, which used the 14-week consensus 124.5B for Q4. On a 52-week basis (13/14 of the Q4 guide) 414.4B, +1.1%. Guidance, not a reported number; the period ends 31.1.2027."
+  },
+  {
+   "metric": "operating margin FY2027 (GAAP), nine months actual + Q4 guide",
+   "kind": "guidance",
+   "unit": "ratio",
+   "model_value": 0.65,
+   "actual": 0.653,
+   "note": "9M operating income 194,791M + Q4 about 81,950M (130.0B x 71.5% - 11.0B opex) on 423.7B; model value = the roughly 65% the frozen notes assumed"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "c1",
+   "text": "Add blocked: Q4 FY2027 revenue guide below 122B",
+   "state": "not_fired",
+   "note": "guide 130.0B (14 weeks); on 13 weeks 120.7B against a 13-week bar of 113.3B; the 14-week Q4 was disclosed in the Q2 FY27 10-Q, so the 124.5B consensus behind the bar was a 14-week figure",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "research/companies/NVDA/thesis_he.md (12.11.2026, section 'מה ישנה את הדעה') and valuation.json of research/companies/NVDA/2026-11-12 (condition c1, text only, not typed); ledger thesis 23d65c1b86a9 of 16.11"
+  },
+  {
+   "id": "c2",
+   "text": "Add blocked: Q4 gross-margin guide below 72%",
+   "state": "fired",
+   "note": "guide 71.0-72.0% (midpoint 71.5%), the Rubin ramp; the extra week does not change a margin",
+   "action_if_fired": "add_blocked",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c2)"
+  },
+  {
+   "id": "c3",
+   "text": "Add blocked: management comments on FY2028 do not fit about 60%+ growth",
+   "state": "not_measurable",
+   "note": "no call transcript when scored (call 22:00 UTC 17.11); the release and CFO commentary give no FY2028 figure; the 13-week guided step slowed to +4.2% (+6.4% without China) from +11.5-14.5%; FY2028 supply commitments 203B",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c3)"
+  },
+  {
+   "id": "c4",
+   "text": "Add blocked: no permanent internal successor named by 8-K, or senior exits",
+   "state": "not_measurable",
+   "note": "Colette Kress interim CEO (and CFO) since the 8-K of 12.11; the search includes outside candidates; no senior exit found; the add stays blocked until a decision",
+   "action_if_fired": "add_blocked",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c4)"
+  },
+  {
+   "id": "c5",
+   "text": "Add blocked: a public DOJ or BIS step, a licence revocation or a government investigation the company reports",
+   "state": "fired",
+   "note": "BIS interim final rule 2026-23529 (filed 16.11, effective 19.11.2026): licences for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil (except US-headquartered buyers) and for data centers supplying significant compute to D:5/Macau-headquartered companies; no action names NVIDIA itself",
+   "action_if_fired": "add_blocked",
+   "acted_on": true,
+   "reason_not_acted": null,
+   "on_file": "same as c1 (condition c5)"
+  },
+  {
+   "id": "f1",
+   "text": "A finding that hurts NVIDIA's export licences or government contracts",
+   "state": "not_fired",
+   "note": "no finding against NVIDIA; the new BIS rule is a general rule, read under c5 and in the export world's weight (20% -> 30% in the 17.11 valuation)",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f1, text only)"
+  },
+  {
+   "id": "f2",
+   "text": "A Q4 guide clearly below 115B or a gross margin below 70%",
+   "state": "not_fired",
+   "note": "130.0B (120.7B on 13 weeks); gross-margin guide 71-72%",
+   "action_if_fired": "review",
+   "acted_on": null,
+   "reason_not_acted": null,
+   "on_file": "valuation.json of research/companies/NVDA/2026-11-12 (falsifier f2, text only)"
+  }
+ ],
+ "notes": [
+  "Scored by hand on 2026-11-17 from the 8-K of the same day (acc. 0001045810-26-000088), read in runs/tickers/NVDA_2026-11-17/reading/, and the Federal Register public-inspection copy of BIS rule 2026-23529.",
+  "The 17.11 valuation (research/companies/NVDA/2026-11-17) was made after this report and is not scored against it.",
+  "The 10-Q of Q3 FY2027 was not yet filed: period-end shares, the legal note and the Hugging Face terms are open."
+ ]
+}

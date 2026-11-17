@@ -1,42 +1,64 @@
-# מעקב תחזיות: מה קרה מאז כל הערכת שווי (2026-11-16)
+# מעקב תחזיות: מה קרה מאז כל הערכת שווי (2026-11-17)
 
 הטבלה רק מודדת. היא לא משנה אף מודל ואף כלל. המספרים של ההערכות נלקחים מהיומן המוקפא (research/ledger.jsonl), לא מהרצה חדשה.
 
 | חברה | תאריך ההערכה | מה דווח מאז | הכנסות מול המסלול | שיעור רווח / תנאים | מחיר מול מסלול השווי | מעמד | קריאה |
 |---|---|---|---|---|---|---|---|
-| APH | 2026-11-06 | אין דוח מאז | — | — | 78.23 מול 70.10 (‎+12%; ביום ההערכה ‎+6%) | מבחן | אין דוח מאז |
-| APP | 2026-11-06 | אין דוח מאז | — | — | 409.10 מול 416.14 (‎-2%; ביום ההערכה ‎-16%) | מבחן | אין דוח מאז |
-| AVGO | 2026-11-07 | אין דוח מאז | — | — | 347.01 מול 296.68 (‎+17%; ביום ההערכה ‎-1%) | מבחן | אין דוח מאז |
-| BNY | 2026-11-11 | אין דוח מאז | — | — | 153.41 מול 157.86 (‎-3%; ביום ההערכה ‎-3%) | מבחן | אין דוח מאז |
-| CRDO | 2026-11-09 | אין דוח מאז | — | — | 131.51 מול 108.55 (‎+21%; ביום ההערכה ‎+23%) | מבחן | אין דוח מאז |
-| DELL | 2026-11-11 | אין דוח מאז | — | — | 344.53 מול 367.06 (‎-6%; ביום ההערכה ‎-1%) | מבחן | אין דוח מאז |
-| FIVE | 2026-11-15 | אין דוח מאז | — | — | — | מבחן | אין דוח מאז |
-| GOOGL | 2026-11-04 | אין דוח מאז | — | — | 295.77 מול 239.97 (‎+23%; ביום ההערכה ‎+21%) | מבחן | אין דוח מאז |
-| LLY | 2026-11-15 | אין דוח מאז | — | — | — | מבחן | אין דוח מאז |
-| MELI | 2026-11-06 | אין דוח מאז | — | — | 1,491.49 מול 2,180.81 (‎-32%; ביום ההערכה ‎-30%) | מבחן | אין דוח מאז |
-| META | 2026-11-13 | אין דוח מאז | — | — | 641.69 מול 513.20 (‎+25%; ביום ההערכה ‎+24%) | מבחן | אין דוח מאז |
-| MSFT | 2026-11-04 | אין דוח מאז | — | — | 523.88 מול 434.82 (‎+20%; ביום ההערכה ‎+28%) | מבחן | אין דוח מאז |
+| APH | 2026-11-06 | אין דוח מאז | — | — | 76.36 מול 70.19 (‎+9%; ביום ההערכה ‎+6%) | מבחן | אין דוח מאז |
+| APP | 2026-11-06 | אין דוח מאז | — | — | 398.94 מול 416.71 (‎-4%; ביום ההערכה ‎-16%) | מבחן | אין דוח מאז |
+| AVGO | 2026-11-07 | אין דוח מאז | — | — | 341.60 מול 297.08 (‎+15%; ביום ההערכה ‎-1%) | מבחן | אין דוח מאז |
+| BNY | 2026-11-11 | אין דוח מאז | — | — | 149.79 מול 157.97 (‎-5%; ביום ההערכה ‎-3%) | מבחן | אין דוח מאז |
+| CRDO | 2026-11-09 | אין דוח מאז | — | — | 123.95 מול 108.72 (‎+14%; ביום ההערכה ‎+23%) | מבחן | אין דוח מאז |
+| DELL | 2026-11-11 | אין דוח מאז | — | — | 322.79 מול 367.53 (‎-12%; ביום ההערכה ‎-1%) | מבחן | אין דוח מאז |
+| FIVE | 2026-11-15 | אין דוח מאז | — | — | 232.07 מול 263.19 (‎-12%; ביום ההערכה ‎-6%) | מבחן | אין דוח מאז |
+| GOOGL | 2026-11-04 | אין דוח מאז | — | — | 280.20 מול 240.22 (‎+17%; ביום ההערכה ‎+21%) | מבחן | אין דוח מאז |
+| LLY | 2026-11-15 | אין דוח מאז | — | — | 1,415.55 מול 818.43 (‎+73%; ביום ההערכה ‎+76%) | מבחן | אין דוח מאז |
+| MELI | 2026-11-06 | אין דוח מאז | — | — | 1,436.83 מול 2,182.93 (‎-34%; ביום ההערכה ‎-30%) | מבחן | אין דוח מאז |
+| META | 2026-11-13 | אין דוח מאז | — | — | 618.87 מול 513.77 (‎+20%; ביום ההערכה ‎+24%) | מבחן | אין דוח מאז |
+| MSFT | 2026-11-04 | אין דוח מאז | — | — | 506.24 מול 435.26 (‎+16%; ביום ההערכה ‎+28%) | מבחן | אין דוח מאז |
 | NBIS | 2026-11-11 | Q3 2026 (פורסם 2026-11-12), כרטיס ניקוד ידני | revenue Q3 2026 against the model year 2026 minus H1 (reported before the valuation): 980.8 מיליון מול 2,318.7 מיליון (‎42.3% מהם, שנה חלקית); revenue FY2026 guidance (low end of 3.0-3.4B) (תחזית החברה): 3,000.0 מיליון מול 3,300.0 מיליון (‎-9.1%); revenue FY2027 outlook (midpoint of 12-13B) (תחזית החברה): 12,500.0 מיליון מול 11,500.0 מיליון (‎+8.7%); capex FY2026 guidance (תחזית החברה): 27,000.0 מיליון מול 22,000.0 מיליון (‎+22.7%) | 2 תנאים הופעלו מתוך 4 | — | תיאור בלבד | כרטיס ניקוד ידני |
-| NBIS | 2026-11-13 | אין דוח שנתי מאז (ל-SEC החברה מגישה מספרים רק פעם בשנה: רבעון נוקד רק בכרטיס ניקוד ידני) | — | — | 115.88 מול 63.60 (‎+82%; ביום ההערכה ‎+74%) | מבחן | אין דוח מאז |
-| NET | 2026-11-06 | אין דוח מאז | — | — | 305.81 מול 95.08 (‎+222%; ביום ההערכה ‎+191%) | מבחן | אין דוח מאז |
-| NOW | 2026-11-04 | אין דוח מאז | — | — | 102.25 מול 87.45 (‎+17%; ביום ההערכה ‎+24%) | מבחן | אין דוח מאז |
+| NBIS | 2026-11-13 | אין דוח שנתי מאז (ל-SEC החברה מגישה מספרים רק פעם בשנה: רבעון נוקד רק בכרטיס ניקוד ידני) | — | — | 106.03 מול 63.72 (‎+66%; ביום ההערכה ‎+74%) | מבחן | אין דוח מאז |
+| NET | 2026-11-06 | אין דוח מאז | — | — | 284.80 מול 95.19 (‎+199%; ביום ההערכה ‎+191%) | מבחן | אין דוח מאז |
+| NOW | 2026-11-04 | אין דוח מאז | — | — | 92.90 מול 87.55 (‎+6%; ביום ההערכה ‎+24%) | מבחן | אין דוח מאז |
 | NU | 2026-11-01 | Q3 2026 (פורסם 2026-11-12), כרטיס ניקוד ידני | — | 2 תנאים הופעלו מתוך 11 | — | תיאור בלבד | כרטיס ניקוד ידני |
-| NU | 2026-11-13 | אין דוח מאז | — | — | 13.22 מול 13.38 (‎-1%; ביום ההערכה ‎-10%) | מבחן | אין דוח מאז |
-| NVDA | 2026-11-12 | אין דוח מאז | — | — | 162.85 מול 182.45 (‎-11%; ביום ההערכה ‎-11%) | מבחן | אין דוח מאז |
-| ORCL | 2026-11-06 | אין דוח מאז | — | — | 125.35 מול 156.34 (‎-20%; ביום ההערכה ‎-25%) | מבחן | אין דוח מאז |
-| PANW | 2026-11-05 | אין דוח מאז | — | — | 322.24 מול 173.63 (‎+86%; ביום ההערכה ‎+82%) | מבחן | אין דוח מאז |
-| RDDT | 2026-11-04 | אין דוח מאז | — | — | 98.45 מול 155.00 (‎-36%; ביום ההערכה ‎-33%) | מבחן | אין דוח מאז |
-| SPCX | 2026-11-13 | אין דוח מאז | — | — | 139.11 מול 70.06 (‎+99%; ביום ההערכה ‎+101%) | מבחן | אין דוח מאז |
+| NU | 2026-11-13 | אין דוח מאז | — | — | 12.33 מול 13.40 (‎-8%; ביום ההערכה ‎-10%) | מבחן | אין דוח מאז |
+| NVDA | 2026-11-12 | Q3 FY2027 (פורסם 2026-11-17), כרטיס ניקוד ידני | revenue Q3 FY2027 against the Q3 guide inside the frozen FY2027 base: 115,844.0 מיליון מול 108,000.0 מיליון (‎107.3% מהם, שנה חלקית); gross margin Q3 FY2027 (GAAP): ‎74.8% מול ‎74.0% (‎101.1% מהם, שנה חלקית); operating margin Q3 FY2027 (GAAP): ‎66.9% מול ‎65.0% (‎102.9% מהם, שנה חלקית); revenue FY2027, nine months actual + Q4 guide midpoint (reported, 53 weeks) (תחזית החברה): 423,681.0 מיליון מול 410,000.0 מיליון (‎+3.3%) | 2 תנאים הופעלו מתוך 7 | — | מבחן | כרטיס ניקוד ידני |
+| NVDA | 2026-11-17 (ממוצע משוקלל של העולמות) | אין דוח מאז | — | — | 155.46 מול 167.60 (‎-7%; ביום ההערכה ‎-7%) | מבחן | אין דוח מאז |
+| ORCL | 2026-11-06 | אין דוח מאז | — | — | 115.00 מול 156.56 (‎-27%; ביום ההערכה ‎-25%) | מבחן | אין דוח מאז |
+| PANW | 2026-11-05 | אין דוח מאז | — | — | 309.29 מול 173.81 (‎+78%; ביום ההערכה ‎+82%) | מבחן | אין דוח מאז |
+| RDDT | 2026-11-04 | אין דוח מאז | — | — | 94.48 מול 155.19 (‎-39%; ביום ההערכה ‎-33%) | מבחן | אין דוח מאז |
+| SPCX | 2026-11-13 | אין דוח מאז | — | — | 141.70 מול 70.15 (‎+102%; ביום ההערכה ‎+101%) | מבחן | אין דוח מאז |
 | TSM | 2026-11-05 | 6-K מ-2026-11-10: אין עדיין מספרים לניקוד | — | — | — | — | דוח בלי ניקוד |
-| TSM | 2026-11-05 | לא נוקד: הנתונים ב-SEC לא במטבע של המודל או חסרים | — | — | 398.73 מול 428.54 (‎-7%; ביום ההערכה ‎-15%) | מבחן | לא נוקד |
-| UBER | 2026-11-13 | אין דוח מאז | — | — | 69.69 מול 114.14 (‎-39%; ביום ההערכה ‎-39%) | מבחן | אין דוח מאז |
-| V | 2026-11-09 | אין דוח מאז | — | — | 425.76 מול 460.78 (‎-8%; ביום ההערכה ‎-8%) | מבחן | אין דוח מאז |
-| WSM | 2026-11-11 | אין דוח מאז | — | — | 254.05 מול 187.40 (‎+36%; ביום ההערכה ‎+40%) | מבחן | אין דוח מאז |
+| TSM | 2026-11-05 | לא נוקד: הנתונים ב-SEC לא במטבע של המודל או חסרים | — | — | 359.69 מול 428.99 (‎-16%; ביום ההערכה ‎-15%) | מבחן | לא נוקד |
+| UBER | 2026-11-13 | אין דוח מאז | — | — | 68.81 מול 114.25 (‎-40%; ביום ההערכה ‎-39%) | מבחן | אין דוח מאז |
+| V | 2026-11-09 | אין דוח מאז | — | — | 416.77 מול 461.19 (‎-10%; ביום ההערכה ‎-8%) | מבחן | אין דוח מאז |
+| WSM | 2026-11-11 | אין דוח מאז | — | — | 250.05 מול 187.59 (‎+33%; ביום ההערכה ‎+40%) | מבחן | אין דוח מאז |
 
 ## שורות של תיאור בלבד (לא נספרות)
 
 - NBIS 2026-11-12: descriptive only: the valuation of 2026-11-11 was frozen on 2026-11-15, after the report of 2026-11-12
 - NU 2026-11-12: descriptive only: the valuation it is scored against (NU:2026-11-01:4df4d5616ef7, research/forecast_ledger.jsonl (legacy heavy-engine ledger, recorded 2026-11-01T22:46 UTC; its chain cannot be verified)) is not a thesis frozen in research/ledger.jsonl
+
+## קבצים שהשתנו אחרי ההקפאה
+
+- APH 2026-11-06: result file rewritten with extra keys; the frozen values are unchanged
+- APP 2026-11-06: result file rewritten with extra keys; the frozen values are unchanged
+- AVGO 2026-11-07: result file rewritten with extra keys; the frozen values are unchanged
+- CRDO 2026-11-09: result file rewritten with extra keys; the frozen values are unchanged
+- DELL 2026-11-11: result file rewritten with extra keys; the frozen values are unchanged
+- GOOGL 2026-11-04: result file rewritten with extra keys; the frozen values are unchanged
+- LLY 2026-11-15: result file rewritten with extra keys; the frozen values are unchanged
+- MELI 2026-11-06: result file rewritten with extra keys; the frozen values are unchanged
+- MSFT 2026-11-04: result file rewritten with extra keys; the frozen values are unchanged
+- NBIS 2026-11-13: result file rewritten with extra keys; the frozen values are unchanged
+- NOW 2026-11-04: result file rewritten with extra keys; the frozen values are unchanged
+- NU 2026-11-13: result file rewritten with extra keys; the frozen values are unchanged
+- ORCL 2026-11-06: result file rewritten with extra keys; the frozen values are unchanged
+- RDDT 2026-11-04: result file rewritten with extra keys; the frozen values are unchanged
+- TSM 2026-11-05: result file rewritten with extra keys; the frozen values are unchanged
+- UBER 2026-11-13: result file rewritten with extra keys; the frozen values are unchanged
+- V 2026-11-09: result file rewritten with extra keys; the frozen values are unchanged
+- WSM 2026-11-11: result file rewritten with extra keys; the frozen values are unchanged
 
 ## תנאים ותנאי שבירה מכרטיסי הניקוד
 
@@ -57,6 +79,13 @@
 | NU | Q3 2026 | q3_profit: Q3 report: net income below about $1.09B or ROE below about 30% | לא הופעל | net income 1,091.6M, ROE 32% | תיאור בלבד |
 | NU | Q3 2026 | q3_customers: Q3 report: customer additions below about 3M or Brazil activity rate below 86% | לא הופעל | 3.7M added; Brazil activity rate 86.3% | תיאור בלבד |
 | NU | Q3 2026 | q3_provisioning: Q3 report: stage-3 share above about 9.5% on cards, or card coverage below about 17% while NPLs rise | אי אפשר למדוד עדיין | not read in this pass (the IFRS credit-quality note) | תיאור בלבד |
+| NVDA | Q3 FY2027 | c1: Add blocked: Q4 FY2027 revenue guide below 122B | לא הופעל | guide 130.0B (14 weeks); on 13 weeks 120.7B against a 13-week bar of 113.3B; the 14-week Q4 was disclosed in the Q2 FY27 10-Q, so the 124.5B consensus behind the bar was a 14-week figure | מבחן |
+| NVDA | Q3 FY2027 | c2: Add blocked: Q4 gross-margin guide below 72% | הופעל | guide 71.0-72.0% (midpoint 71.5%), the Rubin ramp; the extra week does not change a margin | מבחן |
+| NVDA | Q3 FY2027 | c3: Add blocked: management comments on FY2028 do not fit about 60%+ growth | אי אפשר למדוד עדיין | no call transcript when scored (call 22:00 UTC 17.11); the release and CFO commentary give no FY2028 figure; the 13-week guided step slowed to +4.2% (+6.4% without China) from +11.5-14.5%; FY2028 supply commitments 203B | מבחן |
+| NVDA | Q3 FY2027 | c4: Add blocked: no permanent internal successor named by 8-K, or senior exits | אי אפשר למדוד עדיין | Colette Kress interim CEO (and CFO) since the 8-K of 12.11; the search includes outside candidates; no senior exit found; the add stays blocked until a decision | מבחן |
+| NVDA | Q3 FY2027 | c5: Add blocked: a public DOJ or BIS step, a licence revocation or a government investigation the company reports | הופעל | BIS interim final rule 2026-23529 (filed 16.11, effective 19.11.2026): licences for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil (except US-headquartered buyers) and for data centers supplying significant compute to D:5/Macau-headquartered companies; no action names NVIDIA itself | מבחן |
+| NVDA | Q3 FY2027 | f1: A finding that hurts NVIDIA's export licences or government contracts | לא הופעל | no finding against NVIDIA; the new BIS rule is a general rule, read under c5 and in the export world's weight (20% -> 30% in the 17.11 valuation) | מבחן |
+| NVDA | Q3 FY2027 | f2: A Q4 guide clearly below 115B or a gross margin below 70% | לא הופעל | 130.0B (120.7B on 13 weeks); gross-margin guide 71-72% | מבחן |
 
 - חברות בלי הערכה מוקפאת או קבצים שהמעקב יכול לקרוא (ניקוד ידני): ASTS, MA, ONDS, PLTR, PYPL, SOFI, TSLA, VRT.
 
@@ -66,6 +95,7 @@
 |---|---|---|---|---|
 | AVGO | 2026-11-07 | 409.39 | 296.09 | ‎-27.7% |
 | CRDO | 2026-11-09 | 139.50 | 108.37 | ‎-22.3% |
+| FIVE | 2026-11-15 | 267.92 | 263.05 | ‎-1.8% |
 | FIVE | 2026-11-15 | 267.92 | 263.05 | ‎-1.8% |
 | GOOGL | 2026-11-04 | 228.64 | 239.41 | ‎+4.7% |
 | LLY | 2026-11-15 | 845.54 | 818.10 | ‎-3.2% |
@@ -77,17 +107,18 @@
 | NET | 2026-11-06 | 89.91 | 94.90 | ‎+5.5% |
 | NOW | 2026-11-04 | 103.74 | 87.23 | ‎-15.9% |
 | NU | 2026-11-13 | 13.06 | 13.38 | ‎+2.5% |
+| NVDA | 2026-11-17 | 185.93 | 167.60 | ‎-9.9% |
 | ORCL | 2026-11-06 | 169.01 | 155.97 | ‎-7.7% |
 | PANW | 2026-11-05 | 134.32 | 173.27 | ‎+29.0% |
 | SPCX | 2026-11-13 | 27.61 | 70.06 | ‎+153.7% |
 | UBER | 2026-11-06 | 150.04 | 114.35 | ‎-23.8% |
 | UBER | 2026-11-13 | 114.55 | 114.14 | ‎-0.4% |
 
-- חציון השינוי ‎-2.2% (18 הערכות, 16 חברות). שורת אזהרה בלבד: שום כלל לא משתנה ממנה.
+- חציון השינוי ‎-2.2% (20 הערכות, 17 חברות). שורת אזהרה בלבד: שום כלל לא משתנה ממנה.
 
 ## סיכום
 
-- שורות: 28; מבחנים שנוקדו: 0 (0 חברות); כרטיסי ניקוד שהם מבחן: 0; תיאור בלבד: 2; בלי דוח מאז: 24; דוח בלי ניקוד: 1; מודל מותאם בלי כרטיס: 0.
+- שורות: 29; מבחנים שנוקדו: 0 (0 חברות); כרטיסי ניקוד שהם מבחן: 1; תיאור בלבד: 2; בלי דוח מאז: 24; דוח בלי ניקוד: 1; מודל מותאם בלי כרטיס: 0.
 - תוצאות שנכתבו ליומן: 0; סורבו: 0; כבר היו: 0.
 - פחות מ-8 מבחנים מנוקדים מלפחות 3 חברות: מעט מדי כדי להסיק מסקנה (too few to conclude).
 - הכנסות, שנה שהסתיימה (בפועל חלקי תחזית פחות 1): חציון —, מספר שורות 0 (0 חברות): מעט מדי כדי להסיק (too few to conclude).
@@ -95,7 +126,7 @@
 - רווח תפעולי למניה, שנה שהסתיימה: חציון —, מספר שורות 0 (0 חברות): מעט מדי כדי להסיק (too few to conclude).
 - שנה חלקית: הקפיצה לרבעון שהמודל עוד צריך, מול הרבעון החדש: חציון —, מספר שורות 0 (0 חברות): מעט מדי כדי להסיק (too few to conclude).
 - שנה חלקית: שיעור הרווח של החלק החדש מול שנת המודל (נקודות): חציון —, מספר שורות 0 (0 חברות): מעט מדי כדי להסיק (too few to conclude).
-- מחיר מול מסלול השווי הבסיסי: חציון ‎+12% (ביום ההערכה ‎-1%), מספר שורות 23 (23 חברות); ההערכות צעירות (גיל חציוני 6 ימים), לכן זה פער ברמה ולא מבחן של המסלול: מעט מדי כדי להסיק (too few to conclude).
+- מחיר מול מסלול השווי הבסיסי: חציון ‎+6% (ביום ההערכה ‎-1%), מספר שורות 25 (25 חברות); ההערכות צעירות (גיל חציוני 8 ימים), לכן זה פער ברמה ולא מבחן של המסלול: מעט מדי כדי להסיק (too few to conclude).
 
 ## איך לקרוא
 
