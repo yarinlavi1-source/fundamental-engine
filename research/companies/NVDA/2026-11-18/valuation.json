@@ -1,0 +1,756 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "NVDA",
+ "company": "NVIDIA Corporation",
+ "as_of": "2026-11-18",
+ "price": {
+  "value": 162.94,
+  "time_utc": "2026-11-18 00:59 UTC: after hours 162.94 (+4.8% on the 17.11 Nasdaq close 155.46); IBKR overnight 160.54 at 01:24 UTC",
+  "source": "after-hours quote given by the lead after the 22:00 UTC call; checked on IBKR get_price_snapshot (contract 4815747, overnight session); no regular-session price yet"
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": "diluted, FY2027 year-end projection (Q3 weighted diluted 24,186M less the Q4 buyback, plus a 500M margin)",
+  "model_shares_m": 24570.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/NVDA/2026-11-18/lean_params.json",
+   "sha256": "23d9a3ba575e2e6b54fa3fc9460e3e375436cb3de0b0d17a27e504b439a9286b"
+  },
+  "result": {
+   "path": "research/companies/NVDA/2026-11-18/lean_result.json",
+   "sha256": "7adb999f766e8c3f830a22dd6fe16d70347b3a7df2b5e0a64fd5d36eb2872894"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
+  },
+  "worlds": {
+   "path": "research/companies/NVDA/2026-11-18/worlds.json",
+   "sha256": "f497f8e9dc6892f8d66d496e34cb13607402313272c7c2f0fe94a086999644a8"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.25,
+   "condition_he": "האטה חדה בהשקעות ב-AI: ההכנסות בשנת הכספים 2028 עולות רק 35% (רבע מתחת לתחזית), ב-2029 יורדות ב-20%, הרווחיות יורדת לכ-42%, ומחיקות על ההשקעות, הערבויות (118 מיליארד $) וההתחייבויות לספקים",
+   "value_today": 69.2,
+   "annual_return_pct": -5.8,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-31",
+     "value": 79.73
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-31",
+     "value": 88.78
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-31",
+     "value": 98.38
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-31",
+     "value": 108.52
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-31",
+     "value": 119.11
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-18",
+     "value": 77.85,
+     "return_pct": -52.2
+    },
+    "two_year": {
+     "date": "2028-11-18",
+     "value": 86.87,
+     "return_pct": -27.0
+    },
+    "five_year": {
+     "date": "2031-11-18",
+     "value": 116.88,
+     "return_pct": -6.4
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "ההכנסות בשנת הכספים 2028 לפי התחזית החדשה (צמיחה של 75%), רווחיות תפעולית של 65% שיורדת לאט, צמיחה של 15% ב-2029 ואחר כך האטה, מכפיל 15 (ממוצע של שלושה עולמות: 35/35/30)",
+   "value_today": 181.46,
+   "annual_return_pct": 13.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-31",
+     "value": 209.3
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-31",
+     "value": 234.0
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-31",
+     "value": 259.96
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-31",
+     "value": 287.08
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-31",
+     "value": 315.32
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-18",
+     "value": 204.33,
+     "return_pct": 25.4
+    },
+    "two_year": {
+     "date": "2028-11-18",
+     "value": 228.78,
+     "return_pct": 18.5
+    },
+    "five_year": {
+     "date": "2031-11-18",
+     "value": 309.37,
+     "return_pct": 13.7
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.25,
+   "condition_he": "התחזית נעקפת כמו בתשעת הרבעונים האחרונים (בממוצע 5.2% מעל): כ-780 מיליארד $ ב-2028, צמיחה של 30% ב-2029, רווחיות סביב 66%, מכפיל 20",
+   "value_today": 301.16,
+   "annual_return_pct": 25.4,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2028,
+     "date": "2028-01-31",
+     "value": 347.47
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-01-31",
+     "value": 389.18
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-01-31",
+     "value": 433.44
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-01-31",
+     "value": 480.1
+    },
+    {
+     "fiscal_year": 2032,
+     "date": "2032-01-31",
+     "value": 529.08
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-18",
+     "value": 339.19,
+     "return_pct": 108.2
+    },
+    "two_year": {
+     "date": "2028-11-18",
+     "value": 380.36,
+     "return_pct": 52.8
+    },
+    "five_year": {
+     "date": "2031-11-18",
+     "value": 518.76,
+     "return_pct": 26.1
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 183.32,
+  "end_value": null,
+  "annual_return_pct": null,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 208.8,
+  "annual_return_pct": 16.7,
+  "band": "buy",
+  "band_ours": "buy",
+  "agree": true,
+  "pe_held": null,
+  "margin_overridden": null,
+  "dated_values": [
+   {
+    "fiscal_year": 2028,
+    "date": "2028-01-31",
+    "value": 240.86
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-01-31",
+    "value": 269.48
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-01-31",
+    "value": 299.61
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-01-31",
+    "value": 331.12
+   },
+   {
+    "fiscal_year": 2032,
+    "date": "2032-01-31",
+    "value": 363.9
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-18",
+    "value": 235.14,
+    "return_pct": 44.3
+   },
+   "two_year": {
+    "date": "2028-11-18",
+    "value": 263.43,
+    "return_pct": 27.2
+   },
+   "five_year": {
+    "date": "2031-11-18",
+    "value": 357.01,
+    "return_pct": 17.0
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": null,
+   "differs_from_base_only_by_multiple": null,
+   "pe_held": null,
+   "pe_base_exit": null,
+   "pe_held_to_base_exit": null,
+   "inflated_multiple_warning": null
+  },
+  "diagnostics_note": "per world: the second lens of each world holds its own multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2027,
+  "base_year_end": "2027-01-31",
+  "base_year_revenue_m": 414395.0,
+  "years": {
+   "2028": {
+    "fiscal_year_end": "2028-01-31",
+    "revenue_m": 741436,
+    "op_margin": 0.65,
+    "eps_operating": 16.28
+   },
+   "2029": {
+    "fiscal_year_end": "2029-01-31",
+    "revenue_m": 852651,
+    "op_margin": 0.59,
+    "eps_operating": 16.99
+   },
+   "2030": {
+    "fiscal_year_end": "2030-01-31",
+    "revenue_m": 903810,
+    "op_margin": 0.57,
+    "eps_operating": 17.4
+   },
+   "2031": {
+    "fiscal_year_end": "2031-01-31",
+    "revenue_m": 939962,
+    "op_margin": 0.5499999999999999,
+    "eps_operating": 17.46
+   },
+   "2032": {
+    "fiscal_year_end": "2032-01-31",
+    "revenue_m": 977561,
+    "op_margin": 0.53,
+    "eps_operating": 17.5
+   },
+   "2033": {
+    "fiscal_year_end": "2033-01-31",
+    "revenue_m": 1016663,
+    "op_margin": 0.51,
+    "eps_operating": 17.52
+   }
+  },
+  "note": "the yearly path of the main file (orderly_succession, weight 0.35): the weighted values have no single path"
+ },
+ "hurdles": {
+  "horizon_date": "2032-01-31",
+  "years_to_horizon": 5.2,
+  "rungs": [
+   {
+    "id": "company_hurdle",
+    "return_pct": 13.0,
+    "price": 167.01,
+    "price_second_lens": 192.74,
+    "label": "entry with a margin of safety: buy_return 13% a year"
+   },
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 167.01,
+    "price_second_lens": 192.74,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 174.91,
+    "price_second_lens": 201.86,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 200.09,
+    "price_second_lens": 230.92,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 232.9,
+    "price_second_lens": 268.78,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 270.39,
+    "price_second_lens": 312.05,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 174.91,
+   "stated_price": 174.91,
+   "rerun_price": 174.91,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": true,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 13.5,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 174.91
+    },
+    "base_calibrated": {
+     "return_pct": 16.7,
+     "threshold_pct": 12.0,
+     "pass": true,
+     "max_price": 201.86
+    },
+    "bull": {
+     "return_pct": 25.4,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 233.86
+    },
+    "bear": {
+     "return_pct": -5.8,
+     "threshold_pct": -10.0,
+     "pass": true,
+     "max_price": 206.01
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null,
+   "margin_of_safety_price": 167.01,
+   "margin_of_safety_stated_price": 167.01,
+   "margin_of_safety_rerun_price": 167.01,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "base_ours",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+  },
+  "buy_test_price": 174.91,
+  "base_12_price": 174.91,
+  "margin_of_safety_price": 167.01,
+  "base_13_price": 167.01,
+  "index_parity_price": 200.09,
+  "hold_floor_price": 232.9,
+  "sell_line_price": 270.39,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
+  "entry_price": {
+   "value": 167.01,
+   "rung": "buy_test.margin_of_safety_price",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2028-01-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2032-01-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": null,
+  "basis": null,
+  "next_year_figure": null,
+  "median": null,
+  "p25": null,
+  "p75": null,
+  "months": null,
+  "net_cash_per_share": null,
+  "value": 376,
+  "low": 308,
+  "high": 536,
+  "source": "FY2028 operating EPS at the 75% guide 16.28 (orderly world, model) x the own 5-year median forward P/E 23.1 (p25-p75 18.9-32.9, measured 12.11.2026, not re-measured); pre-call consensus EPS 15.85 (Alpha Vantage, 18.11) gives about 366",
+  "note": "the old multiple was paid for 100%+ growth; at 15x about 244",
+  "computed": false
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": "q4_fy27_revenue_guide_bn",
+   "op": ">=",
+   "threshold": 122,
+   "by_date": "2026-11-17",
+   "text_he": "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+   "state": "met",
+   "note": "130.0B (14 weeks); 120.7B on 13 weeks against a 13-week bar of 113.3B (8-K 17.11.2026)"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": "q4_fy27_gross_margin_guide_pct",
+   "op": ">=",
+   "threshold": 72,
+   "by_date": "2026-11-17",
+   "text_he": "רווח גולמי צפוי 72% ומעלה",
+   "state": "not_met",
+   "note": "guide 71.0-72.0% (8-K); on the call Q4 was named \"our bottom\", improving to 72-73% in FY2028 (transcript, secondary): the purpose of the condition is supported, the letter is not met"
+  },
+  {
+   "id": "c3",
+   "kind": "add",
+   "metric": "fy2028_revenue_growth_outlook_pct",
+   "op": ">=",
+   "threshold": 60,
+   "by_date": null,
+   "text_he": "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+   "state": "met",
+   "note": "call 17.11.2026: 75% (raised from about 70%), conditional on data-center readiness, demand durability and customers' access to capital; CNBC live blog and a third-party transcript, not yet on a primary source (condition c6)"
+  },
+  {
+   "id": "c4",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+   "state": "open",
+   "note": "not met so far: the board hired Heidrick & Struggles, \"won't expedite\", \"does not intend to reinstate Jensen as CEO\"; no successor named; no senior exit reported (call 17.11, secondary)"
+  },
+  {
+   "id": "c5",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "אין צעד פומבי של משרד המשפטים או של רשות הייצוא",
+   "state": "not_met",
+   "note": "BIS interim final rule 2026-23529 (effective 19.11.2026) is a broad rule, not an action against NVIDIA; the call named \"new export controls ... this week\" with no effect stated; licensed Hopper to China has stopped"
+  },
+  {
+   "id": "c6",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "אימות ממקור ראשוני (הקלטת השיחה, פרסום של החברה או דוח ה-10-Q) של תחזית הצמיחה של 75% ושל רווח גולמי של 72%-73% ב-2028",
+   "state": "open",
+   "note": "added 18.11.2026 by the review: until then any add is a draft (lean_check L18 open)"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+   "state": "open"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "תחזית נמוכה בבירור מ-115 מיליארד $ (13 שבועות) או רווח גולמי מתחת ל-70%",
+   "state": "open",
+   "note": "not hit on 17.11: 130.0B (120.7B on 13 weeks), gross margin 71-72%"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "החברה מדווחת שכללי הייצוא החדשים פוגעים ביותר מ-10% מההכנסות",
+   "state": "open",
+   "note": "added 17.11.2026 with the BIS rule 2026-23529; UBS worst case about 10% (press)"
+  },
+  {
+   "id": "f4",
+   "kind": "exit",
+   "metric": "fy2028_revenue_growth_outlook_pct",
+   "op": "<",
+   "threshold": 60,
+   "by_date": null,
+   "text_he": "החברה מורידה את תחזית הצמיחה לשנת הכספים 2028 מתחת ל-60%",
+   "state": "open",
+   "note": "added 18.11.2026 after the call raised the outlook to 75%"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-22",
+   "to": "2027-02-28"
+  },
+  "confirmed": false,
+  "text": "דוח רבעון 4 של שנת הכספים 2027, סוף פברואר 2027 (משוער)",
+  "check_he": "קודם: אימות השיחה ממקור ראשוני (75%, רווח גולמי 72%-73%), דוח ה-10-Q (מספר מניות, תנאי Hugging Face, התחייבויות לספקים לפי שנה), ההשפעה של כלל הייצוא של BIS, והחיפוש אחר מנכ\"ל; תחזית האנליסטים אחרי השיחה לשנת 2029"
+ },
+ "last_fresh_pull": {
+  "date": "2026-11-18",
+  "note": "call of 17.11.2026 (CNBC live blog, singjupost transcript: secondary); 8-K of 17.11.2026; IBKR snapshot 01:24 UTC; Alpha Vantage estimates (FY2028 688.7B, not yet updated after the call); Alpha Vantage transcript rate-limited"
+ },
+ "verdict": {
+  "code": "hold",
+  "text_he": "להחזיק עכשיו. הוספה מדורגת (חלק ראשון קטן) רק אחרי שמקור ראשוני מאשר את תחזית הצמיחה של 75% ואת מסלול הרווח הגולמי, ורק במחיר של עד 167$. לא הוספה מלאה: המעבר במבחן הקנייה דק ונשען על כך שהרמה הגבוהה של 2028 נמשכת גם ב-2029",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "buy",
+  "band_second_lens": "buy",
+  "lenses_agree": true,
+  "buy_test_pass": true,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 0,
+  "worlds": 3
+ },
+ "notes_he": [
+  "שיחת רבעון 3 (17.11): תחזית צמיחה של 75% לשנת הכספים 2028 (הייתה כ-70%); רבעון 4 הוא השפל של הרווח הגולמי, ו-72%-73% ב-2028 (מקורות משניים)",
+  "הדירקטוריון שכר חברת חיפוש (Heidrick & Struggles) ולא יחזיר את הואנג; אין מחליף קבוע",
+  "השווי עלה ב-13.86$; כ-13.34$ מזה נשען על כך שהרמה הגבוהה של 2028 נמשכת גם אחרי 2028"
+ ],
+ "thesis_link": "research/companies/NVDA/thesis_he.md",
+ "warnings": [
+  "the values are the weighted worlds of worlds.json (3 worlds); the yearly path is the main file's"
+ ],
+ "index_texts": {
+  "updated_note_he": "אחרי שיחת רבעון 3",
+  "hist_he": "כ-376$ (308-536$; במכפיל 15 כ-244$; המכפיל מ-12.11)",
+  "verdict_he": "להחזיק; הוספה מדורגת עד 167$ רק אחרי אימות של תחזית 75% ממקור ראשוני",
+  "next_check_he": "אימות השיחה ו-10-Q (בימים הקרובים); דוח רבעון 4, סוף פברואר 2027"
+ },
+ "worlds": {
+  "source": null,
+  "weights_label": "subjective (judgement, not engine odds)",
+  "note": "weighted value = sum of weight x value of each world, per scenario and date (wiped = 0); the weighted 5-year return is the weighted horizon year-end value against the price; the ladder and buy test are the model's on those weighted values, and the buy test's rerun price holds each world's own multiple at the trial price. The weights are judgement, not engine odds. The other keys describe the main file",
+  "worlds": [
+   {
+    "name": "orderly_succession",
+    "label_he": "הואנג עוזב, מחליף מבפנים, מסודר",
+    "weight": 0.35,
+    "params": {
+     "path": "lean_params.json",
+     "sha256": "23d9a3ba575e2e6b54fa3fc9460e3e375436cb3de0b0d17a27e504b439a9286b"
+    },
+    "value_today": {
+     "bear": 72.03,
+     "base": 203.34,
+     "bull": 335.03,
+     "base_calibrated": 220.54
+    },
+    "annual_return_pct": {
+     "bear": -5.1,
+     "base": 16.1,
+     "bull": 28.1,
+     "base_calibrated": 17.9
+    },
+    "buy_test_price": 196.46,
+    "buy_test_pass": true,
+    "margin_of_safety_price": 187.59,
+    "base_13_price": 187.59,
+    "base_13_price_second_lens": 203.53,
+    "base_band": "buy",
+    "two_lens_agree": true
+   },
+   {
+    "name": "messy_succession",
+    "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ",
+    "weight": 0.35,
+    "params": {
+     "path": "lean_params_B2_messy_succession.json",
+     "sha256": "433c39e489b9ed687f13c365e7564d38eb179157e576db49ac0b4c2c0ac9760c"
+    },
+    "value_today": {
+     "bear": 70.19,
+     "base": 174.64,
+     "bull": 297.74,
+     "base_calibrated": 203.34
+    },
+    "annual_return_pct": {
+     "bear": -5.6,
+     "base": 12.7,
+     "bull": 25.1,
+     "base_calibrated": 16.1
+    },
+    "buy_test_price": 168.23,
+    "buy_test_pass": true,
+    "margin_of_safety_price": 160.63,
+    "base_13_price": 160.63,
+    "base_13_price_second_lens": 187.68,
+    "base_band": "buy",
+    "two_lens_agree": true
+   },
+   {
+    "name": "export_finding",
+    "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה",
+    "weight": 0.3,
+    "params": {
+     "path": "lean_params_C_export_hit.json",
+     "sha256": "5f0568d7559e0ffbd500aef35c66b8f9bd56bc98219b593dbf82c9447e4b2db2"
+    },
+    "value_today": {
+     "bear": 64.74,
+     "base": 163.88,
+     "bull": 265.63,
+     "base_calibrated": 201.47
+    },
+    "annual_return_pct": {
+     "bear": -7.1,
+     "base": 11.3,
+     "bull": 22.4,
+     "base_calibrated": 15.9
+    },
+    "buy_test_price": 157.56,
+    "buy_test_pass": false,
+    "margin_of_safety_price": 150.44,
+    "base_13_price": 150.44,
+    "base_13_price_second_lens": 186.06,
+    "base_band": "hold",
+    "two_lens_agree": false
+   }
+  ],
+  "weighted_value_today": {
+   "bear": 69.2,
+   "base": 181.46,
+   "bull": 301.16,
+   "base_calibrated": 208.8
+  },
+  "weighted_annual_return_pct": {
+   "bear": -5.8,
+   "base": 13.5,
+   "bull": 25.4,
+   "base_calibrated": 16.7
+  }
+ },
+ "variants": [
+  {
+   "name": "A_huang_stays",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-18/lean_params_A_huang_stays.json",
+    "sha256": "53e4be33f08ac58f63234b231eb8d7dc027564f9b652154086d28fc7ab93e9aa"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-18/lean_result_A_huang_stays.json",
+    "sha256": "755fa4a4ebb95f18bb4c8640ccc733427045d0a6d931beb4c167916ed1ab46e4"
+   },
+   "base_value_today": 223.31,
+   "base_annual_return_pct": 18.3,
+   "weight": 0.0,
+   "note": "saved next to the main file, not one of the worlds in force (weight 0)"
+  },
+  {
+   "name": "B2_messy_succession",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-18/lean_params_B2_messy_succession.json",
+    "sha256": "433c39e489b9ed687f13c365e7564d38eb179157e576db49ac0b4c2c0ac9760c"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-18/lean_result_B2_messy_succession.json",
+    "sha256": "233640d105146b6b080d78569ca3564388231f51a799f32ef1e6e124b81814e7"
+   },
+   "base_value_today": 174.64,
+   "base_annual_return_pct": 12.7,
+   "weight": 0.35,
+   "note": "a world of the weighted value (worlds.json)"
+  },
+  {
+   "name": "C_export_hit",
+   "params": {
+    "path": "research/companies/NVDA/2026-11-18/lean_params_C_export_hit.json",
+    "sha256": "5f0568d7559e0ffbd500aef35c66b8f9bd56bc98219b593dbf82c9447e4b2db2"
+   },
+   "result": {
+    "path": "research/companies/NVDA/2026-11-18/lean_result_C_export_hit.json",
+    "sha256": "cc2b9cbddda21ee3f0a84acab59c5d92b7901b95458675d548f35e711246a31c"
+   },
+   "base_value_today": 163.88,
+   "base_annual_return_pct": 11.3,
+   "weight": 0.3,
+   "note": "a world of the weighted value (worlds.json)"
+  }
+ ]
+}

@@ -1,0 +1,62 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-18",
+ "kind": "lean_model worlds (run: python scripts/lean_model.py lean_params.json --worlds worlds.json [--price P])",
+ "note": "Written 15.11.2026 from the published thesis (research/companies/NVDA/thesis_he.md, entry of 12.11.2026 evening, and research/technical/NVDA/2026-11-12/fundamental.json); no params file was changed. The three files are the succession worlds in force after Jensen Huang resigned (8-K of 12.11.2026): lean_params.json is the orderly succession (its notes: 'CEO exit (12.11.2026): exit P/E base 18->15'), lean_params_B2_messy_succession.json the messy succession or an outside CEO (base exit P/E 13, FY29 +12%), lean_params_C_export_hit.json the export finding together with the exit (base exit P/E 11, FY28 +55%, 10B one-off). Weights 45% / 35% / 20% are the published subjective judgement, not engine odds. The published figures are at 161.50, the price the files hold (since the book backfill of 15.11.2026 one price in every file: the record, the thesis numbers block, the index row and the handoff); a plain rerun gives them. The figures first published on 12.11.2026 used the pre-open quote 155.39 of that day (history only: --price 155.39 reproduces them). The weighted value today does not depend on the price. Updated 18.11.2026: see note_call_2026-11-18; the files now hold price 162.94 and as_of 2026-11-18.",
+ "worlds": [
+  {
+   "name": "orderly_succession",
+   "file": "lean_params.json",
+   "weight": 0.35,
+   "label_he": "הואנג עוזב, מחליף מבפנים, מסודר"
+  },
+  {
+   "name": "messy_succession",
+   "file": "lean_params_B2_messy_succession.json",
+   "weight": 0.35,
+   "label_he": "עזיבה מבולגנת או מנכ\"ל מבחוץ"
+  },
+  {
+   "name": "export_finding",
+   "file": "lean_params_C_export_hit.json",
+   "weight": 0.3,
+   "label_he": "נמצאה הברחת שבבים לסין או נקבעו כללי ייצוא חדשים, יחד עם עזיבה"
+  }
+ ],
+ "superseded": [
+  {
+   "date": "2026-11-17, after the review pass (research/companies/NVDA/2026-11-17)",
+   "weights": {
+    "orderly_succession": 0.4,
+    "messy_succession": 0.3,
+    "export_finding": 0.3
+   },
+   "price": 155.46,
+   "note": "moved 5 points from orderly to messy after the call of 17.11 (note_call_2026-11-18)"
+  },
+  {
+   "date": "2026-11-17, before the review pass",
+   "weights": {
+    "orderly_succession": 0.45,
+    "messy_succession": 0.35,
+    "export_finding": 0.2
+   },
+   "price": 155.46,
+   "note": "the weights of the update before the review; moved to 40/30/30 when the BIS interim final rule 2026-23529 (filed 16.11.2026, effective on publication 19.11.2026) was read in the Federal Register public inspection copy"
+  },
+  {
+   "date": "2026-11-12, before the resignation 8-K of the evening",
+   "weights": {
+    "huang_stays (lean_params_A_huang_stays.json)": 0.3,
+    "orderly_succession": 0.35,
+    "messy_succession": 0.2,
+    "export_finding": 0.15
+   },
+   "price": 161.47,
+   "note": "the four-state weighting behind the published 'about 185' (thesis table and index row); dropped when Huang resigned. Kept as data only: lean_model reads the 'worlds' list above, never this block."
+  }
+ ],
+ "note_2026-11-17": "Q3 FY2027 report (8-K 17.11.2026): the three files carry the report inputs (rev0 on a 52-week basis, net cash, shares, dates, price 155.46); weights kept at 45/35/20: no new 8-K on the succession since 12.11 (interim CEO Colette Kress, search internal and external, no named successor, no senior exit found), and the export news of the week (a Commerce interim licence rule for data-center operators in Singapore, Indonesia, Malaysia and Thailand; a DOJ/Commerce probe of the Singapore partner Megaspeed, per CNBC) is web-reported, not checked against a primary source, with no stated revenue effect, and the Q4 guide of 130.0B already assumes no China data-center compute. Effect of moving 5 points to the export world (40/35/25): weighted base today 170.67 instead of 172.33.",
+ "note_review_2026-11-17": "Review pass (17.11.2026, evening): weights 45/35/20 -> 40/30/30. World C's trigger is 'a smuggling finding or new export rules, together with the departure'. A primary document now exists: BIS interim final rule 'Addressing Remote Access to Advanced Semiconductors' (Federal Register doc. 2026-23529, RIN 0694-AK50, filed for public inspection 16.11.2026, publication and effective date 19.11.2026): a licence for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil (not for buyers headquartered in the US, with reporting), and an end-use licence for data centers anywhere that supply significant compute to companies headquartered in Country Group D:5 or Macau. Not moved further because the rule exempts US-headquartered buyers, the Q4 guide (130.0B, no China data-center compute) was issued a day after the rule was filed, and world C's numbers (FY2028 +55%, exit P/E 11, a 10B one-off) assume a larger hit than the rule alone shows. The orderly:messy ratio is kept (no new succession 8-K). Judgement, not engine odds.",
+ "note_call_2026-11-18": "Call of 17.11.2026 (22:00 UTC), read from attributed coverage: weights 40/30/30 -> 35/35/30. Board chair Harvey Jones: the board hired Heidrick & Struggles, \"does not intend to reinstate Jensen as CEO\" and \"we won't expedite the CEO before finding exactly the right person\"; no internal successor named, no senior executive departure reported. The orderly world is an insider successor; the messy world is \"a messy exit or an outside CEO\". An outside search firm and a search that will not be hurried lengthen the interim and widen the field beyond insiders, so 5 points move from orderly to messy. Not more: no senior exit, the interim team raised the FY2028 frame (70% -> 75%) and the gross-margin path, and a search firm is also routine when insiders are assessed. Export kept at 30: the rule (FR 2026-23529) was known when the guide was given and the call quantified no effect; NVIDIA has stopped licensed Hopper shipments to China (already outside the Q4 guide). Judgement, not engine odds. At 40/30/30 the weighted base today would be 182.89 instead of 181.46."
+}

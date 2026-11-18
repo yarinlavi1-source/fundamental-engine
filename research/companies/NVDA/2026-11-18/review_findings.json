@@ -1,0 +1,89 @@
+{
+ "ticker": "NVDA",
+ "valuation_date": "2026-11-18",
+ "built_on": "2026-11-18",
+ "note": "Built on 2026-11-18 from the reviewer file of the private run folder (runs/tickers/NVDA_2026-11-17/deep/call_review.md, not copied) and the answers (deep/call_review_answers.md): verdict, finding titles and the base value before and after the review pass. Company research only.",
+ "pre_review": {
+  "base_today": 181.46,
+  "price": 162.94,
+  "file": "lean_params_pre_review.json",
+  "note": "weighted base of the three worlds at 35/35/30 (the main file alone: 203.34); the call update of 18.11 (FY2028 at the 75% outlook on reported FY2027, FY2028 margins from the 72-73% gross-margin path, bull at the guidance-beat record, weights 40/30/30 -> 35/35/30)"
+ },
+ "final": {
+  "base_today": 181.46,
+  "file": "lean_params.json",
+  "note": "no input changed by the review; notes review_2026-11-18 added; lean_check L18 reopened (the call figures rest on secondary coverage)"
+ },
+ "base_changed_by_review": false,
+ "bridge": "none: every number reproduced; the review changed the disclosure (FY2029 carry: pure pull-forward 168.12 fails, neutral 173.73 passes thinly with a margin-of-safety price of 159.81) and the process item L18 (open), not an input",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers and red team",
+   "run_file": "runs/tickers/NVDA_2026-11-17/deep/call_review.md",
+   "verdict": "arithmetic reproduced; the pass rests on the FY2028 step carrying into FY2029+; every call figure is secondary, so a buy answer is a draft; hold or a staged add at most",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "About 96% of the value rise (13.34 of 13.86) is the FY2028 step carried into FY2029-2033 at unchanged growth rates; the call gave no FY2029 figure.",
+     "outcome": "partly accepted: disclosed with the answer (pure pull-forward 168.12 FAIL, buy-test price 161.84; neutral 173.73 PASS, buy-test price 167.37, margin-of-safety price 159.81); no input change: FY2029 commitments (92B fifteen months ahead) exceed what FY2028 held six months ahead (87B), so the Q3 jump is lead time, not a pull-forward"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "lean_check passed the buy-blocking item L18 on an answer that says the buy is not verified.",
+     "outcome": "accepted: L18 answer removed; lean_check 27 pass, 1 open (L18), exit 1, not ready to deliver as a buy; the engine behaviour is for the owner"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "Every call figure is secondary (CNBC live blog, a third-party transcript with garbles); no company posting.",
+     "outcome": "accepted: any add is a draft until the 75% and the 72-73% margin path are on the webcast replay, a company posting or the 10-Q"
+    },
+    {
+     "n": 4,
+     "severity": "minor",
+     "title": "The 65 -> 59 FY2029 margin step: a smooth fade to the same FY2033 endpoint is worth +1.42, not the +13.26 of lifting every year.",
+     "outcome": "accepted as the owner's option; not applied (no fact touches FY2029 margins; no band changes)"
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "The second lens agrees through its margin floor (+41.27), not its multiple (-24.07): not an independent market check.",
+     "outcome": "accepted: stated in the answer; no change"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "The world haircuts (messy 5%, export 6%) are judgement, not sized from evidence.",
+     "outcome": "accepted: labelled judgement in the notes; no number change"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "The haircut worlds carry about 7B against about 10-12B of excess FY2028 supply commitments.",
+     "outcome": "partly accepted: under -0.3 weighted; excess supply is sold in FY2029 in a supply-constrained market, the bear carries the write-down; no change"
+    },
+    {
+     "n": 8,
+     "severity": "minor",
+     "title": "FY2028 margin 65%, the bull at the beat record and the unchanged bear checked.",
+     "outcome": "accepted; no change"
+    },
+    {
+     "n": 9,
+     "severity": "minor",
+     "title": "Price: the published price should be an IBKR or regular-session quote, not an after-hours quote from the lead.",
+     "outcome": "partly accepted: no regular-session price yet; the file keeps 162.94 and records IBKR 160.54 (01:24 UTC, overnight); the buy test passes at both"
+    },
+    {
+     "n": 10,
+     "severity": "minor",
+     "title": "Beta 1.84 against the locked 1.53 and exit P/E 15 against the own median 23.1 lean the value down.",
+     "outcome": "no change: owner decisions recorded in judgement; not counted toward an add"
+    }
+   ]
+  }
+ ]
+}

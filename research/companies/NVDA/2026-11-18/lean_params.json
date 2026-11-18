@@ -1,0 +1,200 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-18",
+ "price": 162.94,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.84,
+ "beta_mature": 1.2,
+ "shares_m": 24570.0,
+ "net_cash_m": 38000.0,
+ "rev0_m": 414395.0,
+ "base_year": 2027,
+ "tax": 0.17,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 0.35,
+ "days_to_base_year_end": 74,
+ "years_to_horizon": 5.2,
+ "buy_return": 0.13,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25
+ },
+ "notes": {
+  "variant": "CEO exit (12.11.2026): exit P/E base 18->15, bull 24->20, bear 14->12; base FY28 +66%->+62%, FY29 +20%->+15%, FY30 +8%->+6%; margins -2pt base and bull. A judgement stress, not evidence-based guidance.",
+  "update_2026-11-17": "Q3 FY2027 report (8-K 17.11.2026). Changed only: price 161.50 -> 155.46 (close 17.11; after hours ~159); as_of 2026-11-12 -> 2026-11-17 and base_year_end 2027-01-31 added (FY2027 has 53 weeks: Q4 from 26.10.2026 is 14 weeks, so the year ends 31.1.2027, not 24.1); rev0 410,000 -> 414,395 (52-week basis; the saved 410,000 was H1 actual + Q3 guide 108.0B + Q4 consensus 124.5B, a consensus that probably already held the 14th week, unverified); one_off_revenue_m 9,286 = the 14th week; net cash 45,000 -> 56,000 and shares 24,700 -> 24,570 (reconciliation). Not changed: growth, margins, conversion, charges and exit P/E of every scenario (the release gives no FY2028 figure; the call is at 22:00 UTC); tax 16.5% (FY2027 guide 16-18%, unchanged since the August guide; 9M actual 16.8%); beta 1.84 (judgement.beta). FY2027 GAAP operating margin about 65.3% (9M actual 194,791 + Q4 guide about 81,950 = 276,741 on 423,681 reported) against the ~65% the saved base assumed; Q4 guided GAAP margin about 63.0% (71.5% GM, 11.0B opex) sits above the FY2028 base margin of the file, so FY2028 margins are not touched. FY2027 margin is not a model input (the path starts in FY2028); it enters through the year-end net cash.",
+  "review_2026-11-17": "Review pass of 17.11.2026 (runs/tickers/NVDA_2026-11-17/deep/review.md, answers in deep/review_answers.md; the file before it is lean_params_pre_review.json). Changed only inputs that facts touch: (1) tax 16.5% -> 17%: the FY2027 guide midpoint (16-18%), 9M actual 16.8%, Q3 17.4% (8-K 17.11.2026); (2) net cash 56,000 -> 38,000: Hugging Face (definitive agreement 3.9.2026, about 11.9B plus up to about 1.0B retention, closing in the first half of 2027, press-reported price) -13,000, and Q4 equity investments at about the Q3 pace (Q3: 13.4B net equity purchases plus 2.7B acquisitions; the update had the 5B committed amount) -5,000; (3) base investment charges doubled (8/8/5 -> 16/16/10 after tax, FY2028-30; world C keeps its separate 10B one-off on top): equity purchases were 58.1B in 9M FY2027 (about 77B a year, 8-K cash flow) against the about 25B a year the 12.11 sizing assumed; the base assumes the pace halves (5B committed for the rest of FY2027) with one third lost; (4) bear charges scaled to the new commitments: FY2029 +8,000, FY2030-32 x 118.0/108.5 (guarantees 108.5B -> 118.0B); (5) world weights 45/35/20 -> 40/30/30 (worlds.json): the BIS interim final rule 'Addressing Remote Access to Advanced Semiconductors' (FR doc. 2026-23529, filed for public inspection 16.11.2026, published and effective 19.11.2026: licences for advanced chips to Indonesia, Malaysia, Singapore, Thailand and Brazil except for US-headquartered buyers, and an end-use licence for data centers supplying significant compute to D:5/Macau-headquartered companies) meets the letter of world C (new export rules, together with the departure). Not changed: FY2028 growth (+62% orderly; no call content when this was written, the call is the gate), margins, exit P/Es, beta 1.84 (locked rule 1.53 stays an owner decision), rf/ERP.",
+  "call_2026-11-18": "Q3 FY2027 call (17.11.2026, 22:00 UTC; read from attributed coverage, see guidance[1].source). World: orderly succession. Changed only: price 155.46 -> 162.94 (after hours, price_time_utc) and as_of 2026-11-17 -> 2026-11-18 (days to the year-end 75 -> 74); FY2028 revenue growth (g[0]) base 0.62 -> 0.7892: base FY2028 at the guide: 75% on reported FY2027 = 741,442, which is +78.92% on the 52-week rev0 414,395 (the 14th week stays out of the base; FY2028 has 52 weeks); bull 0.72 -> 0.8823 = this world's base x 1.052, the guidance-beat record (9 of 9 guided quarters beaten, Q3 FY2025 to Q3 FY2027, by 2.5-7.9% above the midpoint, mean 5.2%: guided 32.5, 37.5, 43.0, 45.0, 54.0, 65.0, 78.0, 91.0, 108.0B, actual 35.08, 39.33, 44.06, 46.74, 57.01, 68.13, 81.62, 96.22, 115.84B; company releases; the FY2028 frame itself was raised from about 70% in August to 75% now); FY2028 operating margin (m[0]) base 0.61 -> 0.65 and bull 0.63 -> 0.66: the call put Q4 gross margin (71-72%) as \"our bottom\", improving \"to the 72 to 73 range in fiscal year '28\" (transcript, secondary); opex: Q4 guide about 11.0B GAAP (14 weeks; about 10.2B on 13), Q3 9,156 (+9% q/q, +57% y/y), FY2027 about 36.2B against a first-frame \"low 40s\" growth (Q4 FY2026 call, 25.2.2026; actual about +55%); FY2028 opex about 49.6-57.9B (8-10% a quarter from the 13-week Q4, or +60% y/y) = 6.7-7.8% of the guide revenue; operating margin about 72.5% - 7.25% - 0.1% (acquisition and legal items) = about 65.1% at the guide (orderly base 65%, the world's 1-point haircut kept for messy and export; bull: gross margin +0.8 point, the Q3 beat of the guide, and opex at the bull revenue = about 66.3% -> 66%, export bull 65%); the held 61/60% differed by more than a point. Not changed: FY2029+ growth rates (the higher FY2028 level carries into them mechanically; no FY2029 evidence on the call), FY2029+ margins (the fade is the earlier judgement; the call speaks of FY2028 only; carrying the +4 points through FY2033 is a sensitivity in runs/tickers/NVDA_2026-11-17/deep/call_update.md), the bear (FY2028 +35% = 559,433, 24.6% under the guide: the world where the guide's own conditions fail; its company-specific hits stay), net cash, shares, tax, charges, exit P/Es, beta, rf/ERP (the call gave no new figure for them: guarantees 118B and the neocloud 32B are the CFO-commentary amounts already in the 17.11 file).",
+  "review_2026-11-18": "Review pass of 18.11.2026 (runs/tickers/NVDA_2026-11-17/deep/call_review.md, answers in deep/call_review_answers.md; the main file before it is lean_params_pre_review.json). No input changed: every number of the call update reproduced. Accepted as disclosure, not as a number: (1) about 13.34 of the +13.86 weighted rise is the FY2028 step carried into FY2029-2033 at unchanged growth rates; the call gave no FY2029 figure. Kept (stable-valuation rule): the FY2029 supply commitments (92B, 15 months before FY2029 starts) sit above what FY2028 held 6 months before it started (87B at Q2, CNBC's reading of the 10-Q), so the Q3 jump in the FY2028 column is order lead time, not evidence of a pull-forward; a pure pull-forward (FY2029 at the 17.11 dollar levels: weighted base 168.12, buy test fails, buy-test price 161.84) and the neutral case (midpoint reading of the 75%, half the FY2028 step kept in FY2029: 173.73, 12.6% / 15.8% a year, buy-test price 167.37, margin-of-safety price 159.81) are stated with the answer. (2) lean_check L18 stays open until the 75% and the 72-73% gross-margin path are on a primary source (webcast replay, company posting or the 10-Q); until then a buy answer is a draft. (4) The 65 -> 59 margin step in FY2029 is kept (no fact touches FY2029 margins); the smooth fade to the same FY2033 endpoint (+1.42 weighted) is the owner's option, not the +4-points-every-year version (+13.26). (6) The world haircuts (messy 5%, export 6%) are judgement: the 77B of equity purchases is an upper bound of the financed demand and 'half lapses' is a choice; the export share sits between the 1.4% direct exposure (EX-99.3) and UBS's single-source ~10%. (9) Price: the file keeps the lead's after-hours 162.94; IBKR get_price_snapshot (contract 4815747, REALTIME, overnight session) gave 160.54 at 01:24 UTC 18.11 (+5.08 on the 155.46 close); the buy test passes at both (13.9% / 16.9% at 160.54). Rejected or immaterial: the haircut worlds' excess FY2028 supply (under -0.3 weighted; in a supply-constrained market the excess is sold in FY2029, the bear carries the write-down)."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.35,
+    -0.2,
+    -0.08,
+    0.05,
+    0.05,
+    0.04
+   ],
+   "m": [
+    0.58,
+    0.44,
+    0.4,
+    0.42,
+    0.42,
+    0.42
+   ],
+   "conv": [
+    0.75,
+    0.85,
+    0.95,
+    0.95,
+    0.95,
+    0.95
+   ],
+   "pe": 12,
+   "charge": {
+    "0": 18000,
+    "1": 48000,
+    "2": 27189,
+    "3": 10876,
+    "4": 10876
+   }
+  },
+  "base": {
+   "g": [
+    0.7892,
+    0.15,
+    0.06,
+    0.04,
+    0.04,
+    0.04
+   ],
+   "m": [
+    0.65,
+    0.59,
+    0.57,
+    0.5499999999999999,
+    0.53,
+    0.51
+   ],
+   "conv": [
+    0.8,
+    0.85,
+    0.92,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 15,
+   "charge": {
+    "0": 16000,
+    "1": 16000,
+    "2": 10000
+   }
+  },
+  "bull": {
+   "g": [
+    0.8823,
+    0.3,
+    0.12,
+    0.07,
+    0.05,
+    0.05
+   ],
+   "m": [
+    0.66,
+    0.63,
+    0.62,
+    0.61,
+    0.6,
+    0.58
+   ],
+   "conv": [
+    0.78,
+    0.85,
+    0.9,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 20
+  }
+ },
+ "probabilities_note": "subjective judgement (Claude), not engine odds",
+ "review_changes": "exit P/E 22->18 (justified ~17x at ke 10%, g 4.9%, ROIC 35%); base FY28 +62%->+66% (consensus +68%, AV); FY28 margin 63%; shares 24,700; cash 45B; bear harsher: FY29 -20%, FY30 -8%, conv 0.85-0.95, charges FY28 18B (strategic equity halves) / FY29 40B / FY30 25B / FY31 10B / FY32 10B (guarantee phases FY29-32), P/E 14; bull P/E 24",
+ "repriced": {
+  "price_from": 155.46,
+  "as_of_from": "2026-11-17",
+  "price": 162.94,
+  "as_of_requested": "2026-11-18",
+  "as_of": "2026-11-18",
+  "dates_moved": true,
+  "note": "as_of moved from 2026-11-17 to 2026-11-18; days_to_base_year_end and years_to_horizon recomputed from base_year_end 2027-01-31",
+  "held": "every other input is the file's (net cash, shares, growth, margins, exit multiples); without calibrated.pe the calibrated lens holds the multiple of the new price"
+ },
+ "base_year_end": "2027-01-31",
+ "one_off_revenue_m": 9286.0,
+ "price_time_utc": "2026-11-18 00:59 UTC: after hours 162.94 (+4.8% on the 17.11 Nasdaq close 155.46), given by the lead after the 22:00 UTC call; not an IBKR snapshot; the close 155.46 stays the last regular-session price; checked 01:24 UTC 18.11.2026 on IBKR get_price_snapshot (contract 4815747, REALTIME, overnight session): last 160.54, bid/ask 160.56/160.64, change +5.08 (+3.27%) on the 155.46 close",
+ "guidance": [
+  {
+   "year": 2027,
+   "revenue_low": 410774,
+   "revenue_high": 418017,
+   "source": "Q3 FY2027 8-K of 17.11.2026 (acc. 0001045810-26-000088: EX-99.1 release, EX-99.2 CFO commentary): 9M actual 293,681 + Q4 guide 130.0B +-3% (a 14-week quarter, \"includes an additional week\"), shown here on the 52-week basis of rev0 (Q4 x 13/14); the reported 53-week range is 419,781-427,581"
+  },
+  {
+   "year": 2028,
+   "revenue_low": 725191,
+   "revenue_high": 741442,
+   "source": "Q3 FY2027 earnings call 17.11.2026 22:00 UTC, interim CEO and CFO Colette Kress: FY2028 revenue growth raised to 75% from about 70% (CNBC live blog 17.11.2026: \"We felt very confident, therefore, that we could establish that we will grow 75%\"; transcript singjupost.com/nvidia-q3-fy27-earnings-call-transcript: \"we are increasing that to 75% growth\"; conditions named: data center readiness, the strength and durability of end customer demand, and customers' access to capital). Secondary sources, not in the CFO commentary (filed before the call). The base is not stated: revenue_high = 75% on reported FY2027 (53 weeks, 423,681 at the Q4 guide midpoint) = 741,442 (the reading used); revenue_low = 75% on the 52-week base 414,395 = 725,191"
+  }
+ ],
+ "reconciliation": {
+  "revenue": "rev0 is FY2027 on a 52-week basis: 9M actual 293,681 + Q4 guide 130,000 x 13/14 = 414,395; the 14th week (about 9,286) is one_off_revenue_m, so FY2028 growth is applied to a base without the extra week; reported FY2027 at the guide midpoint is 423,681",
+  "shares": "FY2027 year-end diluted count: Q3 weighted diluted 24,186 (Q2 24,285) less about 115M net in Q4 (22B buyback at about 160 less employee issuance) = about 24,070, plus the 500M reviewer margin of the 04.11 file (24,200 -> 24,700) kept; period-end count is a gap until the 10-Q",
+  "net_cash": "FY2027 year-end, the method of the saved file rolled to Q3 actuals: cash + marketable debt 53,512 - debt 32,371 = 21,141; marketable equity 44,219 x 0.85 = 37,586 (Q3-end 58,727); Q4: FCF about 47,000 (guide: GAAP op income about 81,950 at 71.5% GM and 11.0B opex, tax 17%, 69% FCF conversion of 9M) - buyback 22,000 (Q3 pace) - dividends 6,000 - equity investments due in the rest of FY27 5,000 (CFO table) - employee stock taxes 1,700 = +12,300 -> about 71,000; less the 15,000 reviewer haircut of the 04.11 file (60,000 -> 45,000) kept -> 56,000. Not counted (as before): non-marketable securities 65,528, guarantees 118.0B, the Hugging Face price (gap) Review 17.11.2026: less Hugging Face about 13,000 (agreed 3.9.2026, closing in the first half of 2027) and about 5,000 more Q4 equity investments (Q3 pace), so 38,000."
+ },
+ "judgement": {
+  "beta": {
+   "raw": 1.7878,
+   "adjusted": 1.5278,
+   "weeks": 104,
+   "window": {
+    "from": "2024-11-11",
+    "to": "2026-11-09"
+   },
+   "used": 1.84,
+   "reason_if_different": "stable-valuation rule: the saved valuation (04.11, 12.11) kept 1.84 against the rule (1.52 on 12.11, 1.53 now) as a conservative judgement and the report does not touch beta; the effect of the rule value is stated in runs/tickers/NVDA_2026-11-17/deep/update.md; an owner decision, not changed in a results-day update",
+   "source": "scripts/locked_rules.py NVDA --as-of 2026-11-17 (Yahoo weekly closes vs SPY; correlation 0.647)"
+  },
+  "exit_pe": {
+   "own_median": 23.1,
+   "p25": 18.9,
+   "p75": 32.9,
+   "months": 60,
+   "basis": "forward_pe",
+   "ratio_to_model_eps": 1.0,
+   "used": 15,
+   "reason_if_different": "unchanged from the saved 12.11 world file (base exit P/E 15): the own 5-year median (23.1, research/companies/NVDA/thesis_he.md, historical-multiple paragraph: AV FY2028 EPS 15.92 x 23.1 = ~368, range 301-524) was paid for a different growth rate; the 04.11 review justified ~17x (ke 10%, g 4.9%, ROIC 35%) and the CEO exit of 12.11 cut it per world (orderly 15, messy 13, export 11, Huang stays 18); the Q3 report states nothing that argues for another multiple",
+   "source": "thesis_he.md of 12.11.2026 (p25/p75 derived from its range 301-524 / 15.92); not re-measured on 17.11"
+  },
+  "beta_mature": {
+   "value": 1.2,
+   "source": "saved 04.11 reviewed file (runs/tickers/NVDA_2026-11-04/deep/params_final.json), not touched by the report"
+  },
+  "roic_terminal": {
+   "value": 0.35,
+   "source": "04.11 review: justified exit ~17x at ke 10%, g 4.9%, ROIC 35% (review_changes); not touched by the report"
+  },
+  "market": {
+   "rf": 0.0494,
+   "erp": 0.042,
+   "source": "research/market.json (entry from 2026-11-04, in force on 2026-11-17)",
+   "reason_if_different": ""
+  }
+ }
+}
