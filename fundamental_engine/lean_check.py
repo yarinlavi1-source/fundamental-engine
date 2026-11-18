@@ -108,7 +108,29 @@ def trading_days_between(d0, d1):
 
 def _answer(answers, key):
     a = (answers or {}).get(key)
+    if isinstance(a, dict):
+        a = a.get('answer')
     return a.strip() if isinstance(a, str) and len(a.strip()) >= MIN_ANSWER else None
+
+
+BLOCKING_FORM = '{"answer": text, "confirmed": true, "evidence": [file path or URL, ...]}'
+
+
+def _blocking_answer(answers, key):
+    """(status, text) for a manual question that blocks a buy. A text alone is not enough: the answer must say it is
+    confirmed and name its evidence ({"answer", "confirmed": true, "evidence": [...]}), because a written answer such as
+    "not yet verified" once passed this check (NVDA, 18.11.2026). confirmed false is a fail; anything else stays open."""
+    a = (answers or {}).get(key)
+    text = _answer(answers, key)
+    if not isinstance(a, dict):
+        return 'open', (f'answered without confirmation ({text}); a question that blocks a buy needs {BLOCKING_FORM}'
+                        if text else None)
+    ev = [e for e in (a.get('evidence') or []) if isinstance(e, str) and e.strip()]
+    if a.get('confirmed') is False:
+        return 'fail', 'not confirmed: ' + (text or 'no text')
+    if a.get('confirmed') is True and ev and text:
+        return 'pass', 'confirmed: ' + text + ' (evidence: ' + '; '.join(ev[:4]) + ')'
+    return 'open', f'incomplete confirmation ({text or "no text"}); a question that blocks a buy needs {BLOCKING_FORM}'
 
 
 def _lessons_for(lessons, fn):
@@ -784,6 +806,11 @@ def manual_questions(lessons, params, res, prev=None, answers=None, buy=None):
         id = 'ask.' + x['id']
         if not ok:
             items.append(_item(id, 'not_applicable', why, [x['id']], x.get('blocks_buy'), 'manual', question=x['check']))
+            continue
+        if x.get('blocks_buy'):
+            status, text = _blocking_answer(answers, x['id'])
+            items.append(_item(id, status, text or x['check'], [x['id']], True, 'manual', question=x['check'],
+                               category=x.get('category')))
             continue
         a = _answer(answers, x['id'])
         items.append(_item(id, 'pass' if a else 'open', ('answered: ' + a) if a else x['check'], [x['id']], x.get('blocks_buy'),

@@ -362,11 +362,13 @@ class ManualAndExitTest(unittest.TestCase):
         self.assertEqual(ask['ask.L18']['status'], 'not_applicable')            # not a buy at the fixture price
         self.assertEqual(ask['ask.P06']['status'], 'not_applicable')            # no previous params
         self.assertNotIn('ask.L20', ask)                                        # a process rule, outside the valuation
-        doc = run(params(), answers={'L11': 'none: no one-off revenue in 2026', 'L16': 'x'})
+        doc = run(params(), answers={'L11': {'answer': 'none: no one-off revenue in 2026', 'confirmed': True,
+                                             'evidence': ['10-Q revenue note']}, 'L16': 'x', 'L12': 'text only'})
         ask = {x['id']: x for x in doc['items'] if x['id'].startswith('ask.')}
         self.assertEqual(ask['ask.L11']['status'], 'pass')
         self.assertEqual(ask['ask.L16']['status'], 'open')                      # one letter is not an answer
-        self.assertEqual(doc['answers_given'], ['L11'])
+        self.assertEqual(ask['ask.L12']['status'], 'open')                      # a buy-blocking question needs confirmation
+        self.assertEqual(doc['answers_given'], ['L11', 'L12'])
 
     def test_asset_heavy_questions_follow_the_tags(self):
         p = params()
@@ -399,13 +401,29 @@ class ManualAndExitTest(unittest.TestCase):
         self.assertTrue(doc['buy_test_pass'])
         self.assertEqual(doc['exit_code'], 1)
         self.assertIn('ask.L18', doc['blocking'])
-        answers = {r['id']: 'answered in the test' for r in lessons()}
+        answers = {r['id']: ({'answer': 'answered in the test', 'confirmed': True, 'evidence': ['test fixture']}
+                             if r.get('blocks_buy') else 'answered in the test') for r in lessons()}
         p['probabilities']['label'] = 'subjective'
         doc = run(p, answers=answers, price=p['price'])
         self.assertEqual([x['id'] for x in doc['items'] if x['status'] in ('fail', 'open') and x['blocks_buy']], [])
         self.assertEqual(doc['exit_code'], 0)
         doc = run(p, answers=answers, price=p['price'] * 1.05)                  # the quote moved 5%
         self.assertEqual((doc['exit_code'], doc['blocking']), (1, ['price']))
+
+    def test_a_blocking_question_needs_a_confirmed_answer_with_evidence(self):
+        p = buyable(params())
+        p['probabilities']['label'] = 'subjective'
+        base = {r['id']: ({'answer': 'ok', 'confirmed': True, 'evidence': ['x']} if r.get('blocks_buy') else 'answered')
+                for r in lessons()}
+        def l18(answer):
+            a = dict(base, L18=answer)
+            return item(run(p, answers=a, price=p['price']), 'ask.L18')
+        self.assertEqual(l18('NOT yet a verified buy answer')['status'], 'open')          # the 18.11 slip: text alone
+        self.assertEqual(l18({'answer': 'checked', 'confirmed': True})['status'], 'open')  # no evidence named
+        self.assertEqual(l18({'answer': 'call figures secondary', 'confirmed': False, 'evidence': ['cnbc']})['status'], 'fail')
+        ok = l18({'answer': 'release and 10-Q read', 'confirmed': True, 'evidence': ['reading/q3fy27pr.htm']})
+        self.assertEqual(ok['status'], 'pass')
+        self.assertIn('reading/q3fy27pr.htm', ok['detail'] if 'detail' in ok else str(ok))
 
     def test_the_params_are_never_changed(self):
         p = buyable(params())

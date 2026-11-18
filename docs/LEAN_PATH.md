@@ -96,8 +96,9 @@ Rules that hold on every step:
 6. **Self-check.** Run
    `python scripts/lean_check.py N/lean_params.json --prev B/lean_params.json --facts runs/tickers/T_D/companies/T/raw/sec__companyfacts.json --price P --today D --save`.
    - It writes `N/lean_check.json`.
-   - Manual questions are answered one line each in `N/lean_check_answers.json` (`{"L11": "..."}`), which is read by
-     default.
+   - Manual questions are answered one line each in `N/lean_check_answers.json` (`{"L21": "..."}`), which is read by
+     default. A question that blocks a buy needs `{"answer": "...", "confirmed": true, "evidence": ["file or URL"]}`
+     (16.11 lesson P09): a text alone stays open, `"confirmed": false` is a fail.
    - Exit 1 means the buy test passes but a blocking item is failed or open, so this is not deliverable as a buy.
      Exit 2 means the params cannot run.
 7. **For a buy only: the verification pass.** Parallel lanes check every number and event against a primary source,
