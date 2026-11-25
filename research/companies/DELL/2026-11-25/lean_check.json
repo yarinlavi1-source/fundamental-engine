@@ -262,7 +262,7 @@
    "group": "previous",
    "status": "pass",
    "blocks_buy": false,
-   "detail": "13 changed input(s); base value 366.82 -> 420.16 (+53.34), weighted +40.44; largest alone: scenarios.base.m +30.43, rev0_m +18.87, shares_m +2.30, days_to_base_year_end +1.67: state each in the answer",
+   "detail": "16 changed input(s); base value 366.82 -> 420.16 (+53.34), weighted +6.82; largest alone: scenarios.base.m +30.43, rev0_m +18.87, shares_m +2.30, days_to_base_year_end +1.67; the odds alone move the weighted value -26.84: state each in the answer",
    "lessons": [
     "L26"
    ],
@@ -271,8 +271,8 @@
     "base_value_after": 420.16,
     "base_value_change": 53.34,
     "weighted_value_before": 351.55,
-    "weighted_value_after": 391.99,
-    "weighted_value_change": 40.44,
+    "weighted_value_after": 358.37,
+    "weighted_value_change": 6.82,
     "sum_of_single_effects": 51.37,
     "changes": [
      {
@@ -309,6 +309,30 @@
       "after": 294.5,
       "base_value_effect": 0.0,
       "weighted_value_effect": 0.0
+     },
+     {
+      "input": "probabilities.base",
+      "before": 0.5,
+      "after": 0.45,
+      "base_value_effect": null,
+      "weighted_value_effect": null,
+      "note": "not runnable alone: invalid lean_model params (1 problem(s)): the probabilities of bear, base, bu..."
+     },
+     {
+      "input": "probabilities.bear",
+      "before": 0.3,
+      "after": 0.4,
+      "base_value_effect": null,
+      "weighted_value_effect": null,
+      "note": "not runnable alone: invalid lean_model params (1 problem(s)): the probabilities of bear, base, bu..."
+     },
+     {
+      "input": "probabilities.bull",
+      "before": 0.2,
+      "after": 0.15,
+      "base_value_effect": null,
+      "weighted_value_effect": null,
+      "note": "not runnable alone: invalid lean_model params (1 problem(s)): the probabilities of bear, base, bu..."
      },
      {
       "input": "rev0_m",
@@ -407,6 +431,18 @@
       "after": 5.18,
       "base_value_effect": 0.0,
       "weighted_value_effect": 0.0
+     },
+     {
+      "input": "probabilities (all)",
+      "before": null,
+      "after": null,
+      "group_of": [
+       "probabilities.base",
+       "probabilities.bear",
+       "probabilities.bull"
+      ],
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -26.84
      },
      {
       "input": "dates (as_of, days_to_base_year_end, years_to_horizon, base_year_end)",
