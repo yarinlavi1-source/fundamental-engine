@@ -370,6 +370,25 @@ stated fact argues otherwise; beta = the 2-year weekly beta vs SPY, adjusted (0.
 follows commitments, then fades toward the company's own pre-surge capex share; D&A from the capex vintages. Every answer
 gives a 2-year and a 5-year range (bear-base-bull) and says plainly that the 1-2 year number is the noisiest.
 
+## User preference: every valuation ends with the most-likely number and its odds (25.11.2026)
+
+The owner's instruction after DELL: take everything into account and give the number Claude believes is most accurate,
+with its probability. Every valuation (new company or results day) ends with a calibration pass, after the model and its
+red team (docs/LEAN_PATH.md step 7b; the worked example is research/companies/DELL/2026-11-25 and its thesis):
+1. Historical analogs of the same situation, with their numbers (how often the bear path happened, how deep, how long).
+2. The market-implied distribution from the longest-dated options (implied volatility -> 50% and 80% price bands;
+   risk-neutral, so a caveat, not a forecast) and the attributed analyst range and estimate revisions.
+3. The industry outlook for the next 2-3 years from dated sources, ending in a labelled probability for the key swing.
+4. Our own measured forecast biases for this kind of company (docs/PRICE_PATH_V2_RESULTS_2026-10-25.md and the
+   low-P/E finding: for cheap cyclicals the fundamental base path came in too high).
+From them: labelled subjective probabilities per scenario (changed only with stated reasons), the probability-weighted
+value, and the most-likely price (median) with ~50% and ~80% ranges at 1, 2 and 5 years (labelled judgement, not
+backtested), plus the path risk (the chance of touching the bear price on the way). Fair value and the likely price are
+shown apart: the base value is what the business is worth if the base happens; the range is where the price will
+probably be. When the path risk is large, a buy is staged (thirds, by price and by the next report). The buy test is
+unchanged: the odds never relax it. The odds go into lean_params probabilities (with a note); the ranges go into the
+thesis section 'הסתברויות וטווחים מכוילים' and notes_he.
+
 ## User preference: a buy recommendation carries no unverified claims (04.11.2026)
 
 The owner's instruction after the NU case: when the answer is "buy", every number and event in it must be checked against

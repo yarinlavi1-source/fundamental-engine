@@ -107,6 +107,14 @@ Rules that hold on every step:
    - Save the findings as `N/review_findings.json`, in the form of
      `research/companies/UBER/2026-11-13/review_findings.json`.
    - Then repeat steps 5-6. Anything not verified is dropped, or the answer is labelled a draft.
+7b. **Calibration pass (25.11.2026 owner rule), for every valuation.** Four evidence lanes in parallel: historical
+   analogs of the same situation with numbers; long-dated option implied volatility turned into 50% and 80% bands
+   (risk-neutral caveat) plus the analyst range; the industry outlook for 2-3 years from dated sources; our own measured
+   biases for this kind of company. Then set labelled subjective probabilities per scenario (with a note in
+   `lean_params.json` `notes.probabilities`), and write the most-likely price (median) with ~50% and ~80% ranges at 1, 2
+   and 5 years, and the path risk, into the thesis section `הסתברויות וטווחים מכוילים` and `thesis_inputs.json`
+   `notes_he`. The base value and the likely price are shown apart. A large path risk means a staged buy. The buy test
+   does not change. Example: research/companies/DELL/2026-11-25.
 8. **Publish.**
    - Command: `python scripts/publish_valuation.py N/lean_params.json --thesis-inputs N/thesis_inputs.json`. For a
      custom model, pass the folder `N` instead.
