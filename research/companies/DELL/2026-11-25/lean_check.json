@@ -1,0 +1,689 @@
+{
+ "check_version": 1,
+ "ticker": "DELL",
+ "as_of": "2026-11-25",
+ "price": 294.5,
+ "base_value_today": 420.16,
+ "base_return_pct": 18.8,
+ "buy_test_pass": true,
+ "buy_test_pass_at_quote": null,
+ "buy_test_price": 391.25,
+ "counts": {
+  "pass": 28,
+  "fail": 0,
+  "open": 0,
+  "not_applicable": 5
+ },
+ "blocking": [],
+ "would_block_a_buy": [],
+ "exit_code": 0,
+ "verdict": "buy test passes and no blocking item is failed or open",
+ "model_warnings": [
+  "bear: the two methods land in different bands: DCF alone 5.9% a year (lagging), exit multiple alone -3.9% a year (sell), averaged 1.4% a year (sell); the exit P/E 8 against 16.7 implied by the DCF (0.48x). Say which side is believed and why"
+ ],
+ "answers_given": [
+  "L11",
+  "L12",
+  "L15",
+  "L16",
+  "L18",
+  "L19",
+  "L23",
+  "L25",
+  "L27",
+  "P06",
+  "S04"
+ ],
+ "inputs_supplied": {
+  "previous_params": true,
+  "facts": false,
+  "price": null,
+  "today": null,
+  "market_file": true
+ },
+ "items": [
+  {
+   "id": "inputs",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the input checks raise nothing",
+   "lessons": [
+    "P01"
+   ],
+   "function": "check_inputs"
+  },
+  {
+   "id": "lenses_agree",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "ours buy (18.8% a year), calibrated buy (18.3%)",
+   "lessons": [
+    "L08"
+   ],
+   "function": "check_lenses_agree"
+  },
+  {
+   "id": "calibrated_lens",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the lenses differ by the exit multiple and by the margin (held 9.19 against the base exit 11)",
+   "lessons": [
+    "L03"
+   ],
+   "function": "check_calibrated_lens"
+  },
+  {
+   "id": "funding",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the net-cash path stays funded in every scenario",
+   "lessons": [
+    "L02"
+   ],
+   "function": "check_funding"
+  },
+  {
+   "id": "equity_wiped",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "no scenario wipes the equity",
+   "lessons": [
+    "L05"
+   ],
+   "function": "check_equity_wiped"
+  },
+  {
+   "id": "method_gap",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "base: DCF and exit multiple land in the same band (they differ in: bear)",
+   "lessons": [
+    "P05"
+   ],
+   "function": "check_method_gap"
+  },
+  {
+   "id": "on_the_line",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the buy test passes at the exact price",
+   "lessons": [
+    "P08"
+   ],
+   "function": "check_on_the_line"
+  },
+  {
+   "id": "rerun_price",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "a rerun confirms the highest passing price 391.25",
+   "lessons": [
+    "L04"
+   ],
+   "function": "check_rerun_price"
+  },
+  {
+   "id": "reverse_reading",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "growth the price needs: [18.0, -2.2, -3.6, -3.6, -2.9, -2.9] on the base margin path, [18.0, -2.5, -4.2, -4.2, -3.4, -3.4] at a flat margin",
+   "lessons": [
+    "L07"
+   ],
+   "function": "check_reverse_reading"
+  },
+  {
+   "id": "distributions_band",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "the base stays in its band with distributions reinvested",
+   "lessons": [
+    "P03"
+   ],
+   "function": "check_distributions_band"
+  },
+  {
+   "id": "probabilities_label",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "labelled subjective",
+   "lessons": [
+    "S03"
+   ],
+   "function": "check_probabilities_label"
+  },
+  {
+   "id": "reconcile_revenue",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_shares",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_net_cash",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "guidance",
+   "group": "path",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "2027 revenue 202,000 against the guide 201500-202500",
+   "lessons": [
+    "L14"
+   ],
+   "function": "check_guidance"
+  },
+  {
+   "id": "digestion_year",
+   "group": "path",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the base holds a slowdown year: 2029 growth 3% after 18%",
+   "lessons": [
+    "L21"
+   ],
+   "function": "check_digestion_year"
+  },
+  {
+   "id": "price",
+   "group": "price",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the price is of 2026-11-25, 0 trading day(s) before as_of; no quote given (--price): the move since the run is not checked",
+   "lessons": [
+    "L22"
+   ],
+   "function": "check_price"
+  },
+  {
+   "id": "judgement",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the judgement block follows the locked rules or states why",
+   "lessons": [
+    "L17"
+   ],
+   "rule": {
+    "beta": 1.813,
+    "exit_pe": 9.1,
+    "rf": 0.0494,
+    "erp": 0.042
+   },
+   "function": "check_judgement"
+  },
+  {
+   "id": "market_rates",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "rf 0.0494 and ERP 0.042 are the entry in force on 2026-11-25",
+   "lessons": [
+    "P04"
+   ],
+   "function": "check_market_rates"
+  },
+  {
+   "id": "prev_inputs",
+   "group": "previous",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "13 changed input(s); base value 366.82 -> 420.16 (+53.34), weighted +40.44; largest alone: scenarios.base.m +30.43, rev0_m +18.87, shares_m +2.30, days_to_base_year_end +1.67: state each in the answer",
+   "lessons": [
+    "L26"
+   ],
+   "diff": {
+    "base_value_before": 366.82,
+    "base_value_after": 420.16,
+    "base_value_change": 53.34,
+    "weighted_value_before": 351.55,
+    "weighted_value_after": 391.99,
+    "weighted_value_change": 40.44,
+    "sum_of_single_effects": 51.37,
+    "changes": [
+     {
+      "input": "as_of",
+      "before": "2026-11-11",
+      "after": "2026-11-25",
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "base_year_end",
+      "before": null,
+      "after": "2027-01-29",
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "days_to_base_year_end",
+      "before": 79,
+      "after": 65,
+      "base_value_effect": 1.67,
+      "weighted_value_effect": 1.59
+     },
+     {
+      "input": "net_cash_m",
+      "before": 3000.0,
+      "after": 2400.0,
+      "base_value_effect": -0.9,
+      "weighted_value_effect": -0.91
+     },
+     {
+      "input": "price",
+      "before": 361.78,
+      "after": 294.5,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "rev0_m",
+      "before": 192000.0,
+      "after": 202000.0,
+      "base_value_effect": 18.87,
+      "weighted_value_effect": 18.1
+     },
+     {
+      "input": "rf",
+      "before": 0.049,
+      "after": 0.0494,
+      "base_value_effect": -1.0,
+      "weighted_value_effect": -0.97
+     },
+     {
+      "input": "scenarios.base.m",
+      "before": [
+       0.098,
+       0.096,
+       0.095,
+       0.095,
+       0.095,
+       0.095
+      ],
+      "after": [
+       0.106,
+       0.104,
+       0.103,
+       0.103,
+       0.103,
+       0.103
+      ],
+      "base_value_effect": 30.43,
+      "weighted_value_effect": 15.21
+     },
+     {
+      "input": "scenarios.bear.charge.1",
+      "before": 1600,
+      "after": 2650,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -0.38
+     },
+     {
+      "input": "scenarios.bear.m",
+      "before": [
+       0.09,
+       0.075,
+       0.075,
+       0.075,
+       0.075,
+       0.075
+      ],
+      "after": [
+       0.085,
+       0.07,
+       0.07,
+       0.07,
+       0.07,
+       0.07
+      ],
+      "base_value_effect": 0.0,
+      "weighted_value_effect": -3.73
+     },
+     {
+      "input": "scenarios.bull.m",
+      "before": [
+       0.11,
+       0.11,
+       0.11,
+       0.11,
+       0.11,
+       0.11
+      ],
+      "after": [
+       0.118,
+       0.118,
+       0.118,
+       0.118,
+       0.118,
+       0.118
+      ],
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 7.98
+     },
+     {
+      "input": "shares_m",
+      "before": 643.0,
+      "after": 639.0,
+      "base_value_effect": 2.3,
+      "weighted_value_effect": 2.2
+     },
+     {
+      "input": "years_to_horizon",
+      "before": 5.21,
+      "after": 5.18,
+      "base_value_effect": 0.0,
+      "weighted_value_effect": 0.0
+     },
+     {
+      "input": "dates (as_of, days_to_base_year_end, years_to_horizon, base_year_end)",
+      "before": null,
+      "after": null,
+      "group_of": [
+       "as_of",
+       "base_year_end",
+       "days_to_base_year_end",
+       "years_to_horizon"
+      ],
+      "base_value_effect": 1.67,
+      "weighted_value_effect": 1.59
+     }
+    ]
+   },
+   "function": "check_prev_inputs"
+  },
+  {
+   "id": "prev_levels",
+   "group": "previous",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "2027: revenue +5.2%; 2028: revenue +5.2%, operating profit +13.8%; 2029: revenue +5.2%, operating profit +14.0%; 2030: revenue +5.2%, operating profit +14.1%; 2031: revenue +5.2%, operating profit +14.1%; 2032: revenue +5.2%, operating profit +14.1%; 2033: revenue +5.2%, operating profit +14.1%; the growth rate is unchanged in [2028, 2029, 2030, 2031, 2032, 2033] while the level moved; answered: Level change stated: FY28 base revenue 226,560 -> 238,360 (+5.2%) only because rev0 rose with the FY27 guide (192,000 -> 202,000); growth rates are unchanged in every year, so the +5.2% level carries into FY29-FY33; operating profit +19.2% to +19.6% each year (FY28 22,203 -> 26,458) because the margin path rose 1.3 points with the FY27 guide-implied margin (10.3% -> 11.6%).",
+   "lessons": [
+    "L23"
+   ],
+   "levels": {
+    "rebased": false,
+    "base_year_before": 2027,
+    "base_year_after": 2027,
+    "years": [
+     {
+      "year": 2027,
+      "revenue_before_m": 192000,
+      "revenue_after_m": 202000,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": null,
+      "operating_profit_after_m": null,
+      "operating_profit_change_pct": null,
+      "growth_before": null,
+      "growth_after": null,
+      "growth_unchanged": false
+     },
+     {
+      "year": 2028,
+      "revenue_before_m": 226560,
+      "revenue_after_m": 238360,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 22203,
+      "operating_profit_after_m": 25266,
+      "operating_profit_change_pct": 13.8,
+      "growth_before": 0.18,
+      "growth_after": 0.18,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2029,
+      "revenue_before_m": 233357,
+      "revenue_after_m": 245511,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 22402,
+      "operating_profit_after_m": 25533,
+      "operating_profit_change_pct": 14.0,
+      "growth_before": 0.03,
+      "growth_after": 0.03,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2030,
+      "revenue_before_m": 245025,
+      "revenue_after_m": 257786,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 23277,
+      "operating_profit_after_m": 26552,
+      "operating_profit_change_pct": 14.1,
+      "growth_before": 0.05,
+      "growth_after": 0.05,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2031,
+      "revenue_before_m": 257276,
+      "revenue_after_m": 270676,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 24441,
+      "operating_profit_after_m": 27880,
+      "operating_profit_change_pct": 14.1,
+      "growth_before": 0.05,
+      "growth_after": 0.05,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2032,
+      "revenue_before_m": 267567,
+      "revenue_after_m": 281503,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 25419,
+      "operating_profit_after_m": 28995,
+      "operating_profit_change_pct": 14.1,
+      "growth_before": 0.04,
+      "growth_after": 0.04,
+      "growth_unchanged": true
+     },
+     {
+      "year": 2033,
+      "revenue_before_m": 278270,
+      "revenue_after_m": 292763,
+      "revenue_change_pct": 5.2,
+      "operating_profit_before_m": 26436,
+      "operating_profit_after_m": 30155,
+      "operating_profit_change_pct": 14.1,
+      "growth_before": 0.04,
+      "growth_after": 0.04,
+      "growth_unchanged": true
+     }
+    ],
+    "hidden_level_change_years": [
+     2028,
+     2029,
+     2030,
+     2031,
+     2032,
+     2033
+    ],
+    "largest_revenue_change_pct": 5.2,
+    "largest_operating_profit_change_pct": 14.1
+   },
+   "function": "check_prev_levels"
+  },
+  {
+   "id": "ask.L11",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: No one-off revenue: the Q3 release names none (products 48,925 + services 6,012 = 54,937; no partnership, settlement or extra-week revenue), so rev0 = the FY27 guide midpoint 202,000 with nothing taken out. Receivables read against deferred revenue: AR 22,918 -> 28,948 (+6.0B, +26% q/q against revenue +17%; DSO ~45 -> ~48 days) while deferred revenue rose 29,718 -> 32,851 (+3.1B); AR is not running far ahead of billing, but the Q3 working-capital build (AR + inventory - AP from -5.5B to +0.6B) is a cash-conversion watch item, already in the base-year net cash. (evidence: https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm; https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm; runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt)",
+   "lessons": [
+    "L11"
+   ],
+   "question": "Is one-off revenue taken out of the base year, and are receivables read against deferred revenue? Name the amount or say there is none.",
+   "category": "inputs"
+  },
+  {
+   "id": "ask.L12",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: None to add: no converts, puts or warrants (Class C common; debt = senior notes 27.3B, legacy notes 1.0B, DFS debt 9.6B, other 0.1B, principal 38.0B per the Q3 debt summary); DFS-related debt 21.2B is matched by financing receivables 20.9B + operating-lease equipment ~3.3B and left out of corporate net cash by the saved method; lessee operating leases sit in opex; legal: the only named matter in the Q2 10-Q is the ERISA 401(k) class action (Lowbruck v. Dell, filed 28.1.2026, unspecified damages), not material, no judgment; supplier guarantees for contract manufacturers are remote with full recourse. The Q3 10-Q (not yet filed) must be re-read for new matters. (evidence: https://investors.delltechnologies.com/_assets/_270719a6457975cf4cdc96deae78c939/delltechnologies/db/3595/34778/performance_review/Q3_FY27_Performance_Review_.pdf; https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm; https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm)",
+   "lessons": [
+    "L12"
+   ],
+   "question": "Are converts (and their caps), puts, warrants, leases and legal judgments from the notes in net cash, shares or a charge? Name each or say there is none.",
+   "category": "capital structure"
+  },
+  {
+   "id": "ask.L13",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "not tagged asset_heavy",
+   "lessons": [
+    "L13"
+   ],
+   "question": "For an asset-heavy business: is the margin after depreciation consistent with D&A as a share of revenue, the useful life and assets not yet in use?"
+  },
+  {
+   "id": "ask.L15",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Yes: bull FY28 +25% and a 12.3% margin held (base +18% and 11.1%) carry the beat record: EPS vs Dell's own guide +68% / +47% / +45% in Q1-Q3 FY27 (Q3 9.45 vs 6.50), revenue +24.6% / +5.6% / +12.1% (Q3 54.9B vs 49.0B); the FY27 guide was raised three times ($140B/$12.90 -> $167B/$17.90 -> $192B/$25.50 -> $202B/$29.68) and the Q4 guide was raised vs the Sept-implied Q4 (+7.8% revenue, +18% EPS).",
+   "lessons": [
+    "L15"
+   ],
+   "question": "Does the bull reflect the guidance-beat record? State the record (beats of the last quarters) in one line.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L16",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: Yes: the bear is an AI-capex digestion with an inventory hit: FY28 +8%, FY29 -12%, margins 9.0% then 7.5% (the pre-AI level, 2.6 points under the FY27 guide-implied 11.6%, which also covers the memory-cost read-across from HPE's Q4: non-GAAP GM -220bps q/q), exit P/E 8, and an FY29 after-tax inventory/purchase-commitment charge raised 1,600 -> 1,800 because inventory rose 21,290 -> 29,444 (+38% q/q, days ~52 -> ~62) against purchase obligations of 34.8B at 31.7 (Q3 figure unknown until the 10-Q). Not separately modelled: DFS credit losses (receivables 20.9B, originations +111%) and customer concentration (10-Q gap). Bear 5-year return +2.9% a year, far from the -10% leg. (evidence: https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm; https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm; runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt)",
+   "lessons": [
+    "L16"
+   ],
+   "question": "Does the bear carry the company-specific hit (inventory and commitments, puts, patent cliff, dilution, customer loss, credit cycle)? Name it.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L18",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: Buy verification ran on 25.11.2026: a fresh pull of the Q3 FY27 report from the 8-K exhibit 99.1 and the IR decks, an adversarial verifier on every number and on the thesis conditions, then a red team on the updated params. The red team found a DFS funding-cost double count (margins -0.5 point in every scenario) and an incomplete bear (DFS credit losses, charge 1,800 -> 2,650); both corrections are in the published lean_params.json (the pre-review file is lean_params_pre_review.json). Shares 639M and net cash 2.4B are calculated from the release balance sheet and the Q3 buyback; the Q3 10-Q (early December) must be re-read. (evidence: https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm; research/companies/DELL/2026-11-25/lean_params_pre_review.json; research/companies/DELL/2026-11-25/lean_params.json)",
+   "lessons": [
+    "L18"
+   ],
+   "question": "For a buy: is every number and event in the answer checked against a primary source, with nothing \"from memory\"? Name the verification files.",
+   "category": "publishing"
+  },
+  {
+   "id": "ask.L19",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: No: the own 5-year forward P/E median 9.1x (p25 8.1, p75 12.8; Nov-2021..Nov-2026) belongs to the pre-AI PC-heavy Dell growing low single digits; the AI-era median is 12.0x; base exit 11x kept between them. Historical-multiple report: base FY28 operating EPS ~33.5 x 9.1 = ~305 (range 272-429), x 12.0 = ~402; on the stale AV FY28 consensus $28.48 (9 analysts, below the new FY27 guide of $29.68) x 9.1 = ~259 (231-365). Direct peers at today's growth (HPE, SMCI) not re-measured: gap.",
+   "lessons": [
+    "L19"
+   ],
+   "question": "Does the own-history multiple belong to today's growth rate? If growth changed, say so and show direct peers at today's growth.",
+   "category": "multiple"
+  },
+  {
+   "id": "ask.L24",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "not tagged asset_heavy",
+   "lessons": [
+    "L24"
+   ],
+   "question": "For an asset-heavy or fast-growing business: does stock-based pay scale with revenue, and does capex after the surge follow commitments and the pre-surge share?"
+  },
+  {
+   "id": "ask.L25",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Falsifiers, measurable and dated: (1) Q4 FY27 report (expected late Feb 2027): a first FY28 revenue guide below $220B (base path 238B) or AI backlog below $100B (now $132.3B); (2) ISG operating margin under 12% in Q4 FY27 or Q1 FY28 (Q3 17.0%, Q4 guide ~14.8%); (3) inventory up again in Q4 with days above ~70 while the AI backlog falls; (4) non-GAAP opex back above 8% of revenue. Sell line (3% a year) 647.31 ours / 624.81 calibrated, hold floor (6%) 557.86 / 538.47, as of 25.11.2026 at 294.50.",
+   "lessons": [
+    "L25"
+   ],
+   "question": "Is every falsifier measurable and dated, and is the sell line quoted with its date?",
+   "category": "dates and hurdles"
+  },
+  {
+   "id": "ask.L27",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: Yes: IBKR search_contracts 'DELL' -> contract 346218218, symbol DELL, NYSE, 'DELL TECHNOLOGIES -C' (the Class C shares the params value), US; get_price_snapshot at 08:24:25 UTC 25.11.2026, REALTIME, pre-market last 294.50, bid/ask 294.00/294.99, change -0.78 (-0.26%), which implies the 24.11 close 295.28 as reported. (evidence: runs/tickers/DELL_2026-11-25/price_snapshot.json)",
+   "lessons": [
+    "L27"
+   ],
+   "question": "Does the contract of the price snapshot belong to the params ticker and exchange (state the symbol and exchange the quote came from)?",
+   "category": "data source"
+  },
+  {
+   "id": "ask.S04",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "confirmed: No capex plan to add: capex runs ~$1B a quarter (Q3 985, 9M 3,187; PP&E 7.7B) inside conversion; no new capacity programme was announced; the $25.0B buyback authorization increase (24.11) is value-neutral in the model (cash out = shares out); the $5.0B notes of 15.9.2026 are in debt and cash; purchase obligations are inventory purchases inside margins, with the bear charge for the excess; funding is internal (Q3 CFO 4,459, 9M 10,765): no share or debt funding needed. (evidence: https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm; runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt)",
+   "lessons": [
+    "S04"
+   ],
+   "question": "Is every announced capex plan in the model (conversion, charges), and is its funding in shares or net debt? Name the plan or say there is none.",
+   "category": "funding"
+  },
+  {
+   "id": "ask.P06",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Yes, recorded before any change: positive conditions all met: AI orders >= $20B MET ($60.2B), AI backlog >= $95B MET ($132.3B), ISG margin > 13% MET (17.0%), FY27 guide > $192B and > $25.50 MET ($202.0B / $29.68); negative conditions: backlog < $80B NOT triggered; inventory up without revenue NOT triggered but flagged (inventory +$8.2B vs revenue +$8.0B q/q, days ~52 -> ~62); FY28 guide >= $230B NOT TESTED (no FY28 guide until the Q4 report). No threshold changed.",
+   "lessons": [
+    "P06"
+   ],
+   "question": "Did a pre-set condition fire in this report? If yes, is the hit recorded before any threshold is changed?",
+   "category": "process"
+  }
+ ],
+ "files": {
+  "params": "research/companies/DELL/2026-11-25/lean_params.json",
+  "previous": "research/companies/DELL/2026-11-11/lean_params.json",
+  "facts": null,
+  "answers": "research/companies/DELL/2026-11-25/lean_check_answers.json"
+ }
+}

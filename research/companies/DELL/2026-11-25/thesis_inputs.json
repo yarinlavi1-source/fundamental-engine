@@ -1,0 +1,132 @@
+{
+ "company": "Dell Technologies (Class C)",
+ "price_time_utc": "2026-11-25 ~08:20 UTC, pre-market",
+ "price_source": "IBKR realtime pre-market last",
+ "currency": "USD",
+ "scenarios": {
+  "bear": "האטה בהשקעות ב-AI: ההכנסות יורדות ב-FY29, רווח תפעולי כ-7%, מחיקת מלאי והפסדי אשראי במימון ללקוחות, מכפיל 8",
+  "base": "FY28 ‏+18% ואחר כך 3%-5% בשנה, רווח תפעולי כ-10.3%-10.6% אחרי עלות המימון ללקוחות, מכפיל 11",
+  "bull": "ממשיכה לעקוף את התחזיות: ‎+25%‎ ב-FY28, רווח תפעולי 11.8%, מכפיל 14"
+ },
+ "verdict": {
+  "code": null,
+  "draft": false,
+  "text_he": "קנייה בגודל מוגבל: שתי העדשות כ-18%-19% בשנה, והדוח עבר את כל התנאים שקבענו מראש. אבל לפי המכפיל ההיסטורי של דל הישנה המניה רק בשווי הוגן (כ-291$), והמניה כ-50% מתחת לשיא"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": "price",
+   "op": "<",
+   "threshold": 391.25,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-391$ (מבחן הקנייה עובר)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": "fy28_revenue_guide_b",
+   "op": ">=",
+   "threshold": 230,
+   "by_date": "2027-03-05",
+   "text_he": "תחזית ראשונה ל-FY28 של 230 מיליארד $ ומעלה (דוח רבעון 4, סוף פברואר 2027)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "c3",
+   "kind": "trim",
+   "metric": "price",
+   "op": ">",
+   "threshold": 457.53,
+   "by_date": null,
+   "text_he": "המחיר מעל כ-458$ (התשואה הצפויה יורדת לרמת המדד, 9.1%)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": "fy28_revenue_guide_b",
+   "op": "<",
+   "threshold": 220,
+   "by_date": "2027-03-05",
+   "text_he": "תחזית ראשונה ל-FY28 מתחת ל-220 מיליארד $, או צבר AI מתחת ל-100 מיליארד $",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": "isg_operating_margin_pct",
+   "op": "<",
+   "threshold": 12,
+   "by_date": null,
+   "text_he": "שיעור הרווח במגזר השרתים (ISG) מתחת ל-12% ברבעון 4 FY27 או ברבעון 1 FY28 (ברבעון 3: ‏17.0%)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "f3",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "המלאי עולה שוב ברבעון 4 מעל כ-70 ימי מכירות בזמן שצבר ה-AI יורד (עכשיו 29.4 מיליארד $, כ-62 ימים)",
+   "state": "open",
+   "note": "text only"
+  },
+  {
+   "id": "f4",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "הפסדי אשראי במימון ללקוחות AI (DFS) קופצים, או התחייבויות רכש גדלות הרבה מעל הצבר (10-Q של רבעון 3, תחילת דצמבר)",
+   "state": "open",
+   "note": "text only"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-25",
+   "to": "2027-03-05"
+  },
+  "confirmed": false,
+  "text": "~late February 2027 (Q4 FY27)",
+  "check_he": "תחזית FY28, צבר AI, שיעור הרווח ב-ISG, מלאי, הפסדי אשראי במימון ללקוחות"
+ },
+ "last_fresh_pull": {
+  "date": "2026-11-25",
+  "note": "8-K ex.99.1 of 24.11.2026 and the IR decks; the Q3 10-Q was not yet filed"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": "grower_growth_changed",
+  "basis": "forward P/E on FY28 operating EPS after the DFS correction (32.03)",
+  "next_year_figure": 32.03,
+  "median": 9.1,
+  "p25": 8.1,
+  "p75": 12.8,
+  "months": 60,
+  "value": 291,
+  "low": 259,
+  "high": 410,
+  "source": "red team 25.11.2026 (research/companies/DELL/2026-11-25/lean_params.json notes)",
+  "note": "the old-Dell 5-year median 9.1x gives ~291, about today's price; the AI-era median 12.0x gives ~384. The old multiple belonged to a slower PC-and-storage Dell"
+ },
+ "notes_he": [
+  "רבעון 3: הכנסות 54.9 מיליארד $ (‎+103%‎), רווח למניה 9.45$ מול תחזית של 6.50$; תחזית השנה הועלתה ל-202 מיליארד $ ול-29.68$ למניה; צבר AI של 132.3 מיליארד $",
+  "המניה כ-50% מתחת לשיא; ב-24.11, לפני הדוח, ירדה 11.8% יחד עם HPE על חשש לרווחיות של שרתי ה-AI",
+  "תיקון של הבדיקה הנגדית: עלות המימון ללקוחות (DFS) ירדה מהרווח, ‎-0.5‎ נקודה בכל תרחיש",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ]
+}

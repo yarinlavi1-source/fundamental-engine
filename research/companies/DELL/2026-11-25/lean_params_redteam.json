@@ -1,0 +1,186 @@
+{
+ "ticker": "DELL",
+ "as_of": "2026-11-25",
+ "price": 294.5,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.81,
+ "beta_mature": 1.1,
+ "shares_m": 639.0,
+ "net_cash_m": 2400.0,
+ "rev0_m": 202000.0,
+ "base_year": 2027,
+ "tax": 0.19,
+ "cash_yield": 0.036,
+ "debt_rate": 0.052,
+ "roic_terminal": 0.3,
+ "days_to_base_year_end": 65,
+ "years_to_horizon": 5.18,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "fiscal_years": "Labels are Dell fiscal years: base_year 2027 = FY27 ending 29.1.2027; index 0 = FY28 (Feb 2027-Jan 2028) ... FY32 ends ~28.1.2032 (the 5-year horizon), FY33 is the exit-earnings year.",
+  "price": "IBKR get_price_snapshot, contract 346218218 (DELL, NYSE, Class C, USD), REALTIME, pre-market 25.11.2026 08:24:25 UTC: last 294.50 (-0.26% on the 24.11 close 295.28), bid/ask 294.00/294.99, volume 99k. Was 361.78 on 11.11.2026. Path since: 13.11 344.53; 20.11 278.02; 23.11 334.91 (Nvidia board reinstated Huang); 24.11 295.28 (-11.8% in the session BEFORE the report, AI-hardware sell-off after HPE Q4: HPE -16.3%, NVDA -5.9%, SPY -0.5%); after hours up to ~310, faded to ~298",
+  "base_year": "changed 25.11.2026 (Q3 FY27 report, 8-K of 24.11.2026 ex.99.1): rev0 192,000 -> 202,000 because the FY27 guide was raised to $202.0B +-0.5B (+78%; AI ~$78B, non-GAAP EPS $29.68 +-0.10, GAAP $28.24): 9M actual 145,750 + Q4 guide $56.25B +-0.5B. Guide history: Feb $140B/$12.90 -> May $167B/$17.90 -> Sept $192B/$25.50 -> Nov $202B/$29.68. Q3 revenue 54,937 (+103% y/y) vs own guide 49.0B (+12.1%) and AV consensus 49.27B; non-GAAP EPS 9.45 vs guide 6.50 (+45%). No one-off revenue named. Old text: FY27 revenue = company guide $192.0B (raised from $167B on 1.9.2026, Q2 FY27 release 8-K ex.99.1); AI-optimized servers guide $74B; Q3 guide $49.0B / non-GAAP EPS $6.50; FY non-GAAP EPS guide $25.50, GAAP $24.37. AV consensus FY27 rev $193.5B / EPS $25.91 (27 analysts)",
+  "margin": "changed 25.11.2026 (Q3 FY27 report, 8-K of 24.11.2026 ex.99.1): base [9.8, 9.6, 9.5, 9.5, 9.5, 9.5] -> [11.1, 10.9, 10.8, 10.8, 10.8, 10.8]; bull 11.0 -> 12.3 flat; bear unchanged. Why: the FY27 guide implies ~11.6% on this basis (9M non-GAAP OI 17,990 + Q4 ~6,950 = ~24,940, less SBC 557 + ~190 and other corporate 656 + 0 = ~23,530 / 202,000 = 11.65%; CALC from the ex.99.1 guide reconciliation: SBC $1.15 and other corporate $0.99 a share for FY27) against 10.3% in the 11.11 file, +1.3 points. Quarterly on this basis: Q1 ~8.6%, Q2 11.7%, Q3 13.7% (non-GAAP OI 7,826 - SBC 184 - other corp 99 = 7,543 / 54,937), Q4 guide ~12.0% (non-GAAP OI rate ~12.35% = ~6,950 less SBC ~190 ($0.30 a share x 634M); the guide holds no other-corporate estimate; ISG ~14.8%, CSG ~4.7%; H2 ~12.9%). Non-GAAP opex 7.0% of revenue (flat q/q while revenue +17%); ISG OI 17.0% (Q2 15.0%); management: most Q3 gains structural, ISG share of OI to keep rising into FY28. The whole base and bull paths move by the +1.3 points the guide moved (same gaps as the 11.11 file: base FY28 0.5 below the FY27 level, fading 0.8 below it; bull 0.7 above). Base FY28 11.1% sits ~0.9 below the Q4 guided rate: memory and component costs (HPE Q4 non-GAAP GM -220bps q/q; HPE guided its Cloud & AI margin lower), AI mix, PC softness next year. Bottom-up check FY28: ISG ~185B at ~14.0% + CSG ~53B at ~4.5% - SBC/other ~1.2-1.4B = ~11.3-11.4%: base 11.1% is ~0.2-0.3 under it (memory). Bear left at 9.0% then 7.5% (pre-AI level): it now sits 2.6 points under the FY27 level (was 1.3), which also covers the HPE margin read-across. Old text: Operating margin AFTER SBC and after 'other corporate expenses' (severance, payroll tax on SBC, transaction costs), before amortization of EMC-era intangibles (non-cash, fading). Q2 FY27: non-GAAP OI 5,929 - SBC 184 - other corporate 264 = 5,481 / 46,971 = 11.7%; H1 FY27 9,234 / 90,813 = 10.2%; FY27 guide implies ~10.3%. Pre-AI (FY24-FY25) ~7.5-8%. Base FY28 9.8% (AV FY28 consensus EPS 28.21 on rev $231B implies ~9.4-10% on this basis), fading to 9.5% (AI mix = lower margin, memory costs, competition); bull holds 11%; bear falls to 7.5% (pre-AI level) after a digestion",
+  "growth": "Unchanged rates 25.11.2026 (the level moves with rev0, +5.2%). Base FY28 +18% -> ~238B checked bottom-up against the new facts: AI ~112B (Q4 guide ~23.5B x 4 = 94B; backlog record $132.3B vs $95B, Q3 orders $60.2B, book-to-bill 2.7x, ~5.6 quarters of coverage at Q4 shipments, supply gap widening into next year) + ISG ex-AI ~73B (+~7%; Trad. and Storage modernization, share gains expected) + CSG ~53B (-5%: PC soft next year, manageable) = ~238B. AV FY28 consensus before the report $232.6B (26) is stale (+15% on the new FY27). FY29 +3% digestion kept: no FY28 guide yet (comes with Q4, late Feb 2027). Bull +25% kept (beat record vs own guide: EPS +68/+47/+45% Q1-Q3, revenue +24.6/+5.6/+12.1%). Old text: Base FY28 +18% (AV consensus rev $231B = +20%; AI backlog $95B at 31.7.2026, Q2 AI orders $60.9B, RPO $132B with 77% in 12 months, 10-Q note 9), FY29 +3% (AI capex digestion), then +5/+5/+4/+4. Bull = beat-and-raise record (Q1 FY27 EPS beat +66%, Q2 +43% vs AV consensus; FY guide raised $167B -> $192B): +25/+10/+8/+7/+6/+5. Bear = AI digestion + PC cycle down: +8/-12/-3/+3/+3/+3",
+  "conv": "Unchanged 25.11.2026: Q3 working capital absorbed ~6.1B (AR 22.9 -> 28.9B, inventory 21.3 -> 29.4B, AP 49.7 -> 57.8B; AR+Inv-AP from -5.5B to +0.6B; deferred revenue +3.1B): Q3 equity FCF after SBC ~4.0B (adj. FCF 4,288 - 1/8 of DFS asset growth ~80 - SBC 184) on NOPAT ~6.2B (0.65); 9M ~1.0. The base-year absorption is in net cash; FY28 base 0.95 (growth absorbs inventory) already covers a continued build; purchase obligations and inventory mix are a gap until the Q3 10-Q. Old text: FCF after SBC / NOPAT. Dell runs negative working capital (payables 49.7B vs receivables 22.9B + inventory 21.3B, 31.7.2026). DFS financing receivables are funded 7:1 by DFS-related debt (10-Q MD&A), so FCF here = adjusted FCF less the 1/8 equity share of DFS asset growth. Base 0.95 in FY28 (growth absorbs inventory), 1.0 after; bear 0.9 then 1.0 plus a $1.6B after-tax inventory/commitment charge in FY29",
+  "net_cash": "changed 25.11.2026 (Q3 FY27 report, 8-K of 24.11.2026 ex.99.1): 3,000 -> 2,400 at 29.1.2027, same method (DFS-related debt out, 75% of LT investments in). 30.10.2026: cash 13,553 - core debt ~16,700 (senior 27.3B + legacy 1.0B - DFS-allocated 11.6B) - other ~100 + LT investments 2,703 x 75% = 2,027 -> about -1,220 (31.7: about -510). Q3 used cash for the record $4.9B return (buyback 4,379 = 9.0M shares at avg $488, dividends 398); post-1.9 buybacks are now in the balance sheet AND taken out of the share count (11.11 file: value-neutral, 643M). Q4: equity FCF after SBC est. +4,000 (CALC, not guided: Q4 non-GAAP NI ~8.40 x 634 = 5.3B, ~75% conversion as inventory keeps building; Q3 ~4.0B) - dividends ~400 ($0.63 x ~631M) = ~+2,380, rounded to +2,400. Q4 buybacks after 30.10 value-neutral (cash out = shares out). DFS: fin. receivables 20.9B + op leases 3.3B vs DFS-related debt 21.2B (9.6 + 11.6). Reported debt 37,697 (principal 38.0B incl. the $5.0B notes of 15.9.2026). Old text: DFS TREATMENT: DFS-related debt (DFS debt $9.618B + DFS-allocated core debt $11.042B = $20.66B) is matched by DFS-owned assets $23.612B (financing receivables 20.43B + operating-lease equipment 3.18B) and is NOT counted as corporate net debt; DFS earnings sit inside segment income. Corporate: cash 11,569 - core debt 13,983 - other debt 104 = -2,518 at 31.7.2026. 15.9.2026 notes $5.0B (5.1% 2029 1.25B, 5.4% 2031 1.25B, 5.6% 2033 1.5B, 5.9% 2037 1.0B) = cash and debt both up, neutral. + H2 FY27 equity FCF after SBC est. +6,000 (CALC, not guided) - dividends ~800 - August buyback est. ~1,500 (shares taken at the 1.9.2026 count) + strategic investments 2,679 x 75% = 2,009 -> ~+3,200, rounded down to +3,000 at 29.1.2027",
+  "shares": "changed 25.11.2026 (Q3 FY27 report, 8-K of 24.11.2026 ex.99.1): 643 -> 639 because Q3 buybacks after the 1.9 cover count now reduce the count: basic at 30.10 ~631M (CALC: 635.81M on 1.9 - ~5.0M bought Sep-Oct + ~0.5M issued; the ~4.0M of August purchases solve the Q3 weighted basic of 635M) + ~8M dilutive (Q3 diluted 643 vs basic 635) = ~639M; Q4 guide ~634M diluted weighted (continued buybacks; new $25.0B Class C authorization 24.11, ~$30.4B available, CALC). The point-in-time count is a gap until the Q3 10-Q cover. Old text: 635.81M outstanding on 1.9.2026 (10-Q cover: Class C 315.43M, Class A 276.74M, Class B 43.64M) + ~7M dilutive (Q2 diluted 652 vs basic 645) = 643M. Buybacks ($15.2B authorization after 26.2.2026; $5.4B bought in H1) treated as value-neutral (cash out = shares out); SBC is expensed in the margin",
+  "beta": "Unchanged 1.81: scripts/locked_rules.py DELL --as-of 2026-11-25: raw 2.2135 (104 weeks 18.11.2024-16.11.2026, Yahoo weekly vs SPY, correlation 0.528) -> 0.67 x 2.2135 + 0.33 = 1.813. Old text: 2-year weekly vs SPY (IBKR, 104 weeks to 11.11.2026): raw 2.20 -> adjusted 0.67x2.20+0.33 = 1.81 (locked rule). It is inflated by the 2026 AI re-rating (115 -> 595 -> 317); 1-year raw 2.60. Mature beta 1.1 (hardware, cyclical)",
+  "pe": "Unchanged 25.11.2026 (the report states no fact about the multiple). Exit P/E on after-SBC operating EPS (about non-GAAP EPS minus ~$0.9). Own forward P/E (price / next-4-quarter AV consensus, monthly, Nov-2021..Nov-2026): median 9.1x, p25 8.1x, p75 12.8x; AI era (Mar-2024..) median 12.0x; TIKR: 5-year average 12x. The proxy is biased low in Dec-2025..Apr-2026 (final estimates far above the consensus of the time). Base 11x (between 9.1x and 12x: the mix moved to faster-growing AI servers); bear 8x (pre-AI median 8.6x, digestion); bull 14x (p75 and peers HPE ~14-16x, SMCI ~14.5x, dates unclear)",
+  "ignored": "Amortization of intangibles ($0.4B/yr, non-cash, EMC purchase accounting) excluded from margins; Texas reincorporation and shareholder-proposal limits (8-K 2.7.2026) = governance, not modelled; GC retirement (8-K 21.10.2026) immaterial; 25.11.2026: GAAP-only items (amortization 101, other corporate 99 kept in the margin), the Investor Day framework (revenue 7-9%, EPS 15%+) not used as a path",
+  "rf_erp": "changed 25.11.2026: rf 0.049 -> 0.0494, the research/market.json entry in force (from 2026-11-04: 10y UST 4.94%); the 11.11 file used the same reading rounded (known deviation). erp 0.042 unchanged.",
+  "bear_charge": "changed 25.11.2026 (Q3 FY27 report, 8-K of 24.11.2026 ex.99.1): bear FY29 inventory/commitment charge 1,600 -> 1,800 after tax because inventory rose $8.2B in one quarter (21,290 -> 29,444, +38% q/q, days on COGS ~52 -> ~62 CALC) against revenue +$8.0B: the exposure base (inventory + purchase obligations 34.8B of 31.7) rose from ~56.1B to ~64.2B, the charge scaled pro rata (2.85% after tax). Purchase obligations at 30.10 are unknown until the 10-Q (if they fell as purchases turned into inventory the charge is overstated; if they rose it is understated). Bear growth and margins unchanged.",
+  "change_log": "25.11.2026 update from research/companies/DELL/2026-11-11/lean_params.json. Changed: as_of/price/dates, rf, rev0_m, scenarios.base.m, scenarios.bull.m, scenarios.bear.charge, net_cash_m, shares_m. Unchanged: beta (rule 1.813), beta_mature, erp, tax, cash_yield, debt_rate, roic_terminal, all growth rates, all conversion paths, all exit P/E, bear margins and growth, probabilities. Red team 25.11.2026: all margins -0.5 point (DFS funding cost), bear charge 1,800 -> 2,650 (DFS credit loss).",
+  "redteam": "Red team 25.11.2026 (written to lean_params_redteam.json; lean_params.json not overwritten). Two corrections. (1) DFS funding cost was charged nowhere (a pre-existing error, also in the 11.11 file): the FY26 10-K (filed 16.3.2026) states that interest expense on DFS borrowings 'is recognized within interest and other, net whereas interest income on the underlying assets is recognized to net revenue', and ex.99.1 footnote (f) says interest and other is not allocated to the segments. So the segment-based margin holds DFS's gross financing income, while net cash excludes the 21.2B of DFS-related debt (DFS debt 9.6B + DFS-allocated senior notes 11.6B, Q3 Performance Review debt summary) and its interest. Fix: keep DFS debt and DFS assets out of net cash (the saved method) and charge the funding cost in the margin: 21.2B x ~4.8% (Q3 interest expense 460 x 4 / principal 38.0B) = ~1.03B pre-tax = 0.51% of FY27 revenue 202B, held as a share of revenue (DFS receivables tracked revenue: 12.6% of FY26 revenue, 11.7% of TTM revenue at Q3) and rounded to 0.5 point. Every margin in every scenario is 0.5 point lower: base [10.6, 10.4, 10.3 x4], bull 11.8 flat, bear [8.5, 7.0 x5] (the 7.5% pre-AI anchor was measured on the same segment basis, which also held DFS gross income). Cross-check: Dell's own core-leverage ratio removes a DFS EBITDA proxy of 4% of DFS assets (~1.0B), about the size of this funding cost. (2) The bear's FY29 charge is 2,650 after tax (was 1,800): the inventory/commitment hit is kept, plus a DFS credit loss of 5% of financing receivables 20.9B = ~1,045 pre-tax = ~850 after tax. Receivables rose 14.0B -> 20.9B in two quarters, mainly AI-server customer financing ('selective and short-term, bridging the customer from purchase order to cluster go-live', Q3 Prepared Remarks). The Q2 10-Q shows a 122M Q2 provision against 11M a year earlier. lean_check L16 lists it as 'not separately modelled'. Unchanged and reviewed: rev0 (9M 145,750 + Q4 guide 56,250 = 202,000 verified), net cash 2,400 (30.10 arithmetic -1,220 verified against the ex.99.1 balance sheet and the debt summary; the Q4 FCF is needed because the model values at the base year-end), shares 639 (CALC consistent with Q3 weighted basic 635 and 9.0M bought at $488), growth (conservative against the 132.3B backlog; not raised), exit P/E 11 (the 11.11 judgement; the calibrated lens tests 9.2x), beta 1.81, rf 0.0494."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.08,
+    -0.12,
+    -0.03,
+    0.03,
+    0.03,
+    0.03
+   ],
+   "m": [
+    0.085,
+    0.07,
+    0.07,
+    0.07,
+    0.07,
+    0.07
+   ],
+   "conv": [
+    0.9,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 8,
+   "charge": {
+    "1": 2650
+   }
+  },
+  "base": {
+   "g": [
+    0.18,
+    0.03,
+    0.05,
+    0.05,
+    0.04,
+    0.04
+   ],
+   "m": [
+    0.106,
+    0.104,
+    0.103,
+    0.103,
+    0.103,
+    0.103
+   ],
+   "conv": [
+    0.95,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 11
+  },
+  "bull": {
+   "g": [
+    0.25,
+    0.1,
+    0.08,
+    0.07,
+    0.06,
+    0.05
+   ],
+   "m": [
+    0.118,
+    0.118,
+    0.118,
+    0.118,
+    0.118,
+    0.118
+   ],
+   "conv": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 14
+  }
+ },
+ "base_year_end": "2027-01-29",
+ "price_time_utc": "2026-11-25 08:24:25 UTC: IBKR get_price_snapshot contract 346218218 (DELL NYSE), REALTIME, pre-market last 294.50, bid/ask 294.00/294.99, change -0.78 (-0.26%) on the 24.11 close 295.28",
+ "guidance": [
+  {
+   "year": 2027,
+   "revenue_low": 201500,
+   "revenue_high": 202500,
+   "source": "Dell Q3 FY27 8-K 24.11.2026 ex.99.1 and Prepared Remarks: FY27 revenue $202.0B +-$0.5B, non-GAAP EPS $29.68 +-$0.10, GAAP EPS $28.24, AI ~$78B, non-GAAP OI rate +~350bps y/y (implied ~11.6% after SBC and other corporate, CALC); Q4 $56.25B +-0.5B, non-GAAP EPS $8.40 +-0.10. No FY28 guide (expected with Q4, late Feb 2027)"
+  }
+ ],
+ "tags": [
+  "capex_cycle"
+ ],
+ "reconciliation": {
+  "revenue": "rev0 = FY27 guide midpoint 202,000 (9M actual 145,750 per the 24.11 release + Q4 guide 56,250); the companyfacts hold only H1 FY27 (Q3 10-Q not yet filed)",
+  "shares": "point-in-time diluted ~639M at 30.10.2026 (CALC from the 1.9 cover 635.81M less ~5.0M bought after 1.9, plus ~8M dilutive); companyfacts show the 1.9 cover count and the Q2 diluted 652M",
+  "net_cash": "corporate net cash ex DFS: DFS-related debt (~21.2B) is matched by DFS receivables and leases (~24.2B) and sits inside segment income, so it is not corporate debt; the reported gap is that DFS debt"
+ },
+ "judgement": {
+  "beta": {
+   "raw": 2.2135,
+   "adjusted": 1.813,
+   "weeks": 104,
+   "window": {
+    "from": "2024-11-18",
+    "to": "2026-11-16"
+   },
+   "used": 1.81,
+   "reason_if_different": "",
+   "source": "scripts/locked_rules.py DELL --as-of 2026-11-25 (Yahoo weekly closes vs SPY, correlation 0.528)"
+  },
+  "exit_pe": {
+   "own_median": 9.1,
+   "p25": 8.1,
+   "p75": 12.8,
+   "months": 60,
+   "basis": "forward_pe",
+   "ratio_to_model_eps": 1.0,
+   "used": 11,
+   "reason_if_different": "kept from the 11.11.2026 file: the 5-year median 9.1x belongs to the pre-AI PC-heavy Dell; the AI-era median (Mar-2024..) is 12.0x and the mix moved to faster-growing servers, so 11x between them; the Q3 report states no fact about the multiple",
+   "source": "notes.pe of research/companies/DELL/2026-11-11/lean_params.json (price / next-4-quarter AV consensus, monthly Nov-2021..Nov-2026); not re-measured on 25.11"
+  },
+  "beta_mature": {
+   "value": 1.1,
+   "source": "11.11.2026 file, notes.beta: hardware, cyclical; unchanged"
+  },
+  "roic_terminal": {
+   "value": 0.3,
+   "source": "11.11.2026 file, unchanged: negative-working-capital model (AP ~121 days) with low PP&E (7.7B on ~200B revenue)"
+  },
+  "market": {
+   "rf": 0.0494,
+   "erp": 0.042,
+   "reason_if_different": "",
+   "source": "research/market.json entry in force from 2026-11-04"
+  }
+ }
+}

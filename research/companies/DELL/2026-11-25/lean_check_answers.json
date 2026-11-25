@@ -1,0 +1,58 @@
+{
+ "L11": {
+  "answer": "No one-off revenue: the Q3 release names none (products 48,925 + services 6,012 = 54,937; no partnership, settlement or extra-week revenue), so rev0 = the FY27 guide midpoint 202,000 with nothing taken out. Receivables read against deferred revenue: AR 22,918 -> 28,948 (+6.0B, +26% q/q against revenue +17%; DSO ~45 -> ~48 days) while deferred revenue rose 29,718 -> 32,851 (+3.1B); AR is not running far ahead of billing, but the Q3 working-capital build (AR + inventory - AP from -5.5B to +0.6B) is a cash-conversion watch item, already in the base-year net cash.",
+  "confirmed": true,
+  "evidence": [
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm",
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm",
+   "runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt"
+  ]
+ },
+ "L12": {
+  "answer": "None to add: no converts, puts or warrants (Class C common; debt = senior notes 27.3B, legacy notes 1.0B, DFS debt 9.6B, other 0.1B, principal 38.0B per the Q3 debt summary); DFS-related debt 21.2B is matched by financing receivables 20.9B + operating-lease equipment ~3.3B and left out of corporate net cash by the saved method; lessee operating leases sit in opex; legal: the only named matter in the Q2 10-Q is the ERISA 401(k) class action (Lowbruck v. Dell, filed 28.1.2026, unspecified damages), not material, no judgment; supplier guarantees for contract manufacturers are remote with full recourse. The Q3 10-Q (not yet filed) must be re-read for new matters.",
+  "confirmed": true,
+  "evidence": [
+   "https://investors.delltechnologies.com/_assets/_270719a6457975cf4cdc96deae78c939/delltechnologies/db/3595/34778/performance_review/Q3_FY27_Performance_Review_.pdf",
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm",
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm"
+  ]
+ },
+ "L15": "Yes: bull FY28 +25% and a 12.3% margin held (base +18% and 11.1%) carry the beat record: EPS vs Dell's own guide +68% / +47% / +45% in Q1-Q3 FY27 (Q3 9.45 vs 6.50), revenue +24.6% / +5.6% / +12.1% (Q3 54.9B vs 49.0B); the FY27 guide was raised three times ($140B/$12.90 -> $167B/$17.90 -> $192B/$25.50 -> $202B/$29.68) and the Q4 guide was raised vs the Sept-implied Q4 (+7.8% revenue, +18% EPS).",
+ "L16": {
+  "answer": "Yes: the bear is an AI-capex digestion with an inventory hit: FY28 +8%, FY29 -12%, margins 9.0% then 7.5% (the pre-AI level, 2.6 points under the FY27 guide-implied 11.6%, which also covers the memory-cost read-across from HPE's Q4: non-GAAP GM -220bps q/q), exit P/E 8, and an FY29 after-tax inventory/purchase-commitment charge raised 1,600 -> 1,800 because inventory rose 21,290 -> 29,444 (+38% q/q, days ~52 -> ~62) against purchase obligations of 34.8B at 31.7 (Q3 figure unknown until the 10-Q). Not separately modelled: DFS credit losses (receivables 20.9B, originations +111%) and customer concentration (10-Q gap). Bear 5-year return +2.9% a year, far from the -10% leg.",
+  "confirmed": true,
+  "evidence": [
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm",
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000046/dell-20260731.htm",
+   "runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt"
+  ]
+ },
+ "L18": {
+  "answer": "Buy verification ran on 25.11.2026: a fresh pull of the Q3 FY27 report from the 8-K exhibit 99.1 and the IR decks, an adversarial verifier on every number and on the thesis conditions, then a red team on the updated params. The red team found a DFS funding-cost double count (margins -0.5 point in every scenario) and an incomplete bear (DFS credit losses, charge 1,800 -> 2,650); both corrections are in the published lean_params.json (the pre-review file is lean_params_pre_review.json). Shares 639M and net cash 2.4B are calculated from the release balance sheet and the Q3 buyback; the Q3 10-Q (early December) must be re-read.",
+  "confirmed": true,
+  "evidence": [
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm",
+   "research/companies/DELL/2026-11-25/lean_params_pre_review.json",
+   "research/companies/DELL/2026-11-25/lean_params.json"
+  ]
+ },
+ "L19": "No: the own 5-year forward P/E median 9.1x (p25 8.1, p75 12.8; Nov-2021..Nov-2026) belongs to the pre-AI PC-heavy Dell growing low single digits; the AI-era median is 12.0x; base exit 11x kept between them. Historical-multiple report: base FY28 operating EPS ~33.5 x 9.1 = ~305 (range 272-429), x 12.0 = ~402; on the stale AV FY28 consensus $28.48 (9 analysts, below the new FY27 guide of $29.68) x 9.1 = ~259 (231-365). Direct peers at today's growth (HPE, SMCI) not re-measured: gap.",
+ "L23": "Level change stated: FY28 base revenue 226,560 -> 238,360 (+5.2%) only because rev0 rose with the FY27 guide (192,000 -> 202,000); growth rates are unchanged in every year, so the +5.2% level carries into FY29-FY33; operating profit +19.2% to +19.6% each year (FY28 22,203 -> 26,458) because the margin path rose 1.3 points with the FY27 guide-implied margin (10.3% -> 11.6%).",
+ "L25": "Falsifiers, measurable and dated: (1) Q4 FY27 report (expected late Feb 2027): a first FY28 revenue guide below $220B (base path 238B) or AI backlog below $100B (now $132.3B); (2) ISG operating margin under 12% in Q4 FY27 or Q1 FY28 (Q3 17.0%, Q4 guide ~14.8%); (3) inventory up again in Q4 with days above ~70 while the AI backlog falls; (4) non-GAAP opex back above 8% of revenue. Sell line (3% a year) 647.31 ours / 624.81 calibrated, hold floor (6%) 557.86 / 538.47, as of 25.11.2026 at 294.50.",
+ "L27": {
+  "answer": "Yes: IBKR search_contracts 'DELL' -> contract 346218218, symbol DELL, NYSE, 'DELL TECHNOLOGIES -C' (the Class C shares the params value), US; get_price_snapshot at 08:24:25 UTC 25.11.2026, REALTIME, pre-market last 294.50, bid/ask 294.00/294.99, change -0.78 (-0.26%), which implies the 24.11 close 295.28 as reported.",
+  "confirmed": true,
+  "evidence": [
+   "runs/tickers/DELL_2026-11-25/price_snapshot.json"
+  ]
+ },
+ "S04": {
+  "answer": "No capex plan to add: capex runs ~$1B a quarter (Q3 985, 9M 3,187; PP&E 7.7B) inside conversion; no new capacity programme was announced; the $25.0B buyback authorization increase (24.11) is value-neutral in the model (cash out = shares out); the $5.0B notes of 15.9.2026 are in debt and cash; purchase obligations are inventory purchases inside margins, with the bear charge for the excess; funding is internal (Q3 CFO 4,459, 9M 10,765): no share or debt funding needed.",
+  "confirmed": true,
+  "evidence": [
+   "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000050/exhibit991earnings8kq3fy27.htm",
+   "runs/tickers/DELL_2026-11-25/ex991_q3fy27.txt"
+  ]
+ },
+ "P06": "Yes, recorded before any change: positive conditions all met: AI orders >= $20B MET ($60.2B), AI backlog >= $95B MET ($132.3B), ISG margin > 13% MET (17.0%), FY27 guide > $192B and > $25.50 MET ($202.0B / $29.68); negative conditions: backlog < $80B NOT triggered; inventory up without revenue NOT triggered but flagged (inventory +$8.2B vs revenue +$8.0B q/q, days ~52 -> ~62); FY28 guide >= $230B NOT TESTED (no FY28 guide until the Q4 report). No threshold changed."
+}
