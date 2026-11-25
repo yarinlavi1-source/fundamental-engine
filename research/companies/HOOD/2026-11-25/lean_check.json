@@ -1,0 +1,441 @@
+{
+ "check_version": 1,
+ "ticker": "HOOD",
+ "as_of": "2026-11-25",
+ "price": 63.9,
+ "base_value_today": 49.99,
+ "base_return_pct": 7.5,
+ "buy_test_pass": false,
+ "buy_test_pass_at_quote": null,
+ "buy_test_price": 51.79,
+ "counts": {
+  "pass": 14,
+  "fail": 1,
+  "open": 6,
+  "not_applicable": 12
+ },
+ "blocking": [],
+ "would_block_a_buy": [
+  "guidance",
+  "ask.L11",
+  "ask.L12",
+  "ask.L16",
+  "ask.L27",
+  "ask.S04"
+ ],
+ "exit_code": 0,
+ "verdict": "not a buy at this price: nothing blocks",
+ "model_warnings": [
+  "base: the two methods land in different bands: DCF alone 5% a year (lagging), exit multiple alone 9.7% a year (hold), averaged 7.5% a year (hold); the exit P/E 22 against 16.9 implied by the DCF (1.30x). Say which side is believed and why",
+  "base_calibrated: the two methods land in different bands: DCF alone 5% a year (lagging), exit multiple alone 11.8% a year (hold), averaged 8.6% a year (hold); the exit P/E 24.5 against 16.9 implied by the DCF (1.45x). Say which side is believed and why"
+ ],
+ "answers_given": [
+  "L11",
+  "L12",
+  "L15",
+  "L16",
+  "L19",
+  "L25",
+  "L27",
+  "S04",
+  "guidance",
+  "method_gap"
+ ],
+ "inputs_supplied": {
+  "previous_params": false,
+  "facts": false,
+  "price": null,
+  "today": null,
+  "market_file": true
+ },
+ "items": [
+  {
+   "id": "inputs",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the input checks raise nothing",
+   "lessons": [
+    "P01"
+   ],
+   "function": "check_inputs"
+  },
+  {
+   "id": "lenses_agree",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "ours hold (7.5% a year), calibrated hold (8.6%)",
+   "lessons": [
+    "L08"
+   ],
+   "function": "check_lenses_agree"
+  },
+  {
+   "id": "calibrated_lens",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the margin floor does not bind: the two lenses differ only by the exit multiple (held 24.5 against the base exit 22)",
+   "lessons": [
+    "L03"
+   ],
+   "function": "check_calibrated_lens"
+  },
+  {
+   "id": "funding",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the net-cash path stays funded in every scenario",
+   "lessons": [
+    "L02"
+   ],
+   "function": "check_funding"
+  },
+  {
+   "id": "equity_wiped",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "no scenario wipes the equity",
+   "lessons": [
+    "L05"
+   ],
+   "function": "check_equity_wiped"
+  },
+  {
+   "id": "method_gap",
+   "group": "model",
+   "status": "fail",
+   "blocks_buy": false,
+   "detail": "base: the two methods land in different bands: DCF alone 5% a year (lagging), exit multiple alone 9.7% a year (hold), averaged 7.5% a year (hold); the exit P/E 22 against 16.9 implied by the DCF (1.30x). Say which side is believed and why",
+   "lessons": [
+    "P05"
+   ],
+   "function": "check_method_gap"
+  },
+  {
+   "id": "on_the_line",
+   "group": "model",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "the buy test does not pass",
+   "lessons": [
+    "P08"
+   ],
+   "function": "check_on_the_line"
+  },
+  {
+   "id": "rerun_price",
+   "group": "model",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no rerun price (calibrated.pe is set, a leg is wiped or has no value)",
+   "lessons": [
+    "L04"
+   ],
+   "function": "check_rerun_price"
+  },
+  {
+   "id": "reverse_reading",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "growth the price needs: [16.0, 20.2, 18.8, 17.3, 15.9, 14.4] on the base margin path, [16.0, 22.2, 20.6, 19.1, 17.5, 15.9] at a flat margin",
+   "lessons": [
+    "L07"
+   ],
+   "function": "check_reverse_reading"
+  },
+  {
+   "id": "distributions_band",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "the base stays in its band with distributions reinvested",
+   "lessons": [
+    "P03"
+   ],
+   "function": "check_distributions_band"
+  },
+  {
+   "id": "probabilities_label",
+   "group": "model",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "labelled subjective",
+   "lessons": [
+    "S03"
+   ],
+   "function": "check_probabilities_label"
+  },
+  {
+   "id": "reconcile_revenue",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_shares",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "reconcile_net_cash",
+   "group": "inputs",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no SEC companyfacts supplied (--facts)",
+   "lessons": [
+    "P02"
+   ],
+   "function": "check_reconciliation"
+  },
+  {
+   "id": "guidance",
+   "group": "path",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "no params.guidance block {year, revenue_low, revenue_high, margin_low, margin_high, source}: is the guided year at the company guide? (answer L14)",
+   "lessons": [
+    "L14"
+   ],
+   "function": "check_guidance"
+  },
+  {
+   "id": "digestion_year",
+   "group": "path",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no tags, and the first base year grows 16% (under 20%)",
+   "lessons": [
+    "L21"
+   ],
+   "function": "check_digestion_year"
+  },
+  {
+   "id": "price",
+   "group": "price",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the price is of 2026-11-25, 0 trading day(s) before as_of; no quote given (--price): the move since the run is not checked",
+   "lessons": [
+    "L22"
+   ],
+   "function": "check_price"
+  },
+  {
+   "id": "judgement",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": true,
+   "detail": "the judgement block follows the locked rules or states why (exit_pe: own median over 51 months, shorter than 60)",
+   "lessons": [
+    "L17"
+   ],
+   "rule": {
+    "beta": 2.3426,
+    "exit_pe": 27.81,
+    "hist_multiple": {
+     "value": 76.77,
+     "low": 44.82,
+     "high": 118.37
+    },
+    "rf": 0.0494,
+    "erp": 0.042
+   },
+   "function": "check_judgement"
+  },
+  {
+   "id": "market_rates",
+   "group": "rules",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "rf 0.0494 and ERP 0.042 are the entry in force on 2026-11-25",
+   "lessons": [
+    "P04"
+   ],
+   "function": "check_market_rates"
+  },
+  {
+   "id": "prev_inputs",
+   "group": "previous",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "no previous params (--prev)",
+   "lessons": [
+    "L26"
+   ],
+   "function": "check_prev_inputs"
+  },
+  {
+   "id": "prev_levels",
+   "group": "previous",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "no previous params (--prev)",
+   "lessons": [
+    "L23"
+   ],
+   "function": "check_prev_levels"
+  },
+  {
+   "id": "ask.L11",
+   "group": "manual",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "answered without confirmation (No one-off revenue identified: Trump Account service revenue (in other revenues, Q2-Q3 2026) is not disclosed as a build fee, left in (gap); the RVI deconsolidation gain (106) and RVI/RVII marks sit below operating income and are not in the margin. Receivables from users are margin loans and card balances (interest-earning, in NII), not unbilled revenue; Gold deferred revenue 67.); a question that blocks a buy needs {\"answer\": text, \"confirmed\": true, \"evidence\": [file path or URL, ...]}",
+   "lessons": [
+    "L11"
+   ],
+   "question": "Is one-off revenue taken out of the base year, and are receivables read against deferred revenue? Name the amount or say there is none.",
+   "category": "inputs"
+  },
+  {
+   "id": "ask.L12",
+   "group": "manual",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "answered without confirmation (0% convertible notes 2,200 due 1.10.2029 in net cash as debt (conversion 174.42, capped call to 237.85, cash up to principal): bull end-2029 value 121.83 < 174.42, so no extra shares in any scenario. Warrants/options/RSUs in the 910 diluted shares. Card-trust ABS non-recourse, matched to receivables. Operating leases 329 (rent in opex). Legal: cash-sweep settlement in principle and event-contract suits as charges (base 100, bear 400).); a question that blocks a buy needs {\"answer\": text, \"confirmed\": true, \"evidence\": [file path or URL, ...]}",
+   "lessons": [
+    "L12"
+   ],
+   "question": "Are converts (and their caps), puts, warrants, leases and legal judgments from the notes in net cash, shares or a charge? Name each or say there is none.",
+   "category": "capital structure"
+  },
+  {
+   "id": "ask.L13",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "no tags, and free cash stays above half of operating profit in the base",
+   "lessons": [
+    "L13"
+   ],
+   "question": "For an asset-heavy business: is the margin after depreciation consistent with D&A as a share of revenue, the useful life and assets not yet in use?"
+  },
+  {
+   "id": "ask.L15",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Revenue beat record is weak: below consensus in 3 of the last 4 quarters (Q4-25 1,283 vs 1,341; Q1-26 1,067 vs 1,136; Q2-26 1,308 vs 1,281; Q3-26 1,424 vs 1,433); EPS beat 8 of 8 (+7% to +41%) partly on one-offs. Bull = consensus in 2027 (revenue ~6,880, EPS ~2.88 vs 2.93), not above it.",
+   "lessons": [
+    "L15"
+   ],
+   "question": "Does the bull reflect the guidance-beat record? State the record (beats of the last quarters) in one line.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L16",
+   "group": "manual",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "answered without confirmation (Yes: sports event contracts lost in most states (9th/6th Circuit against, Nevada/Michigan/Ohio exits, SCOTUS cert pending), a PFOF challenge after the midterm shift, options/equity volumes off records (2022 analog: revenue -25%), crypto stays low, rate cuts: 2027 revenue -14%, margin 36%, exit 14x, charge 400.); a question that blocks a buy needs {\"answer\": text, \"confirmed\": true, \"evidence\": [file path or URL, ...]}",
+   "lessons": [
+    "L16"
+   ],
+   "question": "Does the bear carry the company-specific hit (inventory and commitments, puts, patent cliff, dilution, customer loss, credit cycle)? Name it.",
+   "category": "growth path"
+  },
+  {
+   "id": "ask.L18",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": true,
+   "detail": "the buy test does not pass",
+   "lessons": [
+    "L18"
+   ],
+   "question": "For a buy: is every number and event in the answer checked against a primary source, with nothing \"from memory\"? Name the verification files."
+  },
+  {
+   "id": "ask.L19",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: No: the 60-month median 26.2x was set while revenue grew 37-58% a year and EPS rose from ~0; base growth is 10% at the horizon. Direct peers at today's growth: IBKR 23.1x FY27 (EPS +22%), SCHW 11.8x. Exit 22x base.",
+   "lessons": [
+    "L19"
+   ],
+   "question": "Does the own-history multiple belong to today's growth rate? If growth changed, say so and show direct peers at today's growth.",
+   "category": "multiple"
+  },
+  {
+   "id": "ask.L24",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "no tags, and free cash stays above half of operating profit in the base",
+   "lessons": [
+    "L24"
+   ],
+   "question": "For an asset-heavy or fast-growing business: does stock-based pay scale with revenue, and does capex after the surge follow commitments and the pre-surge share?"
+  },
+  {
+   "id": "ask.L25",
+   "group": "manual",
+   "status": "pass",
+   "blocks_buy": false,
+   "detail": "answered: Falsifiers dated in the answer: Q4-26 revenue (report ~Feb 2027) below 1,350; FY2027 revenue growth below 10%; a final court loss or federal action ending sports event contracts; net deposits below 15% of platform assets for two quarters. Sell line (3%/yr) = 86.96 on 23.11.2026.",
+   "lessons": [
+    "L25"
+   ],
+   "question": "Is every falsifier measurable and dated, and is the sell line quoted with its date?",
+   "category": "dates and hurdles"
+  },
+  {
+   "id": "ask.L27",
+   "group": "manual",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "answered without confirmation (IBKR contract 504546674 = HOOD, NASDAQ, 'ROBINHOOD MARKETS INC - A', US, realtime last 67.64 on 23.11.2026.); a question that blocks a buy needs {\"answer\": text, \"confirmed\": true, \"evidence\": [file path or URL, ...]}",
+   "lessons": [
+    "L27"
+   ],
+   "question": "Does the contract of the price snapshot belong to the params ticker and exchange (state the symbol and exchange the quote came from)?",
+   "category": "data source"
+  },
+  {
+   "id": "ask.S04",
+   "group": "manual",
+   "status": "open",
+   "blocks_buy": true,
+   "detail": "answered without confirmation (No announced capex plan: capex ~63M in 9M, about equal to D&A. The capital use is lending (card book +725M in 9M, ~490M equity) and regulatory capital: in conv (0.80 -> 0.90). No unfunded plan.); a question that blocks a buy needs {\"answer\": text, \"confirmed\": true, \"evidence\": [file path or URL, ...]}",
+   "lessons": [
+    "S04"
+   ],
+   "question": "Is every announced capex plan in the model (conversion, charges), and is its funding in shares or net debt? Name the plan or say there is none.",
+   "category": "funding"
+  },
+  {
+   "id": "ask.P06",
+   "group": "manual",
+   "status": "not_applicable",
+   "blocks_buy": false,
+   "detail": "no previous params (--prev)",
+   "lessons": [
+    "P06"
+   ],
+   "question": "Did a pre-set condition fire in this report? If yes, is the hit recorded before any threshold is changed?"
+  }
+ ],
+ "files": {
+  "params": "research/companies/HOOD/2026-11-25/lean_params.json",
+  "previous": null,
+  "facts": null,
+  "answers": "research/companies/HOOD/2026-11-25/lean_check_answers.json"
+ }
+}

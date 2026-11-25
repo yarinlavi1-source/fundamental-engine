@@ -1,0 +1,528 @@
+{
+ "schema": "valuation_record/1",
+ "ticker": "HOOD",
+ "company": "Robinhood Markets (Class A)",
+ "as_of": "2026-11-25",
+ "price": {
+  "value": 63.9,
+  "time_utc": "2026-11-25 ~10:05 UTC, pre-market",
+  "source": "IBKR realtime last"
+ },
+ "currency": "USD",
+ "share_basis": {
+  "basis": null,
+  "model_shares_m": 910.0,
+  "known_split": null
+ },
+ "model": {
+  "kind": "lean",
+  "reproducible": true,
+  "params": {
+   "path": "research/companies/HOOD/2026-11-25/lean_params.json",
+   "sha256": "d0641f70bae20bfab0abde93a7f14796bc5e4a6ecfe6a6007fae8d853dd9367b"
+  },
+  "result": {
+   "path": "research/companies/HOOD/2026-11-25/lean_result.json",
+   "sha256": "5f0392ca48bce6ca0bb37f8ebab3f9b6a6a829671361d232fb18ce38fec63182"
+  },
+  "code": {
+   "path": "scripts/lean_model.py",
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "probability": 0.3,
+   "condition_he": "איפוס של המסחר לרמה ממוצעת: ההכנסות יורדות כ-17%, הרווח התפעולי כ-34%-37%, הפסד בבית המשפט על הימורי ספורט, מכפיל 14",
+   "value_today": 20.7,
+   "annual_return_pct": -10.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 23.66
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 26.55
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 29.64
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 32.91
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 36.36
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-25",
+     "value": 23.38,
+     "return_pct": -63.4
+    },
+    "two_year": {
+     "date": "2028-11-25",
+     "value": 26.25,
+     "return_pct": -35.9
+    },
+    "five_year": {
+     "date": "2031-11-25",
+     "value": 36.0,
+     "return_pct": -10.8
+    }
+   }
+  },
+  "base": {
+   "probability": 0.5,
+   "condition_he": "צמיחה של 16% שדועכת ל-10%, רווח תפעולי 42%-46%, מכפיל 22",
+   "value_today": 49.99,
+   "annual_return_pct": 7.5,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 57.74
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 65.46
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 73.81
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 82.76
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 92.32
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-25",
+     "value": 57.0,
+     "return_pct": -10.8
+    },
+    "two_year": {
+     "date": "2028-11-25",
+     "value": 64.66,
+     "return_pct": 0.6
+    },
+    "five_year": {
+     "date": "2031-11-25",
+     "value": 91.33,
+     "return_pct": 7.4
+    }
+   }
+  },
+  "bull": {
+   "probability": 0.2,
+   "condition_he": "צמיחה של 32% ואחר כך כ-20%, רווח תפעולי 48%-52%, מכפיל 28",
+   "value_today": 82.23,
+   "annual_return_pct": 18.9,
+   "wiped": false,
+   "dated_values": [
+    {
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "value": 95.25
+    },
+    {
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "value": 108.31
+    },
+    {
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "value": 122.52
+    },
+    {
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "value": 137.85
+    },
+    {
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "value": 154.24
+    }
+   ],
+   "at": {
+    "one_year": {
+     "date": "2027-11-25",
+     "value": 94.01,
+     "return_pct": 47.1
+    },
+    "two_year": {
+     "date": "2028-11-25",
+     "value": 106.95,
+     "return_pct": 29.4
+    },
+    "five_year": {
+     "date": "2031-11-25",
+     "value": 152.54,
+     "return_pct": 19.0
+    }
+   }
+  }
+ },
+ "probability_label": "subjective",
+ "weighted": {
+  "value_today": 47.65,
+  "end_value": 87.92,
+  "annual_return_pct": 6.5,
+  "index_return_pct": 9.1
+ },
+ "second_lens": {
+  "value_today": 52.6,
+  "annual_return_pct": 8.6,
+  "band": "hold",
+  "band_ours": "hold",
+  "agree": true,
+  "pe_held": 24.5,
+  "margin_overridden": false,
+  "dated_values": [
+   {
+    "fiscal_year": 2027,
+    "date": "2027-12-31",
+    "value": 60.78
+   },
+   {
+    "fiscal_year": 2028,
+    "date": "2028-12-31",
+    "value": 68.93
+   },
+   {
+    "fiscal_year": 2029,
+    "date": "2029-12-31",
+    "value": 77.76
+   },
+   {
+    "fiscal_year": 2030,
+    "date": "2030-12-31",
+    "value": 87.24
+   },
+   {
+    "fiscal_year": 2031,
+    "date": "2031-12-31",
+    "value": 97.37
+   }
+  ],
+  "at": {
+   "one_year": {
+    "date": "2027-11-25",
+    "value": 60.0,
+    "return_pct": -6.1
+   },
+   "two_year": {
+    "date": "2028-11-25",
+    "value": 68.08,
+    "return_pct": 3.2
+   },
+   "five_year": {
+    "date": "2031-11-25",
+    "value": 96.32,
+    "return_pct": 8.6
+   }
+  },
+  "diagnostics": {
+   "margin_floor_binds": false,
+   "differs_from_base_only_by_multiple": true,
+   "pe_held": 24.5,
+   "pe_base_exit": 22,
+   "pe_held_to_base_exit": 1.11,
+   "inflated_multiple_warning": false
+  },
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+ },
+ "base_path": {
+  "basis": {
+   "revenue_m": "reported revenue",
+   "op_margin": "operating income after SBC / revenue",
+   "eps_operating": "operating_income_after_sbc_after_model_tax/model_shares"
+  },
+  "base_year": 2026,
+  "base_year_end": "2026-12-31",
+  "base_year_revenue_m": 5082.0,
+  "years": {
+   "2027": {
+    "fiscal_year_end": "2027-12-31",
+    "revenue_m": 5895,
+    "op_margin": 0.421,
+    "eps_operating": 2.1
+   },
+   "2028": {
+    "fiscal_year_end": "2028-12-31",
+    "revenue_m": 6720,
+    "op_margin": 0.433,
+    "eps_operating": 2.46
+   },
+   "2029": {
+    "fiscal_year_end": "2029-12-31",
+    "revenue_m": 7594,
+    "op_margin": 0.443,
+    "eps_operating": 2.85
+   },
+   "2030": {
+    "fiscal_year_end": "2030-12-31",
+    "revenue_m": 8505,
+    "op_margin": 0.45,
+    "eps_operating": 3.24
+   },
+   "2031": {
+    "fiscal_year_end": "2031-12-31",
+    "revenue_m": 9441,
+    "op_margin": 0.455,
+    "eps_operating": 3.63
+   },
+   "2032": {
+    "fiscal_year_end": "2032-12-31",
+    "revenue_m": 10385,
+    "op_margin": 0.46,
+    "eps_operating": 4.04
+   }
+  }
+ },
+ "hurdles": {
+  "horizon_date": "2031-12-31",
+  "years_to_horizon": 5.1,
+  "rungs": [
+   {
+    "id": "margin_of_safety_13",
+    "return_pct": 13.0,
+    "price": 49.5,
+    "price_second_lens": 52.21,
+    "label": "margin of safety: fixed 13% a year for every company"
+   },
+   {
+    "id": "buy_test",
+    "return_pct": 12.0,
+    "price": 51.79,
+    "price_second_lens": 54.63,
+    "label": "buy test: base return 12% a year"
+   },
+   {
+    "id": "company_hurdle",
+    "return_pct": 12.0,
+    "price": 51.79,
+    "price_second_lens": 54.63,
+    "label": "entry with a margin of safety: buy_return 12% a year"
+   },
+   {
+    "id": "index",
+    "return_pct": 9.14,
+    "price": 59.1,
+    "price_second_lens": 62.33,
+    "label": "index return (rf + erp) 9.14% a year"
+   },
+   {
+    "id": "hold_floor",
+    "return_pct": 6.0,
+    "price": 68.59,
+    "price_second_lens": 72.34,
+    "label": "hold floor: 6% a year"
+   },
+   {
+    "id": "sell_line",
+    "return_pct": 3.0,
+    "price": 79.4,
+    "price_second_lens": 83.74,
+    "label": "sell line: 3% a year"
+   }
+  ],
+  "buy_test": {
+   "price": 51.79,
+   "stated_price": 51.79,
+   "rerun_price": null,
+   "rerun_used": false,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "complete": true,
+   "legs": {
+    "base_ours": {
+     "return_pct": 7.5,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 51.79
+    },
+    "base_calibrated": {
+     "return_pct": 8.6,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 54.63
+    },
+    "bull": {
+     "return_pct": 18.9,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 69.25
+    },
+    "bear": {
+     "return_pct": -10.5,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 62.23
+    }
+   },
+   "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
+   "note": null,
+   "margin_of_safety_price": 49.5,
+   "margin_of_safety_stated_price": 49.5,
+   "margin_of_safety_rerun_price": null,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "base_ours",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+  },
+  "buy_test_price": 51.79,
+  "base_12_price": 51.79,
+  "margin_of_safety_price": 49.5,
+  "base_13_price": 49.5,
+  "index_parity_price": 59.1,
+  "hold_floor_price": 68.59,
+  "sell_line_price": 79.4,
+  "labels_he": {
+   "buy_test_price": "מחיר מבחן הקנייה",
+   "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
+  "entry_price": {
+   "value": 49.5,
+   "rung": "buy_test.margin_of_safety_price",
+   "note": null
+  }
+ },
+ "display": {
+  "one_year": {
+   "date": "2027-12-31",
+   "source": "fiscal_year_end"
+  },
+  "five_year": {
+   "date": "2031-12-31",
+   "source": "horizon_year_end"
+  },
+  "rule": "in one year = the fiscal year-end within 92 days of as_of + 1 year, else that exact day (log-linear between the dated values); in five years = the horizon year-end the returns are computed to"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": "grower_growth_changed",
+  "basis": "forward_pe",
+  "next_year_figure": 2.93,
+  "median": 26.24,
+  "p25": 15.32,
+  "p75": 40.46,
+  "months": 51,
+  "net_cash_per_share": null,
+  "value": 76.88,
+  "low": 44.89,
+  "high": 118.55,
+  "source": "Alpha Vantage FY2027 EPS consensus (26 analysts, 23.11.2026) x own forward P/E history (09.2022-11.2026)",
+  "note": "the median was formed while revenue grew 37-58% a year; read it next to peers at today's growth (IBKR ~23x, SCHW ~12x)",
+  "computed": true
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": "price",
+   "op": "<",
+   "threshold": 51.79,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-52$ (מבחן הקנייה עובר)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "החלטה של בית המשפט העליון לטובת הסמכות הפדרלית בהימורי ספורט, או צמיחת הכנסות של 15% ומעלה ברבעון 4 בלי תמיכה מריבית",
+   "state": "open",
+   "note": "text only"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "היקפי מסחר במניות ובאופציות יורדים מעל 20% משנה לשנה במשך שלושה חודשים",
+   "state": "open",
+   "note": "text only"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "איסור או הגבלה על תשלום עבור זרימת הוראות (PFOF), או הפסד סופי על חוזי ספורט",
+   "state": "open",
+   "note": "text only"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-05",
+   "to": "2027-02-15"
+  },
+  "confirmed": false,
+  "text": "~mid-February 2027 (Q4 2026); November operating data mid-December",
+  "check_he": "היקפי מסחר, הכנסות מריבית, חוזי אירועים, הפקדות נטו, הוצאות"
+ },
+ "last_fresh_pull": {
+  "date": "2026-11-25",
+  "note": "EDGAR (no 8-K since the Q3 10-Q), Truist note 24.11, crypto prices, event-contract court docket"
+ },
+ "verdict": {
+  "code": null,
+  "text_he": "לא לקנות במחיר הזה: בתרחיש הבסיסי כ-7.5% בשנה, מתחת למדד. מבחן הקנייה עובר רק ב-52$ ומטה",
+  "draft": false
+ },
+ "model_reading": {
+  "band_ours": "hold",
+  "band_second_lens": "hold",
+  "lenses_agree": true,
+  "buy_test_pass": false,
+  "moves_most": "revenue growth",
+  "method_gap_warnings": 2
+ },
+ "notes_he": [
+  "הסתברויות (שיקול דעת, 25.11.2026): דובי 30% / בסיסי 50% / שורי 20%, בלי שינוי אחרי בדיקת הכיול: התקדימים דוחפים לדובי, התעשייה והריבית העולה דוחפות נגדו, והאופציות מתמחרות את שני הקצוות",
+  "טווח מכויל (שיקול דעת): בעוד שנה חציון כ-60$, חצי מהמקרים 40-90$, 80% מהמקרים 25-140$; בעוד שנתיים חציון כ-58$, 35-105$, 18-190$; בעוד 5 שנים חציון כ-85$, 50-150$, 25-250$",
+  "סיכון בדרך: כ-35%-40% סיכוי שהמניה תרד לאזור 25-30$ בשלב כלשהו בשנתיים הקרובות",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "thesis_link": "research/companies/HOOD/thesis_he.md",
+ "warnings": []
+}

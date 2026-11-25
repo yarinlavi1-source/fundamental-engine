@@ -1,0 +1,373 @@
+{
+ "ticker": "HOOD",
+ "as_of": "2026-11-25",
+ "price": 63.9,
+ "price_time_utc": "2026-11-25 ~10:05 UTC, pre-market",
+ "verdict_he": "לא לקנות במחיר הזה: בתרחיש הבסיסי כ-7.5% בשנה, מתחת למדד. מבחן הקנייה עובר רק ב-52$ ומטה",
+ "buy_test_price": 51.79,
+ "margin_of_safety_price": 49.5,
+ "values": {
+  "today": {
+   "bear": 20.7,
+   "base": 49.99,
+   "bull": 82.23
+  },
+  "end_2027": {
+   "bear": 23.66,
+   "base": 57.74,
+   "bull": 95.25
+  },
+  "end_2028": {
+   "bear": 26.55,
+   "base": 65.46,
+   "bull": 108.31
+  },
+  "end_2029": {
+   "bear": 29.64,
+   "base": 73.81,
+   "bull": 122.52
+  },
+  "end_2030": {
+   "bear": 32.91,
+   "base": 82.76,
+   "bull": 137.85
+  },
+  "end_2031": {
+   "bear": 36.36,
+   "base": 92.32,
+   "bull": 154.24
+  },
+  "weighted_today_30_50_20": 47.65,
+  "calibrated_today": 52.6
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": "איפוס של המסחר לרמה ממוצעת: ההכנסות יורדות כ-17%, הרווח התפעולי כ-34%-37%, הפסד בבית המשפט על הימורי ספורט, מכפיל 14"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה של 16% שדועכת ל-10%, רווח תפעולי 42%-46%, מכפיל 22"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "צמיחה של 32% ואחר כך כ-20%, רווח תפעולי 48%-52%, מכפיל 28"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -10.5,
+  "base": 7.5,
+  "bull": 18.9,
+  "calibrated": 8.6,
+  "weighted": 6.5,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-52$ (מבחן הקנייה עובר)",
+   "החלטה של בית המשפט העליון לטובת הסמכות הפדרלית בהימורי ספורט, או צמיחת הכנסות של 15% ומעלה ברבעון 4 בלי תמיכה מריבית"
+  ],
+  "proposed_trim": [],
+  "proposed_exit": [
+   "היקפי מסחר במניות ובאופציות יורדים מעל 20% משנה לשנה במשך שלושה חודשים",
+   "איסור או הגבלה על תשלום עבור זרימת הוראות (PFOF), או הפסד סופי על חוזי ספורט"
+  ]
+ },
+ "next_report": {
+  "date": "~mid-February 2027 (Q4 2026); November operating data mid-December",
+  "confirmed": false,
+  "check": "היקפי מסחר, הכנסות מריבית, חוזי אירועים, הפקדות נטו, הוצאות"
+ },
+ "thesis_link": "research/companies/HOOD/thesis_he.md",
+ "notes_he": [
+  "הסתברויות (שיקול דעת, 25.11.2026): דובי 30% / בסיסי 50% / שורי 20%, בלי שינוי אחרי בדיקת הכיול: התקדימים דוחפים לדובי, התעשייה והריבית העולה דוחפות נגדו, והאופציות מתמחרות את שני הקצוות",
+  "טווח מכויל (שיקול דעת): בעוד שנה חציון כ-60$, חצי מהמקרים 40-90$, 80% מהמקרים 25-140$; בעוד שנתיים חציון כ-58$, 35-105$, 18-190$; בעוד 5 שנים חציון כ-85$, 50-150$, 25-250$",
+  "סיכון בדרך: כ-35%-40% סיכוי שהמניה תרד לאזור 25-30$ בשלב כלשהו בשנתיים הקרובות",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "schema_version": 2,
+ "v2": {
+  "currency": "USD",
+  "share_basis": null,
+  "known_split": null,
+  "model_kind": "lean",
+  "record": {
+   "path": "research/companies/HOOD/2026-11-25/valuation.json"
+  },
+  "buy_test": {
+   "price_all_legs": 51.79,
+   "stated_price": 51.79,
+   "rerun_price": null,
+   "base_12_price": 51.79,
+   "binding_leg": "base_ours",
+   "pass_at_price": false,
+   "rerun_used": false,
+   "legs": {
+    "base_ours": {
+     "return_pct": 7.5,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 51.79
+    },
+    "base_calibrated": {
+     "return_pct": 8.6,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 54.63
+    },
+    "bull": {
+     "return_pct": 18.9,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 69.25
+    },
+    "bear": {
+     "return_pct": -10.5,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 62.23
+    }
+   },
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 49.5,
+    "stated_price": 49.5,
+    "rerun_price": null,
+    "rerun_used": false,
+    "binding_leg": "base_ours",
+    "base_13_price": 49.5,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
+  },
+  "price_ladder": {
+   "horizon_date": "2031-12-31",
+   "years_to_horizon": 5.1,
+   "rungs": [
+    {
+     "id": "margin_of_safety_13",
+     "return_pct": 13.0,
+     "price": 49.5,
+     "price_second_lens": 52.21
+    },
+    {
+     "id": "buy_test",
+     "return_pct": 12.0,
+     "price": 51.79,
+     "price_second_lens": 54.63
+    },
+    {
+     "id": "company_hurdle",
+     "return_pct": 12.0,
+     "price": 51.79,
+     "price_second_lens": 54.63
+    },
+    {
+     "id": "index",
+     "return_pct": 9.14,
+     "price": 59.1,
+     "price_second_lens": 62.33
+    },
+    {
+     "id": "hold_floor",
+     "return_pct": 6.0,
+     "price": 68.59,
+     "price_second_lens": 72.34
+    },
+    {
+     "id": "sell_line",
+     "return_pct": 3.0,
+     "price": 79.4,
+     "price_second_lens": 83.74
+    }
+   ]
+  },
+  "entry_price": {
+   "value": 49.5,
+   "rung": "buy_test.margin_of_safety_price",
+   "note": null
+  },
+  "index_parity_price": 59.1,
+  "hold_floor_price": 68.59,
+  "sell_line_price": 79.4,
+  "values_dated": {
+   "today": {
+    "bear": 20.7,
+    "base": 49.99,
+    "bull": 82.23,
+    "date": "2026-11-25",
+    "base_calibrated": 52.6
+   },
+   "year_ends": [
+    {
+     "bear": 23.66,
+     "base": 57.74,
+     "bull": 95.25,
+     "fiscal_year": 2027,
+     "date": "2027-12-31",
+     "base_calibrated": 60.78
+    },
+    {
+     "bear": 26.55,
+     "base": 65.46,
+     "bull": 108.31,
+     "fiscal_year": 2028,
+     "date": "2028-12-31",
+     "base_calibrated": 68.93
+    },
+    {
+     "bear": 29.64,
+     "base": 73.81,
+     "bull": 122.52,
+     "fiscal_year": 2029,
+     "date": "2029-12-31",
+     "base_calibrated": 77.76
+    },
+    {
+     "bear": 32.91,
+     "base": 82.76,
+     "bull": 137.85,
+     "fiscal_year": 2030,
+     "date": "2030-12-31",
+     "base_calibrated": 87.24
+    },
+    {
+     "bear": 36.36,
+     "base": 92.32,
+     "bull": 154.24,
+     "fiscal_year": 2031,
+     "date": "2031-12-31",
+     "base_calibrated": 97.37
+    }
+   ],
+   "at": {
+    "one_year": {
+     "bear": 23.38,
+     "base": 57.0,
+     "bull": 94.01,
+     "date": "2027-11-25",
+     "base_calibrated": 60.0
+    },
+    "two_year": {
+     "bear": 26.25,
+     "base": 64.66,
+     "bull": 106.95,
+     "date": "2028-11-25",
+     "base_calibrated": 68.08
+    },
+    "five_year": {
+     "bear": 36.0,
+     "base": 91.33,
+     "bull": 152.54,
+     "date": "2031-11-25",
+     "base_calibrated": 96.32
+    }
+   },
+   "published": {
+    "one_year": {
+     "date": "2027-12-31",
+     "source": "fiscal_year_end",
+     "bear": 23.66,
+     "base": 57.74,
+     "bull": 95.25,
+     "second_lens": 60.78
+    },
+    "five_year": {
+     "date": "2031-12-31",
+     "source": "horizon_year_end",
+     "bear": 36.36,
+     "base": 92.32,
+     "bull": 154.24,
+     "second_lens": 97.37
+    }
+   }
+  },
+  "wiped": {
+   "bear": false,
+   "base": false,
+   "bull": false
+  },
+  "second_lens": {
+   "value_today": 52.6,
+   "annual_return_pct": 8.6,
+   "band": "hold",
+   "band_ours": "hold",
+   "agree": true,
+   "inflated_multiple_warning": false,
+   "note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  },
+  "historical_multiple": {
+   "value": 76.88,
+   "low": 44.89,
+   "high": 118.55,
+   "basis": "forward_pe",
+   "company_type": "grower_growth_changed",
+   "note": "the median was formed while revenue grew 37-58% a year; read it next to peers at today's growth (IBKR ~23x, SCHW ~12x)"
+  },
+  "conditions_typed": [
+   {
+    "id": "c1",
+    "kind": "add",
+    "metric": "price",
+    "op": "<",
+    "threshold": 51.79,
+    "by_date": null,
+    "text_he": "המחיר מתחת לכ-52$ (מבחן הקנייה עובר)",
+    "state": "open",
+    "note": "typed 25.11.2026"
+   },
+   {
+    "id": "c2",
+    "kind": "add",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "החלטה של בית המשפט העליון לטובת הסמכות הפדרלית בהימורי ספורט, או צמיחת הכנסות של 15% ומעלה ברבעון 4 בלי תמיכה מריבית",
+    "state": "open",
+    "note": "text only"
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "f1",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "היקפי מסחר במניות ובאופציות יורדים מעל 20% משנה לשנה במשך שלושה חודשים",
+    "state": "open",
+    "note": "text only"
+   },
+   {
+    "id": "f2",
+    "kind": "exit",
+    "metric": null,
+    "op": null,
+    "threshold": null,
+    "by_date": null,
+    "text_he": "איסור או הגבלה על תשלום עבור זרימת הוראות (PFOF), או הפסד סופי על חוזי ספורט",
+    "state": "open",
+    "note": "text only"
+   }
+  ],
+  "last_fresh_pull": {
+   "date": "2026-11-25",
+   "note": "EDGAR (no 8-K since the Q3 10-Q), Truist note 24.11, crypto prices, event-contract court docket"
+  },
+  "verdict": {
+   "code": null,
+   "text_he": "לא לקנות במחיר הזה: בתרחיש הבסיסי כ-7.5% בשנה, מתחת למדד. מבחן הקנייה עובר רק ב-52$ ומטה",
+   "draft": false
+  },
+  "next_report": {
+   "date": null,
+   "window": {
+    "from": "2027-02-05",
+    "to": "2027-02-15"
+   },
+   "confirmed": false
+  }
+ }
+}

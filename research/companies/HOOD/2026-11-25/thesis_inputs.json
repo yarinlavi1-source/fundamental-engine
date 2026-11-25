@@ -1,0 +1,99 @@
+{
+ "company": "Robinhood Markets (Class A)",
+ "price_time_utc": "2026-11-25 ~10:05 UTC, pre-market",
+ "price_source": "IBKR realtime last",
+ "currency": "USD",
+ "scenarios": {
+  "bear": "איפוס של המסחר לרמה ממוצעת: ההכנסות יורדות כ-17%, הרווח התפעולי כ-34%-37%, הפסד בבית המשפט על הימורי ספורט, מכפיל 14",
+  "base": "צמיחה של 16% שדועכת ל-10%, רווח תפעולי 42%-46%, מכפיל 22",
+  "bull": "צמיחה של 32% ואחר כך כ-20%, רווח תפעולי 48%-52%, מכפיל 28"
+ },
+ "verdict": {
+  "code": null,
+  "draft": false,
+  "text_he": "לא לקנות במחיר הזה: בתרחיש הבסיסי כ-7.5% בשנה, מתחת למדד. מבחן הקנייה עובר רק ב-52$ ומטה"
+ },
+ "conditions": [
+  {
+   "id": "c1",
+   "kind": "add",
+   "metric": "price",
+   "op": "<",
+   "threshold": 51.79,
+   "by_date": null,
+   "text_he": "המחיר מתחת לכ-52$ (מבחן הקנייה עובר)",
+   "state": "open",
+   "note": "typed 25.11.2026"
+  },
+  {
+   "id": "c2",
+   "kind": "add",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "החלטה של בית המשפט העליון לטובת הסמכות הפדרלית בהימורי ספורט, או צמיחת הכנסות של 15% ומעלה ברבעון 4 בלי תמיכה מריבית",
+   "state": "open",
+   "note": "text only"
+  }
+ ],
+ "falsifiers": [
+  {
+   "id": "f1",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "היקפי מסחר במניות ובאופציות יורדים מעל 20% משנה לשנה במשך שלושה חודשים",
+   "state": "open",
+   "note": "text only"
+  },
+  {
+   "id": "f2",
+   "kind": "exit",
+   "metric": null,
+   "op": null,
+   "threshold": null,
+   "by_date": null,
+   "text_he": "איסור או הגבלה על תשלום עבור זרימת הוראות (PFOF), או הפסד סופי על חוזי ספורט",
+   "state": "open",
+   "note": "text only"
+  }
+ ],
+ "next_report": {
+  "date": null,
+  "window": {
+   "from": "2027-02-05",
+   "to": "2027-02-15"
+  },
+  "confirmed": false,
+  "text": "~mid-February 2027 (Q4 2026); November operating data mid-December",
+  "check_he": "היקפי מסחר, הכנסות מריבית, חוזי אירועים, הפקדות נטו, הוצאות"
+ },
+ "last_fresh_pull": {
+  "date": "2026-11-25",
+  "note": "EDGAR (no 8-K since the Q3 10-Q), Truist note 24.11, crypto prices, event-contract court docket"
+ },
+ "historical_multiple": {
+  "label_he": "שווי לפי המכפיל ההיסטורי",
+  "company_type": "grower_growth_changed",
+  "basis": "forward P/E",
+  "next_year_figure": 2.93,
+  "median": 26.24,
+  "p25": 15.32,
+  "p75": 40.46,
+  "months": 51,
+  "value": 76.77,
+  "low": 44.82,
+  "high": 118.37,
+  "source": "Alpha Vantage FY2027 EPS consensus (26 analysts, 23.11.2026) x own forward P/E history (09.2022-11.2026)",
+  "note": "the median was formed while revenue grew 37-58% a year; read it next to peers at today's growth (IBKR ~23x, SCHW ~12x)"
+ },
+ "notes_he": [
+  "הסתברויות (שיקול דעת, 25.11.2026): דובי 30% / בסיסי 50% / שורי 20%, בלי שינוי אחרי בדיקת הכיול: התקדימים דוחפים לדובי, התעשייה והריבית העולה דוחפות נגדו, והאופציות מתמחרות את שני הקצוות",
+  "טווח מכויל (שיקול דעת): בעוד שנה חציון כ-60$, חצי מהמקרים 40-90$, 80% מהמקרים 25-140$; בעוד שנתיים חציון כ-58$, 35-105$, 18-190$; בעוד 5 שנים חציון כ-85$, 50-150$, 25-250$",
+  "סיכון בדרך: כ-35%-40% סיכוי שהמניה תרד לאזור 25-30$ בשלב כלשהו בשנתיים הקרובות",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ]
+}

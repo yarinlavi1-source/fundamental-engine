@@ -1,0 +1,215 @@
+{
+ "ticker": "HOOD",
+ "as_of": "2026-11-25",
+ "price": 63.9,
+ "price_time_utc": "2026-11-25 ~10:05 UTC, pre-market (IBKR realtime last 63.90, NASDAQ HOOD contract 504546674)",
+ "base_year_end": "2026-12-31",
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 2.34,
+ "beta_mature": 1.2,
+ "shares_m": 910.0,
+ "net_cash_m": 3160.0,
+ "rev0_m": 5082.0,
+ "base_year": 2026,
+ "tax": 0.23,
+ "cash_yield": 0.036,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.25,
+ "days_to_base_year_end": 36,
+ "years_to_horizon": 5.1,
+ "buy_return": 0.12,
+ "bands": {
+  "buy": 12.0,
+  "hold": 6.0,
+  "lagging": 3.0
+ },
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement, 25.11.2026)"
+ },
+ "one_off_revenue_m": 0,
+ "calibrated": {
+  "pe": 24.5,
+  "why": "red team: today's forward multiple = 24.5x NTM consensus (pe_history.json h60.latest 24.53, the lowest month in 24); 26 was the own 60-month median, which is the exit-rule anchor, not today's multiple. Price / model FY27 operating EPS (~31x) stays non-credible for the reason the original gives."
+ },
+ "judgement": {
+  "beta": {
+   "raw": 3.0039,
+   "adjusted": 2.3426,
+   "weeks": 104,
+   "window": {
+    "from": "2024-11-18",
+    "to": "2026-11-16"
+   },
+   "used": 2.34,
+   "reason_if_different": ""
+  },
+  "exit_pe": {
+   "own_median": 26.24,
+   "p25": 15.32,
+   "p75": 40.46,
+   "months": 51,
+   "basis": "forward_pe",
+   "ratio_to_model_eps": 1.06,
+   "used": 22,
+   "reason_if_different": "Rule = 26.24 x 1.06 = ~28x on operating EPS ex cash. Stated facts for the departure: (1) the median was formed 09.2022-11.2026 while revenue grew 37%/58%/52% (2023-25) and EPS went from ~0 to ~2; the base grows ~10% at the horizon (2032); (2) HOOD earnings are ~60% transaction revenue at record options/equity volumes and margin balances: a cyclical broker's exit multiple sits below its boom-era median; (3) direct peers at today's growth (23.11.2026, price / FY2027 AV consensus EPS): IBKR 76.47/3.31 = 23.1x (EPS +22%), SCHW 92.37/7.80 = 11.8x; (4) own p25 15.3x. 22x = below the own median, near IBKR, above SCHW. Bull 28 (= the rule), bear 14 (own p25 / SCHW)."
+  },
+  "hist_multiple": {
+   "company_type": "grower_growth_changed",
+   "basis": "forward_pe",
+   "next_year_figure": 2.9257,
+   "source": "Alpha Vantage FY2027 EPS consensus (adjusted basis), 26 analysts, pulled 23.11.2026; no company EPS or revenue guide; revenue beat record weak (3 of the last 4 quarters below consensus)",
+   "median": 26.24,
+   "p25": 15.32,
+   "p75": 40.46,
+   "months": 51,
+   "net_cash_per_share": 0
+  },
+  "beta_mature": {
+   "value": 1.2,
+   "source": "judgement: a mature retail broker keeps above-market earnings cyclicality (transaction revenue ~60%); 1.2 not 1.0"
+  },
+  "roic_terminal": {
+   "value": 0.25,
+   "source": "judgement: capital-light broker; TTM ROE 21% on equity that holds ~$6B corporate cash (screen: roe 0.213); 25% on invested capital ex excess cash"
+  },
+  "market": {
+   "rf": 0.0494,
+   "erp": 0.042,
+   "source": "research/market.json (entry from 2026-11-04)",
+   "reason_if_different": ""
+  }
+ },
+ "notes": {
+  "price": "IBKR realtime last 67.64 on 23.11.2026 (read-only snapshot), +8.8% on the day after last week's crash; Yahoo month-end series 67.37. Screen runs/screens/2026-11-23: HOOD routed 'financial' (quality passes: revenue growing, ROE 21.3%, BVPS +18.5%) but FAILS all three trend gates (12-1 return -28% vs SPY, price 25.5% below a falling 200-day average 90.9, 51.6% below the 52-week high): by the house screen it is a falling stock, not an intact uptrend.",
+  "base_year": "FY2026 = calendar 2026. 9M actual revenue 3,799 (Q1 1,067 / Q2 1,308 / Q3 1,424; Q3 release 8-K/A 28.10.2026). Q4 estimate 1,440 (ours; consensus 1,518, 19 analysts, 11 down-revisions in 30 days): October operating data (12.11.2026) equity notional +1% m/m, options flat, event contracts +5%, crypto -21% m/m (-48% y/y), margin book +4%, cash sweep -5%, securities lending net -12M; Bitcoin fell below ~$62K mid-November; Ohio sports event contracts stopped 2.11.2026. FY2026 = 5,239 (+17% vs 4,473); organic ~+16% (Bitstamp Jan-May and WonderFi from June add ~45M, ours). rev0 5,082 = 5,239 less interest on corporate cash (9M 112 + Q4 ~45 = 157), because net cash is added at face and earns cash_yield in the model (no double count). No company revenue guide. FY2026 adjusted opex+SBC guide 2,675-2,750 (top cut by 25, Q3 release).",
+  "mid_cycle": "Transaction revenue (61% of Q3 revenue) is cyclical. FY2026 is treated as roughly mid-cycle IN AGGREGATE and not adjusted: options (FY26E ~1,406) and equities (~452) run at record volumes (Q3 equity notional $992B +53%, options 905M contracts +48%) and record margin book ($22.9B Oct), i.e. above mid-cycle, while crypto (~450 vs 901 in 2025 and ~626 in 2024) is near a trough. The two roughly offset (ours). The bear takes the down-cycle on options/equities with crypto staying low.",
+  "segments_fy26e": "ours from 9M + Q4E: options 1,406; event contracts 613 (9M 433, Q3 173 = 12% of revenue, mostly sports); crypto 450; equities 452; other transaction 201; net interest 1,588 (incl. corporate cash 157; margin interest 9M 652 +73%, sweep 131 -24%, securities lending -5 vs +164, credit card net 122 +205%); other revenue 520 (Gold subscriptions + Trump Account service revenue; Gold subs 5.2M +34%).",
+  "growth": "Base 2027 +19%: the Q4 run-rate alone (1,395 ex interest x 4 = 5,580) is +9.8% over 2026, plus ~3%/quarter sequential growth from net deposits (LTM $80.5B = 23% of platform assets, Oct release), Gold (+34%), credit card, banking, event contracts annualising; then 15/13/12/11/10%. Below consensus FY2027 revenue 6,881 (+29%, 28 analysts): consensus has been too high on revenue in 3 of the last 4 quarters (Q4-25 1,283 vs 1,341; Q1-26 1,067 vs 1,136; Q2-26 1,308 vs 1,281; Q3-26 1,424 vs 1,433; AV estimates). Bull = consensus in 2027: +32% ex interest (= consensus revenue 6,881 incl. ~170 corporate interest) and a 49% margin, giving EPS ~2.88 vs consensus 2.93 (crypto recovery to the 2025 level, event contracts win in court, perpetual futures / 24-7 equities / international); then 20/17/15/13/11. The revenue beat record does not support a bull above consensus (3 of the last 4 quarters missed); EPS beats (+7% to +41% in 2026) came with one-offs (RVI gain Q2, tax). Bear = company-specific hit: sports event contracts lost in most states (9th and 6th Circuit rulings against, Nevada/Michigan/Ohio exits, SCOTUS cert pending) and federal excise-tax risk, a PFOF challenge more likely after the midterm shift (Trefis 6.11.2026), options/equity volumes fall from records, crypto stays low, rate cuts: 2027 -14% (analog: 2022 revenue -25% after the 2021 boom, 1,815 -> 1,358; today's mix is more diversified: options/equities -25% = -465, event contracts -60% = -370, crypto -20% = -90, net interest -10% = -145 -> about -20% at worst; -14% taken), then 3/8/8/8/7.",
+  "margin": "Operating margin after SBC (GAAP opex includes SBC and the provision for credit losses), ex corporate cash interest. FY2025 ~44.6%; 9M26 (1,670-112)/(3,799-112) = 42.3%; Q3-26 46.3%; FY2026E 41.1% (41.5% before the 23M restructuring): opex ran ahead of revenue in 2026 (Trump Accounts, Rothera, credit-card provisions 9M 163 +109%, marketing). Base 43.3% in 2027 (revenue +19% vs opex +15%) rising ~1pt/yr to 47% (peers: SCHW ~45-50% pre-tax, IBKR ~70%+). Bull 49% -> 53% (consensus FY27 EPS 2.93 implies ~50% incl. interest). Bear 36% -> 39%: on revenue -14% (4,370) the 2026 cost base 2,985 cut ~7% (brokerage/transaction and marketing are variable; HOOD cut costs in 2022) gives 36.5%.",
+  "conv": "FCF after SBC / NOPAT. Capex ~63M (9M) about equals D&A 72. The constraint is capital tied up in lending: credit-card receivables in the Trust rose 786 -> 1,510 in 9M while Trust borrowings rose 602 -> 839, so ~490M of equity went into the card book (~35% of 9M net income); regulatory net capital grows with the business (RHS required 491). 9M26 conversion ~0.76 (ours). Base 0.80 -> 0.90; bull 0.78 -> 0.90 (faster card/margin growth); bear 0.90 -> 0.95.",
+  "net_cash": "3,300 at 31.12.2026 = cash and equivalents 30.9.2026 5,829 + stablecoin 164 - 0% convertible notes 2,200 principal (due 1.10.2029, conversion $174.42, capped call to $237.85; cash-settled up to principal) - 1,000 operating/regulatory buffer (judgement: RHS required net capital 491, clearing deposits 1,125 swing with volatility) + ~300 investments (RVI/RVII retained stakes and non-marketable securities, haircut; judgement) + ~200 Q4 cash generation after ~100 buybacks (ours). Credit Card Funding Trust debt (839 incl. Series 2026-1 ABS 500, plus Series 2026-2 500 on 15.10.2026) is non-recourse and matched against the card receivables, whose income is in revenue: both left out. Segregated cash, customer receivables/payables and securities borrowed/loaned are customer balances: left out. Revolving facilities (4.45B) undrawn.",
+  "shares": "910 = Q3-26 diluted weighted average 911 (Class A 793 + Class B 108 = 901 outstanding at 30.9.2026, plus RSUs/options/warrants). Buybacks ($1.5B authorization from March 2026 over ~3 years; Q3 only $25M) roughly offset SBC (~370/yr, expensed in the margin): the model keeps the cash instead. Converts below the cap in every scenario (bull end-2029 value checked in the output): no extra shares.",
+  "charges": "Year 1 (2027) after tax, judgement: base 100 (cash-sweep class action settled in principle, amount undisclosed; NYAG execution-quality probe), bull 50, bear 400 (event-contract class actions and state actions, possible federal wagering excise tax on contracts never collected, 10-Q note 16).",
+  "beta": "2-year weekly vs SPY (104 weeks to 16.11.2026, Yahoo): raw 3.00, adjusted 0.67 x 3.00 + 0.33 = 2.34 (locked rule, used as is). Cost of equity 4.94% + 2.34 x 4.2% = 14.8%, fading to 1.2 beta over 10 years.",
+  "pe": "Own forward P/E (Yahoo month-end closes / next-4-quarter AV consensus, look-ahead caveat): 60-month window median 26.24x, p25 15.32, p75 40.46 (51 positive months 09.2022-11.2026; 24-month median 38.6x during the 2025 boom); today 24.5x NTM consensus. Exit on next-year operating EPS: base 22, bull 28, bear 14 (reasons in judgement.exit_pe).",
+  "roe_crosscheck": "Book equity 30.9.2026 10,078; tangible 9,332 = $10.36/share -> P/TBV 6.5x at 67.64. TTM ROE 21%. Computed in the result note.",
+  "gaps": "Q3-26 call transcript not read (pages blocked): no Q4/2027 management commentary beyond the release. No 2027 expense outlook. Trump Account service revenue split (recurring vs build fee) not disclosed. Rothera revenue share and NCI economics not quantified. Investment stakes (RVI/RVII, Crypto.com up-to-10% equity) not marked.",
+  "redteam": {
+   "conv": "WRONG INPUT FIXED. The original said ~490M of equity went into the card book (receivables 786 -> 1,510 vs trust borrowings 602 -> 839). 10-Q Q3-26 Note 11: the 839 is the revolving warehouse only (Other current liabilities); the Series 2026-1 ABS 500 sits separately in Long-term borrowings (2,700 = converts 2,200 + ABS 500). Trust debt 602 -> 1,339 (+737) vs receivables +724: the card book was ~100% debt funded. The real drains are elsewhere. (1) Firm capital in brokerage balances: segregated + receivables from users ex card + securities borrowed + clearing deposits + broker receivables - payables to users - securities loaned = 2,058 (YE24) -> 2,881 (YE25) -> 4,021 (30.9.26), i.e. +1,140 in 9M26 on margin book +5.3B (16.8 -> 22.1B) and +1.96B over 21 months on +14.2B margin = ~13-14%. (2) Deferred customer match incentives: cash -318 (FY25), -190 (9M26). Organic corporate cash generation (change in corporate cash 1,568 less converts, capped call, RVI IPO/deconsolidation, M&A, non-marketable purchases, buybacks, NCI contributions, FX) = ~488 in 9M26 with SBC as non-cash, ~211 after SBC, against NOPAT plus after-tax interest of ~1,286, so actual conversion after SBC was ~0.16 (FY25 ~0.41). Forward: reinvestment = 13% x margin-book growth (margin grows with revenue from ~23B) + ~250/yr match deferral + ~80 card equity (trust advance rate ~89%) + ~40 other. That gives base 0.56 -> 0.73, bull 0.43 -> 0.75 (faster margin growth eats more), and bear 1.10 in 2027 (margin book shrinks and releases capital, the 2022 pattern), then 0.77 -> 0.74.",
+   "growth": "Base 2027 +19% -> +16%, 2028 +15% -> +14%. The +19% compounded ~3.2%/quarter sequential growth from a record Q4 run-rate. October 2026 operating data (12.11.2026) shows the plateau: equity notional +2% y/y, options contracts +8% y/y, crypto -48% y/y, platform assets -3% m/m, funded customers +7% y/y; Q3 revenue +12% y/y. Ohio sports contracts stopped on 2.11.2026, and NC/KY prediction-market taxes start 1.1.2027 (10-Q). +16% = ~2.3%/quarter from the Q4 run-rate, about 9-10% underlying growth plus the base effect of the weak Q1-26.",
+   "margin": "-0.5pt in every scenario for profit that leaks to the non-controlling interest: Rothera is a JV with SIG, which paid 41 of the 79 MIAXdx price (10-Q Note 3). NCI income was 16 in 9M26 and is rising, while Rothera is above $100M annualized revenue. The model consolidates 100% of it. The base 2027 margin also loses ~0.7pt more because revenue is lower against an opex base that is ~60% fixed (opex +13% vs the original's +14.6%).",
+   "bear": "2027 -14% -> -17%: the original's own decomposition gives about -20% at worst (options/equities -25%, event contracts -60%, crypto -20%, NII -10%), against -25% in 2022, and -14% was taken without a stated reason. The margin falls to 33.5% (costs cut 7%, NCI 0.5pt). The charge rises 400 -> 600: event contracts are ~16-17B contracts a quarter at an assumed ~$0.45 average price, so ~$7B of quarterly notional. A retroactive 2% IRC 4401 excise assessment (the rate for wagers not authorized under state law) on 2025-26 volumes would be ~$0.5-0.7B before tax (10-Q: not collected or remitted). This is our estimate; the notional is not disclosed.",
+   "net_cash": "3,300 -> 3,160: the +200 of Q4 cash after buybacks assumed full earnings conversion. The 9M26 organic corporate cash run-rate is ~163 a quarter, so Q4 nets ~+60 after ~100 of buybacks.",
+   "calibrated": "26 -> 24.5 (see calibrated.why).",
+   "kept": "Kept unchanged: beta 2.34 (locked rule), exit P/E 22/28/14 (departure reasons accepted), rev0 5,082 (Q4E 1,440 vs our rough 1,420 from October data, within noise), shares 910 (gross dilution of ~1%/yr is offset by buybacks costing ~$0.9B annualized in 2026 vs SBC expense ~$0.37B, flagged but not modelled), the 1,000 liquidity buffer, the 300 for investments, tax 23% (9M ETR 20.1%, Q3 23.8%), and probabilities 30/50/20 (subjective)."
+  },
+  "probabilities": "Kept 30/50/20 on 25.11.2026 after the calibration pass (four evidence lanes): the analogs argue for more bear (6 of 6 broker/crypto volume peaks were followed by a revenue fall the next year, median -23%; Ameritrade FY2000 is the closest mix and fell -22%), the industry lane argues for less in 2027 (Q4-26 run-rate ~5.65B is +7.8% over FY26; the Fed is raising, +100bp = ~+366M revenue; P(2027 revenue < 2026) ~20%), so the bear is a 2028 story more than a 2027 one (sports event contracts at the Supreme Court, crypto, PFOF risk after 2029, a lower exit multiple); the options price P(below the bear value) at 28-34% at ~2 years and P(above the bull) at 22-28%; our measured biases for 20-30x names say the base path ran too low, not too high. The pulls cancel: weights unchanged. No model input changed.",
+  "fresh_pull_25_11": "25.11.2026: no filing or company fact since 23.11 touches an input (EDGAR: a 10b5-1 director Form 4 on 19.11 only). Truist 123 -> 95 (Buy) on 24.11; BTC ~59.0K; a third circuit loss on sports event contracts (4th Cir., Kalshi/Maryland); Louisiana suit with TRO (hearing 30.11); SCOTUS response on No. 26-338 due 07.12; a record equity trading day on 05.11 (secondary). Price only: 67.64 -> 63.90."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    -0.17,
+    0.03,
+    0.08,
+    0.08,
+    0.08,
+    0.07
+   ],
+   "m": [
+    0.335,
+    0.34,
+    0.35,
+    0.36,
+    0.365,
+    0.37
+   ],
+   "conv": [
+    1.1,
+    0.77,
+    0.7,
+    0.71,
+    0.72,
+    0.74
+   ],
+   "pe": 14,
+   "charge": {
+    "0": 600
+   }
+  },
+  "base": {
+   "g": [
+    0.16,
+    0.14,
+    0.13,
+    0.12,
+    0.11,
+    0.1
+   ],
+   "m": [
+    0.421,
+    0.433,
+    0.443,
+    0.45,
+    0.455,
+    0.46
+   ],
+   "conv": [
+    0.56,
+    0.62,
+    0.66,
+    0.68,
+    0.71,
+    0.73
+   ],
+   "pe": 22,
+   "charge": {
+    "0": 100
+   }
+  },
+  "bull": {
+   "g": [
+    0.32,
+    0.2,
+    0.17,
+    0.15,
+    0.13,
+    0.11
+   ],
+   "m": [
+    0.485,
+    0.495,
+    0.505,
+    0.515,
+    0.52,
+    0.525
+   ],
+   "conv": [
+    0.43,
+    0.58,
+    0.65,
+    0.69,
+    0.72,
+    0.75
+   ],
+   "pe": 28,
+   "charge": {
+    "0": 50
+   }
+  }
+ },
+ "repriced": {
+  "price_from": 67.64,
+  "as_of_from": "2026-11-23",
+  "price": 63.9,
+  "as_of_requested": "2026-11-25",
+  "as_of": "2026-11-25",
+  "dates_moved": true,
+  "note": "as_of moved from 2026-11-23 to 2026-11-25; days_to_base_year_end and years_to_horizon recomputed from base_year_end 2026-12-31",
+  "held": "every other input is the file's (net cash, shares, growth, margins, exit multiples); without calibrated.pe the calibrated lens holds the multiple of the new price"
+ }
+}
