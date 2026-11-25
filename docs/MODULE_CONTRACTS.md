@@ -759,6 +759,20 @@ or a price more than 1.8x away is 'unknown'. `scripts/quality_momentum_screen.py
 [--research R]`: SEC companyfacts per company (not XBRL frames), the Nasdaq listing feed and Yahoo closes; screen.json
 gains `saved_valuations` and the counts `passers_saved_*`, `near_misses_saved_*`.
 
+`quality_momentum` screen v2 (25.11.2026; price is information, never a gate): `price_info(t, spy) -> {rel_strength,
+vs_ma200, ma200_rising, below_high} | None`; `parse_estimates(surprise_json, forecast_json, momentum_json) ->
+{surprises, years, momentum, gaps}` (three Nasdaq analyst pages, data by Zacks); `eps_revision(est, history, as_of) ->
+{fiscal_year_end, now, then, pct, window_days, source nasdaq_month|own_history, state ok|not_positive|no_data}`;
+`business_gates(est, history=(), as_of=None) -> [eps_revisions, earnings_beats]` (pass None = missing: the row is
+incomplete); `classify(quality, business)`; `needs_business(quality)`; `divergence(price_info, business)` (flag
+`price_down_business_up`) and `divergence_rows(lists)` (the report's top section: passers in rank order, the other
+lists by 12-month revenue growth); `rank(rows)` on `RANK_KEYS` (a missing `eps_revision_pct` gets the median);
+`history_lines(est, as_of)`; `symbol_variants(symbol)`; `calendar_days(as_of)`, `parse_calendar(day, payload)`,
+`earnings_radar(calendar, rows, book, as_of) -> {reported, upcoming}`. Row keys: `business`, `price_info`,
+`trend_measures`, `rel_strength`, `eps_revision_pct`, `eps_revision_window_days`, `surprise_min_pct`, `divergence`,
+`flags`, `estimates`; screen.json keys `divergence`, `radar`, `gaps.estimates`, `gaps.calendar`. The script also writes
+`OUT/estimates/<SYMBOL>.json`, `OUT/calendar/<day>.json` and `<parent of OUT>/_estimates_history/<SYMBOL>.jsonl`.
+
 `research_store.latest(ticker, root='.', full=False, run=None)` (CLI `research-latest T [--full]`): the newest dated
 folder of research/companies/<T>/ of any kind through `valuation_record.latest_valuation`, with {ticker, as_of, folder,
 kind, model, record_source, note, older_folders, saved, summary {price, currency, value_today, annual_return_pct,

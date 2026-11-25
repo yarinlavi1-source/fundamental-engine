@@ -1,12 +1,23 @@
-"""Quality + trend screen over US-listed companies above a market value floor (network + CLI).
+"""Quality + business-momentum screen over US-listed companies above a market value floor (network + CLI).
 
-    SEC_USER_AGENT="app-name contact@example.com" python scripts/quality_momentum_screen.py runs/screens/2026-11-15 --as-of 2026-11-15 [--min-cap 5e9] [--reuse]
+    SEC_USER_AGENT="app-name contact@example.com" python scripts/quality_momentum_screen.py runs/screens/2026-11-25 --as-of 2026-11-25 [--min-cap 5e9] [--reuse]
 
 Sources: the Nasdaq listing feed (symbol, market value, sector; an unofficial public API), the SEC ticker map, the SEC
 companyfacts API read per company (data.sec.gov/api/xbrl/companyfacts/CIK##########.json, one request per company above
-the floor; not the XBRL frames API) and its submissions file (SIC code), Yahoo daily adjusted closes for the names that
-reach the trend gates. Only the extracted series are kept (facts/CIK*.json), not the raw companyfacts. --reuse reads the
-saved files and fetches only what is missing. The SEC User-Agent is read from the environment and never written to disk.
+the floor; not the XBRL frames API) and its submissions file (SIC code). For the names with at most one failed quality
+gate, and for the thesis book: three Nasdaq analyst pages per company (earnings surprises, the EPS forecast table with
+its 4-week revisions, the consensus now against a month ago; data by Zacks, an unofficial public API) and Yahoo daily
+closes. The Nasdaq earnings calendar is read for the 10 days before the as-of date and the 14 after it.
+Version 2 (25.11.2026): price is information, never a gate. The business-momentum gates (analysts are not cutting,
+the last two quarters met the consensus) replaced the three price gates; see fundamental_engine/quality_momentum.py.
+Files under the output folder: raw/ (listing, ticker map), facts/CIK*.json (the extracted series, not the raw
+companyfacts), prices/<SYMBOL>.json, estimates/<SYMBOL>.json (the raw analyst rows and any error), calendar/<day>.json,
+screen.json and screen_he.md. Beside the output folder: _estimates_history/<SYMBOL>.jsonl, our own record of the
+consensus per fiscal year (one line per fiscal year and day the pages were read), which lengthens the revision window on
+later runs.
+The analyst pages are a snapshot of the day they are read: a run for an older as-of date cannot rebuild them.
+--reuse reads the saved files and fetches only what is missing. The SEC User-Agent is read from the environment and
+never written to disk; the Nasdaq and Yahoo requests carry a generic browser header.
 Saved valuations (15.11.2026): every listed name and every thesis-book name gets 'saved_valuation' (the buy test of its
 newest research/companies valuation or research/rejected.jsonl row at the screen's close); a failing name is marked in
 screen_he.md ('הערכה שמורה'), never dropped. --research points at another research folder (tests).
@@ -31,6 +42,16 @@ FACTS = 'https://data.sec.gov/api/xbrl/companyfacts/CIK{:010d}.json'
 SUBS = 'https://data.sec.gov/submissions/CIK{:010d}.json'
 YAHOO = 'https://query1.finance.yahoo.com/v8/finance/chart/{}?period1={}&period2={}&interval=1d'
 BROWSER = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
+# the Nasdaq analyst pages answer only a browser-like request (data by Zacks; an unofficial public API)
+NASDAQ_SITE = dict(BROWSER, Origin='https://www.nasdaq.com', Referer='https://www.nasdaq.com/')
+EST_PAGES = (('surprise', 'https://api.nasdaq.com/api/company/{}/earnings-surprise'),
+             ('forecast', 'https://api.nasdaq.com/api/analyst/{}/earnings-forecast'),
+             ('momentum', 'https://api.nasdaq.com/api/analyst/{}/estimate-momentum'))
+CALENDAR = 'https://api.nasdaq.com/api/calendar/earnings?date={}'
+HISTORY_DIR = '_estimates_history'              # beside the output folder (under runs/: private, not in Git)
+# One Nasdaq page takes 1-3 seconds to answer (measured 25.11.2026), so three workers reach about 1.5 requests a second.
+# Eight workers reach the throttle's limit instead; the throttle, not the worker count, keeps the rate at about 4 a second.
+NASDAQ_GAP, NASDAQ_WORKERS = 0.25, 8
 
 
 class Throttle:
@@ -171,6 +192,103 @@ def get_prices(symbol, out, reuse, throttle, as_of):
     return rec
 
 
+def _nasdaq_page(url, throttle):
+    """One Nasdaq API page -> (state, data, message). state 'ok' (data: the 'data' node, which may be empty),
+    'no_symbol' (the page does not know the symbol) or 'error'. One retry on a network error (fetch, attempts=2)."""
+    throttle.wait()
+    try:
+        status, body = fetch(url, NASDAQ_SITE, attempts=2)
+    except Exception as e:                                         # noqa: BLE001 (a failed page is a recorded gap)
+        return 'error', None, type(e).__name__
+    if status != 200:
+        return 'no_symbol', None, f'status {status}'
+    try:
+        j = json.loads(body)
+    except ValueError:
+        return 'error', None, 'not JSON'
+    st = j.get('status') or {} if isinstance(j, dict) else {}
+    codes = [m for m in st.get('bCodeMessage') or [] if isinstance(m, dict)]
+    text = '; '.join(str(m.get('errorMessage')) for m in codes) or None
+    if st.get('rCode') not in (None, 200) and any(m.get('code') == 1001 for m in codes):
+        return 'no_symbol', None, text
+    if st.get('rCode') not in (None, 200):
+        return 'error', None, text or f"rCode {st.get('rCode')}"
+    return 'ok', j.get('data') if isinstance(j, dict) else None, text
+
+
+def get_estimates(symbol, out, reuse, throttle):
+    """The three Nasdaq analyst pages of one company, saved as estimates/<SYMBOL>.json: {symbol, queried_as,
+    retrieved_at_utc, raw {surprise, forecast, momentum} (the 'data' node of each page), errors}. A share-class symbol is
+    tried as listed, then in its dotted and hyphen forms (quality_momentum.symbol_variants). A page that answers 'no
+    record' is a saved gap; a network error is not saved, so the next run tries again. Never raises."""
+    path = os.path.join(out, 'estimates', symbol.replace('/', '_') + '.json')
+    if reuse and os.path.exists(path):
+        return _load(path)
+    rec = {'symbol': symbol, 'queried_as': None, 'retrieved_at_utc': _now(), 'raw': {k: None for k, _ in EST_PAGES}, 'errors': []}
+    failed = False
+    for variant in qm.symbol_variants(symbol):
+        raw, errors, known = {}, [], False
+        for key, url in EST_PAGES:
+            state, data, msg = _nasdaq_page(url.format(variant), throttle)
+            if state == 'no_symbol' and not known:
+                errors.append(f'{key}: {msg or "symbol not found"} ({variant})')
+                break                                              # the first page does not know this spelling: try the next
+            known = True
+            raw[key] = data
+            if state == 'error':
+                failed = True
+            if state != 'ok' or (msg and not data):
+                errors.append(f'{key}: {msg or state} ({variant})')
+        rec['errors'] += errors
+        if known:
+            rec['queried_as'] = variant
+            rec['raw'].update(raw)
+            break
+    if not failed:
+        _save(path, rec)
+    rec['fetch_failed'] = failed
+    return rec
+
+
+def read_history(folder, symbol):
+    """Our own earlier readings of one company's consensus: the lines of _estimates_history/<SYMBOL>.jsonl."""
+    path = os.path.join(folder, symbol.replace('/', '_') + '.jsonl')
+    if not os.path.isfile(path):
+        return []
+    rows = []
+    with open(path, encoding='utf-8') as f:
+        for line in f:
+            try:
+                rows.append(json.loads(line))
+            except ValueError:                                     # a broken line is skipped, never a crash
+                continue
+    return [r for r in rows if isinstance(r, dict)]
+
+
+def add_history(folder, symbol, lines, history):
+    """Appends today's readings once per as_of (a second run of the same day adds nothing)."""
+    if not lines or any(h.get('as_of') == lines[0]['as_of'] for h in history):
+        return False
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, symbol.replace('/', '_') + '.jsonl'), 'a', encoding='utf-8') as f:
+        f.write(''.join(json.dumps(x, separators=(',', ':')) + '\n' for x in lines))
+    return True
+
+
+def get_calendar(day, out, reuse, throttle):
+    """One day of the Nasdaq earnings calendar, saved as calendar/<day>.json: {date, retrieved_at_utc, rows, error}.
+    A day that failed is not saved (the next run tries again). Never raises."""
+    path = os.path.join(out, 'calendar', day + '.json')
+    if reuse and os.path.exists(path):
+        return _load(path)
+    state, data, msg = _nasdaq_page(CALENDAR.format(day), throttle)
+    rec = {'date': day, 'retrieved_at_utc': _now(), 'rows': (data or {}).get('rows') or [] if isinstance(data, dict) else [],
+           'error': None if state == 'ok' else (msg or state)}
+    if rec['error'] is None:
+        _save(path, rec)
+    return rec
+
+
 def thesis_book(research=None):
     d = os.path.join(research or os.path.join(ROOT, 'research'), 'companies')
     return sorted(x for x in os.listdir(d) if os.path.isdir(os.path.join(d, x))) if os.path.isdir(d) else []
@@ -201,7 +319,7 @@ def main(argv=None):
     a = ap.parse_args(argv)
     if '@' not in os.environ.get('SEC_USER_AGENT', ''):
         raise SystemExit('set SEC_USER_AGENT to "application contact-email" (SEC fair-access policy)')
-    for sub in ('raw', 'facts', 'prices'):
+    for sub in ('raw', 'facts', 'prices', 'estimates', 'calendar'):
         os.makedirs(os.path.join(a.out, sub), exist_ok=True)
     t0 = time.time()
     book = thesis_book(a.research)
@@ -232,9 +350,9 @@ def main(argv=None):
     spy_bars = get_prices('SPY', a.out, a.reuse, yh, a.as_of)
     spy = qm.trend_measures(spy_bars['adjclose'], spy_bars.get('close'), spy_bars.get('high'))
     if not spy:
-        raise SystemExit('SPY bars missing: the trend gates cannot be computed')
+        raise SystemExit('SPY bars missing: the last trading day is unknown and no price can be read')
     last_day = spy_bars['dates'][-1]
-    want = [r for r in rows if r['basis'] and (qm.needs_trend(r['quality']) or r['symbol'] in book)]
+    want = [r for r in rows if r['basis'] and (qm.needs_business(r['quality']) or r['symbol'] in book)]
     with ThreadPoolExecutor(3) as ex:
         bars = list(ex.map(lambda r: get_prices(r['symbol'], a.out, a.reuse, yh, a.as_of), want))
     fx = {}
@@ -247,7 +365,7 @@ def main(argv=None):
         stale = bool(b['dates']) and b['dates'][-1] != last_day
         tm = None if stale else qm.trend_measures(b['adjclose'], b.get('close'), b.get('high'))
         r['trend_measures'] = tm
-        r['trend'] = qm.trend_gates(tm, spy)
+        r['price_info'] = qm.price_info(tm, spy)                   # information only: no status reads it
         if tm is None:
             why = b.get('error') or ('last bar %s, not %s' % (b['dates'][-1], last_day) if stale else 'under 253 daily bars (%d)' % len(b['dates']))
             r['gaps'].append('prices: ' + why)
@@ -259,14 +377,52 @@ def main(argv=None):
         r.update(qm.price_columns(r, r['market_cap'], rate))
         if rate is None:
             r['gaps'].append('no exchange rate for %s: price multiples not computed' % r.get('currency'))
+
+    # business momentum: three Nasdaq analyst pages per company, about 4 requests a second
+    nq = Throttle(NASDAQ_GAP)
+    with ThreadPoolExecutor(NASDAQ_WORKERS) as ex:
+        ests = list(ex.map(lambda r: get_estimates(r['symbol'], a.out, a.reuse, nq), want))
+    hist_dir = os.path.join(os.path.dirname(os.path.abspath(a.out)), HISTORY_DIR)
+    est_gaps = []
+    for r, e in zip(want, ests):
+        est = qm.parse_estimates(e['raw'].get('surprise'), e['raw'].get('forecast'), e['raw'].get('momentum'))
+        history = read_history(hist_dir, r['symbol'])
+        r['business'] = qm.business_gates(est, history, a.as_of)
+        r.update(qm.business_columns(r['business']))
+        r['estimates'] = {'queried_as': e.get('queried_as'), 'retrieved_at_utc': e.get('retrieved_at_utc'), 'years': est['years'],
+                          'momentum': est['momentum'], 'surprises': est['surprises'][:4]}
+        why = [g['gate'] + ': ' + (g.get('note') or 'missing') for g in qm.missing(r['business'])]
+        if e.get('fetch_failed') or why:
+            why = (['fetch failed'] if e.get('fetch_failed') else []) + why + e['errors'][:3]
+            r['gaps'].append('analyst data: ' + '; '.join(why))
+            est_gaps.append({'symbol': r['symbol'], 'why': why})
+        notes = [g['note'] for g in r['business'] if g['pass'] is not None and g.get('note')] + [x for x in est['gaps'] if 'describes' in x]
+        r['gaps'] += ['analyst data: ' + x for x in notes]
+        # our own record of the consensus, dated by the day the pages were read (the as-of day in a normal run; a run
+        # over older saved pages records them under their own day, never under a later one)
+        add_history(hist_dir, r['symbol'], qm.history_lines(est, (e.get('retrieved_at_utc') or a.as_of)[:10]), history)
+    print(json.dumps({'step': 'estimates', 'n': len(want), 'gaps': len(est_gaps), 'seconds': round(time.time() - t0)}), flush=True)
+
     for r in rows:
-        r['status'] = qm.classify(r['quality'], r.get('trend'))
-        gates = r['quality'] + (r.get('trend') or [])
+        r['status'] = qm.classify(r['quality'], r.get('business'))
+        gates = r['quality'] + (r.get('business') or [])
         r['failed'], r['missing'] = qm.failed(gates), qm.missing(gates)
-        if r.get('trend_measures'):
-            r['rel_strength'] = r['trend_measures']['ret_12_1'] - spy['ret_12_1']
+        if r.get('price_info'):
+            r['rel_strength'] = r['price_info']['rel_strength']
+        r['divergence'] = qm.divergence(r.get('price_info'), r.get('business'))
+        r['flags'] = [qm.DIVERGENCE] if r['divergence'] else []
         if r.get('behind_latest_filing'):
             r['status'], r['note'] = 'incomplete', 'הדוח האחרון לא נקרא בנתוני ה-SEC'      # an older report is not a result
+
+    # earnings radar: who reported in the last 10 days, who reports in the next 14
+    cal, cal_gaps = [], []
+    for day in qm.calendar_days(a.as_of):
+        rec = get_calendar(day, a.out, a.reuse, nq)
+        cal += qm.parse_calendar(day, rec.get('rows') or [])
+        if rec.get('error'):
+            cal_gaps.append(day)
+    radar = dict(qm.earnings_radar(cal, rows, book, a.as_of), gaps=cal_gaps)
+    print(json.dumps({'step': 'calendar', 'rows': len(cal), 'seconds': round(time.time() - t0)}), flush=True)
 
     inu = [r for r in rows if r['in_universe']]
     std = [r for r in inu if r['route'] == 'standard']
@@ -274,7 +430,7 @@ def main(argv=None):
     near = sorted([r for r in std if r['status'] == 'near_miss'], key=lambda r: -r['market_cap'])
     fins = sorted([r for r in inu if r['route'] == 'financial' and r['status'] == 'pass'], key=lambda r: -(r.get('roe') or 0))
     fin_near = sorted([r for r in inu if r['route'] == 'financial' and r['status'] == 'near_miss'], key=lambda r: -r['market_cap'])
-    unread = sorted([r for r in inu if r['status'] == 'incomplete' and r['basis'] and not r['failed'] and r.get('trend')
+    unread = sorted([r for r in inu if r['status'] == 'incomplete' and r['basis'] and not r['failed'] and r.get('business')
                      and not r.get('behind_latest_filing')],
                     key=lambda r: -r['market_cap'])
     commodity = sorted([r for r in inu if r['route'] == 'commodity' and r['status'] in ('pass', 'near_miss')],
@@ -288,6 +444,10 @@ def main(argv=None):
     listed = {id(r): r for r in passers + near + fins + fin_near + commodity + ann + unread}
     listed.update({id(by_sym[qm.norm_symbol(t)]): by_sym[qm.norm_symbol(t)] for t in book if qm.norm_symbol(t) in by_sym})
     qm.attach_saved(list(listed.values()), saved, a.as_of, last_day, lean)
+    # the DELL pattern: listed names 25% or more below the high whose business gates both pass (information, no gate;
+    # commodity names keep the mark in their own table only)
+    diverging = qm.divergence_rows([('passers', 'עברה', passers), ('near_misses', 'כמעט', near), ('financials', 'פיננסים', fins),
+                                    ('financial_near_misses', 'פיננסים, כמעט', fin_near), ('annual_only', 'שנתי בלבד', ann)])
     book_rows = []
     for t in book:
         r = by_sym.get(qm.norm_symbol(t))
@@ -309,7 +469,9 @@ def main(argv=None):
         'standard_quality_all_pass': sum(1 for r in std if not qm.failed(r['quality']) and not qm.missing(r['quality'])),
         'standard_quality_one_fail': sum(1 for r in std if len(qm.failed(r['quality'])) == 1 and not qm.missing(r['quality'])),
         'standard_incomplete': sum(1 for r in std if r['status'] == 'incomplete'),
-        'trend_fetched': len(want), 'passers': len(passers), 'near_misses': len(near),
+        'business_fetched': len(want), 'analyst_data_gaps': len(est_gaps), 'price_gaps': len(price_gaps),
+        'divergence': len(diverging), 'radar_reported': len(radar['reported']), 'radar_upcoming': len(radar['upcoming']),
+        'passers': len(passers), 'near_misses': len(near),
         'financial_pass': len(fins), 'financial_near_miss': len(fin_near), 'no_gate_failed_but_incomplete': len(unread),
         'stale_period': sum(1 for r in inu if r.get('stale')), 'behind_latest_filing': sum(1 for r in inu if r.get('behind_latest_filing')),
         'annual_only_pass': sum(1 for r in ann if r['status'] == 'pass'),
@@ -327,8 +489,32 @@ def main(argv=None):
                                 ('commodity', commodity), ('annual_only', ann), ('unread', unread)], book_rows)
     res = {
         'as_of': a.as_of, 'last_trading_day': last_day, 'min_cap': a.min_cap, 'generated_at_utc': _now(),
-        'method': {'gates': qm.GATES, 'rank_keys': list(qm.RANK_KEYS), 'rank': 'plain sum of percentile ranks among the passers, no weights',
-                   'trend_prices': 'Yahoo daily adjusted closes', 'market_cap': 'Nasdaq listing feed snapshot',
+        'method': {'version': 2, 'gates': qm.GATES, 'rank_keys': list(qm.RANK_KEYS),
+                   'rank': 'plain sum of percentile ranks among the passers, no weights; a passer without eps_revision_pct (a zero '
+                           'or negative consensus has no percentage) gets the median of the others for that component',
+                   'price': 'information only since 25.11.2026, never a gate: the three price gates (12-1 return above SPY, price '
+                            'above a rising 200-day average, within 25% of the 52-week high) threw out DELL, 43% below its high, '
+                            'just before its best quarter. trend_measures, price_info and rel_strength are shown; no status and '
+                            'no rank reads them',
+                   'prices': 'Yahoo daily closes (adjusted for splits; the 12-1 return also for dividends)',
+                   'business_gates': {
+                       'eps_revisions': qm.RULE_REVISIONS, 'earnings_beats': qm.RULE_BEATS,
+                       'source': 'Nasdaq analyst pages per company (api.nasdaq.com: company/<S>/earnings-surprise, '
+                                 'analyst/<S>/earnings-forecast, analyst/<S>/estimate-momentum), data by Zacks; an unofficial '
+                                 'public API, read as a snapshot on the day of the run',
+                       'revision_window': f'{qm.REVISION_MONTH_DAYS} days (Nasdaq: the consensus now against one month ago; the '
+                                          'up/down count covers 4 weeks) until our own saved readings of the same fiscal year are '
+                                          f'older than that, then the oldest one within {qm.REVISION_HISTORY_DAYS} days',
+                       'history': f'{HISTORY_DIR}/<SYMBOL>.jsonl beside the output folder: one line per fiscal year and day read',
+                       'missing': 'a company without analyst data is incomplete, never a passer'},
+                   'divergence': f"flag '{qm.DIVERGENCE}' (information, no gate): the last close is "
+                                 f"{qm.GATES['divergence_below_high'] * 100:.0f}% or more below the 52-week high and both business "
+                                 'gates pass',
+                   'radar': f'Nasdaq earnings calendar (api.nasdaq.com/api/calendar/earnings), {qm.RADAR_BACK_DAYS} days back and '
+                            f'{qm.RADAR_AHEAD_DAYS} ahead; reported: status pass or near_miss with an EPS surprise of '
+                            f'+{qm.RADAR_MIN_SURPRISE_PCT:.0f}% or more, plus every thesis-book company; upcoming: passers, near '
+                            'misses and thesis-book companies',
+                   'market_cap': 'Nasdaq listing feed snapshot',
                    'fundamentals': 'SEC XBRL companyfacts as reported (no adjustment for one-offs or acquisitions)',
                    'fundamentals_source': 'the companyfacts API read per company (one request per company above the floor) and its '
                                           'submissions file for the SIC code; not the XBRL frames API',
@@ -348,9 +534,11 @@ def main(argv=None):
                       ['פיננסים', counts['route_financial']], ['זרות עם נתונים שנתיים בלבד', counts['route_annual_only']],
                       ['רגיל: עברו את כל תנאי האיכות', counts['standard_quality_all_pass']],
                       ['רגיל: נכשלו בתנאי איכות אחד', counts['standard_quality_one_fail']],
-                      ['נבדקה מגמת מחיר', counts['trend_fetched']], ['עברו הכול', counts['passers']],
-                      ['כמעט עברו', counts['near_misses']], ['חסר נתון (לא נספרו כעוברות)', counts['standard_incomplete']]],
-        'gaps': {'no_cik': no_cik, 'incomplete': incomplete, 'prices': price_gaps,
+                      ['נקראו נתוני אנליסטים ומחיר', counts['business_fetched']],
+                      ['מהן בלי נתוני אנליסטים מלאים', counts['analyst_data_gaps']], ['עברו הכול', counts['passers']],
+                      ['כמעט עברו', counts['near_misses']], ['חסר נתון (לא נספרו כעוברות)', counts['standard_incomplete']],
+                      ['המחיר ירד, העסק משתפר', counts['divergence']]],
+        'gaps': {'no_cik': no_cik, 'incomplete': incomplete, 'prices': price_gaps, 'estimates': est_gaps, 'calendar': cal_gaps,
                  'revenue_mixed_tags': [r['symbol'] for r in inu if r.get('revenue_mixed_tags')],
                  'stale_period': [{'symbol': r['symbol'], 'period_end': r.get('period_end'), 'status': r['status']} for r in inu if r.get('stale')],
                  'behind_latest_filing': [{'symbol': r['symbol'], 'period_end': r.get('period_end'), 'latest_filing': r.get('latest_filing')}
@@ -370,13 +558,23 @@ def main(argv=None):
                        '(הדוח האחרון חסר שם או בלי שורת הכנסות): לא נבדקו ולא נספרו, לא כעוברות ולא כנכשלות: '
                        + ', '.join(r['symbol'] for r in sorted(inu, key=lambda r: -r['market_cap']) if r.get('behind_latest_filing'))]
                       if any(r.get('behind_latest_filing') for r in inu) else []),
-                    'שווי השוק מרשימת Nasdaq, שיכולה לפגר ביום מסחר: סף השווי נבדק לפיה, ולחברות שנבדקה להן מגמה השווי והמכפילים '
+                    *([f"{len(est_gaps)} חברות בלי נתוני אנליסטים מלאים בדפי Nasdaq (בלי תחזית, בלי שני דוחות, או שהדף לא נקרא): "
+                       'לא נספרו כעוברות. מהן בלי שום תנאי שנכשל: '
+                       + (', '.join(r['symbol'] for r in unread if any(g['gate'] in ('eps_revisions', 'earnings_beats') for g in r['missing'])) or 'אין')
+                       + '. הרשימה המלאה ב-screen.json (gaps.estimates).'] if est_gaps else []),
+                    *([f"{len(price_gaps)} חברות בלי מחירים יומיים (עמודות המחיר ריקות; זה לא משפיע על התנאים)."] if price_gaps else []),
+                    'נתוני האנליסטים הם תמונת מצב של יום ההרצה. חברה שדיווחה בימים האחרונים: ההפתעה ברווח כבר מעודכנת, '
+                    'אבל מספרי האיכות עדיין מהרבעון הקודם, עד שהדוח יופיע בנתוני ה-SEC.',
+                    'תחזיות הרווח והפתעות הרווח הן המספרים של Zacks כפי שהם. הרווח למניה שם הוא לפי ההגדרה שלהם, '
+                    'ויכול לכלול או להשמיט סעיף חד-פעמי אחרת ממה שהחברה מציגה: הפתעה חריגה מאוד כדאי לבדוק מול הדוח.',
+                    'שווי השוק מרשימת Nasdaq, שיכולה לפגר ביום מסחר: סף השווי נבדק לפיה, ולחברות שנקרא להן מחיר השווי והמכפילים '
                     f'עודכנו למחיר הסגירה של {last_day}. סוג המניה נבחר לפי מחזור המסחר של יום אחד.',
                     'הוצאות הון: שורת הסך בדוח התזרים, או סכום שורות הרכיבים (בארות נפט, ציוד אחר) כשהוא גדול יותר.',
                     'תזרים חופשי = תזרים מפעילות פחות רכישת רכוש קבוע; פיתוח תוכנה מהוון ותגמול במניות לא נוכו.',
                     'צמיחה כוללת רכישות; לא נעשתה התאמה לצמיחה אורגנית.'],
         'passers': passers, 'near_misses': near, 'commodity': commodity, 'financials': fins, 'financial_near_misses': fin_near, 'unread': unread,
         'annual_only': ann, 'thesis_book': book_rows, 'saved_valuations': saved_list,
+        'divergence': diverging, 'radar': radar,
         'rows': rows,
     }
     _save(os.path.join(a.out, 'screen.json'), res)

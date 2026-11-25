@@ -1,3 +1,70 @@
+## Unreleased — screen v2: price is information, business-momentum gates (25.11.2026)
+
+The owner's correction of 25.11.2026: the screen's three price gates (12-1 return above SPY, price above a rising 200-day
+average, not more than 25% below the 52-week high) threw out DELL, 43% below its high, just before its best quarter. What
+he meant by "no collapsed stocks" is a company that fell because the business weakened and the market stopped believing in
+it (the PayPal pattern), not a stock that is below its high or its average. Not a valuation, not a buy signal, not
+backtested: the screen still only decides where research time goes.
+
+- **Price is information, never a gate.** `trend_gates()` and `needs_trend()` are gone; `price_info(t, spy)` returns
+  `{rel_strength, vs_ma200, ma200_rising, below_high}` and no status or rank reads it. `GATES['max_below_high']` is
+  removed; `GATES['divergence_below_high'] = 0.25` is used only by the flag below. `trend_measures()` is unchanged.
+- **Two business-momentum gates** (`business_gates(est, history, as_of)`), on every route (standard, financial,
+  commodity, annual-only), from the Nasdaq analyst pages per company (`company/<S>/earnings-surprise`,
+  `analyst/<S>/earnings-forecast`, `analyst/<S>/estimate-momentum`; data by Zacks; an unofficial public API):
+  - `eps_revisions`: analysts who raised minus analysts who cut over 4 weeks, summed over the current and the next fiscal
+    year, is >= 0, and the current fiscal year's consensus is not more than 1% lower over the longest window we have
+    (`eps_revision()`: one month from Nasdaq; our own saved reading of the same fiscal year end when it is older than
+    that and at most 100 days old). A zero or negative consensus, or a change of sign, has no usable percentage: the count
+    alone decides and the row says so.
+  - `earnings_beats`: the EPS surprise of each of the last two reported quarters is >= -2% (a zero consensus: reported
+    EPS >= consensus). Fewer than two quarters, or the newest older than 200 days: missing.
+  - Missing analyst data is `pass None`: the row is incomplete, never a passer, like a missing fundamental.
+  `parse_estimates()` reads the three pages defensively (numbers, numeric strings, 'N/A', nothing).
+- `classify(quality, business)`: pass / near_miss / incomplete / fail as before, over quality + business gates.
+  `needs_business()` replaces `needs_trend()` (same rule: at most one failed quality gate); analyst pages and prices are
+  fetched for those rows and for the thesis book.
+- **Divergence flag** `price_down_business_up` (information): the close is 25% or more below the 52-week high and both
+  business gates pass. Listed passers and near misses carrying it get their own section at the top of the report
+  ("המחיר ירד, העסק משתפר") and the mark ◆ in the tables. The section's table holds up to 12 passers (rank order) and up
+  to 12 near misses (highest 12-month revenue growth first); the rest, and flagged financial and annual-only names, are
+  named in one line each (`divergence_rows()`).
+- **Rank** among passers: `RANK_KEYS = (rev_growth_ttm, margin_change_pts, fcf_margin, eps_revision_pct)`; relative price
+  strength no longer ranks. A passer without `eps_revision_pct` gets the median of the others for that component
+  (`rank_filled`).
+- **Earnings radar** (`calendar_days`, `parse_calendar`, `earnings_radar`): the Nasdaq earnings calendar, 10 days back and
+  14 ahead. Reported: status pass or near_miss with an EPS surprise of +5% or more, plus every thesis-book company.
+  Upcoming: passers, near misses and thesis-book companies with their date.
+- `scripts/quality_momentum_screen.py`: `get_estimates()` (three pages per company, saved as
+  `OUT/estimates/<SYMBOL>.json` with the raw rows and any error; share-class symbols tried as listed, then dotted and
+  hyphenated; a network error is not saved, so the next `--reuse` run tries again), `get_calendar()`
+  (`OUT/calendar/<day>.json`), and our own consensus history `<parent of OUT>/_estimates_history/<SYMBOL>.jsonl` (one line
+  `{as_of, fiscal_year_end, consensus, n}` per fiscal year, once per day; `as_of` is the day the pages were read, which is
+  the as-of day in a normal run; under runs/, private). About 4 requests a second to Nasdaq; 8 workers, not 3, because one
+  page takes 1-3 seconds to answer (387 companies: about 6 minutes). screen.json: rows gain `business`, `price_info`, `eps_revision_pct`,
+  `eps_revision_window_days`, `surprise_min_pct`, `divergence`, `flags`, `estimates` and keep `trend_measures` and
+  `rel_strength`; the row key `trend` is gone. New top-level keys `divergence` and `radar`; `gaps.estimates`,
+  `gaps.calendar`; counts `business_fetched` (was `trend_fetched`), `analyst_data_gaps`, `price_gaps`, `divergence`,
+  `radar_reported`, `radar_upcoming`; `method.version` 2 with `price`, `business_gates`, `divergence`, `radar`.
+- `render_he`: the conditions and the "what the search says" bullets are rewritten for version 2; price columns are
+  labelled "(מידע)"; new columns "שינוי בתחזית הרווח" (with its window and the raised / cut counts) and "הפתעה ברווח, 2
+  רבעונים"; the saved-valuation marking is unchanged.
+- Untouched: the quality gates and their thresholds, the saved-valuation code, lean_model.
+- Trial on the saved 23.11.2026 screen data with the analyst pages read on 25.11 (a scratch copy; nothing under runs/
+  was changed): 387 companies read, 22 without full analyst data; passers 6 -> 36, near misses 29 -> 67; DELL moved from
+  fail (durability and two price gates) to near miss (durability only) and carries the flag; 69 listed names carry the
+  flag (53 of them passers or near misses: many growth names were far below their highs that week).
+- Honest limits: the analyst pages are a snapshot of the day they are read (a run for an older as-of date cannot rebuild
+  them); the revision window is one month until our own history is longer; Zacks's EPS is its own definition; a company
+  that has just reported still shows the quarter before in its quality numbers until the report reaches the SEC data.
+- `tests/test_quality_momentum.py`: 89 tests (54 before): the parser (numbers, strings, N/A, empty pages), each business
+  gate at its boundary, missing data, a negative or sign-changing consensus, our own history window, classify on every
+  route, a row 60% below its high that passes, statuses equal for any price path, the divergence flag, rank with a
+  missing revision, the radar filters, the fetchers against a faked `fetch`, and the script end to end offline.
+  `test_one_trend_failure_is_a_near_miss_two_gates_is_a_fail` keeps its name because lesson L10 in
+  `research/lessons.jsonl` points at it; it now tests the business gates. The lesson's own wording ("trend gates") was
+  not changed here.
+
 ## Unreleased — lean_model reporting keys (15.11.2026)
 
 Reporting only: no valuation changed. `scripts/lean_model.py` gains eight top-level keys that read the model's own numbers;
