@@ -761,17 +761,24 @@ gains `saved_valuations` and the counts `passers_saved_*`, `near_misses_saved_*`
 
 `quality_momentum` screen v2 (25.11.2026; price is information, never a gate): `price_info(t, spy) -> {rel_strength,
 vs_ma200, ma200_rising, below_high} | None`; `parse_estimates(surprise_json, forecast_json, momentum_json) ->
-{surprises, years, momentum, gaps}` (three Nasdaq analyst pages, data by Zacks); `eps_revision(est, history, as_of) ->
-{fiscal_year_end, now, then, pct, window_days, source nasdaq_month|own_history, state ok|not_positive|no_data}`;
-`business_gates(est, history=(), as_of=None) -> [eps_revisions, earnings_beats]` (pass None = missing: the row is
-incomplete); `classify(quality, business)`; `needs_business(quality)`; `divergence(price_info, business)` (flag
-`price_down_business_up`) and `divergence_rows(lists)` (the report's top section: passers in rank order, the other
-lists by 12-month revenue growth); `rank(rows)` on `RANK_KEYS` (a missing `eps_revision_pct` gets the median);
-`history_lines(est, as_of)`; `symbol_variants(symbol)`; `calendar_days(as_of)`, `parse_calendar(day, payload)`,
-`earnings_radar(calendar, rows, book, as_of) -> {reported, upcoming}`. Row keys: `business`, `price_info`,
-`trend_measures`, `rel_strength`, `eps_revision_pct`, `eps_revision_window_days`, `surprise_min_pct`, `divergence`,
-`flags`, `estimates`; screen.json keys `divergence`, `radar`, `gaps.estimates`, `gaps.calendar`. The script also writes
-`OUT/estimates/<SYMBOL>.json`, `OUT/calendar/<day>.json` and `<parent of OUT>/_estimates_history/<SYMBOL>.jsonl`.
+{surprises, years, momentum, gaps}` (three Nasdaq analyst pages; Nasdaq's vendor is Zacks; 999 on the momentum page is
+"no value"); `eps_revision(est, history, as_of, read_on=None) -> {fiscal_year_end, now, then, pct, window_days, source
+nasdaq_month|own_history, state ok|not_positive|no_data, notes}` (a saved reading on another per-share scale is
+skipped; ages are measured from `read_on`); `business_gates(est, history=(), as_of=None, read_on=None) ->
+[eps_revisions, earnings_beats]` (pass None = missing with `why`: the row is incomplete; `failed_legs` on a failed
+revisions gate; both gates missing with why `erratic` when EPS swings beyond 25% above and below the consensus);
+`fail_count(quality, business)` (the two analyst gates are one failed condition) and `classify(quality, business)`;
+`needs_business(quality)`; `improving(business)` and `divergence(price_info, business, status=None)` (flag
+`price_down_business_up`, passers and near misses only) and `divergence_rows(lists)` (the report's top section: passers
+in rank order, the other lists by 12-month revenue growth); `rank(rows)` on `RANK_KEYS` (a missing `eps_revision_pct`
+gets the median); `history_lines(est, as_of)` (lines {as_of, fiscal_year_end, consensus, n, ref_reported, ref_eps});
+`symbol_variants(symbol)`, `sibling_symbols(symbol, other_classes)`; `calendar_days(as_of)`, `parse_calendar(day,
+payload)`, `earnings_radar(calendar, rows, book, as_of) -> {reported, upcoming}` (items carry `failed_gates`,
+`in_quality`). Row keys: `business`, `price_info`, `trend_measures`, `rel_strength`, `eps_revision_pct`,
+`eps_revision_window_days`, `surprise_min_pct`, `divergence`, `flags`, `estimates` (with `read_from`); screen.json keys
+`divergence`, `radar`, `analyst_read`, `gaps.estimates`, `gaps.calendar`. The script also writes
+`OUT/estimates/<SYMBOL>.json`, `OUT/calendar/<day>.json` and `<parent of OUT>/_estimates_history/<SYMBOL>.jsonl`
+(under runs/: kept only while that folder is kept).
 
 `research_store.latest(ticker, root='.', full=False, run=None)` (CLI `research-latest T [--full]`): the newest dated
 folder of research/companies/<T>/ of any kind through `valuation_record.latest_valuation`, with {ticker, as_of, folder,

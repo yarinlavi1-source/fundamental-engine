@@ -10,15 +10,20 @@ are read on their own measures; filers with annual XBRL only (20-F, 40-F) are re
 Version 2 (25.11.2026, the owner's correction after DELL): price is information, never a gate. The three price gates
 (12-1 return above SPY, price above a rising 200-day average, within 25% of the 52-week high) threw out DELL, 43% below
 its high, just before its best quarter. trend_measures() and price_info() still describe the price, and no status reads
-them. What replaced them is business_gates(): two gates from analyst data (Nasdaq analyst pages, data by Zacks, an
-unofficial public API), parsed by parse_estimates():
+them. What replaced them is business_gates(): two gates from analyst data (Nasdaq analyst pages, data attributed to
+Zacks, an unofficial public API), parsed by parse_estimates():
 - eps_revisions: analysts are not cutting (revisions up minus down over 4 weeks, current and next fiscal year, >= 0; and
   the current fiscal year's consensus not more than 1% lower over the longest window we have: one month from Nasdaq, or
-  our own saved readings of the same fiscal year, up to 100 days back);
-- earnings_beats: reported EPS at or above consensus in each of the last two reported quarters (a miss of up to 2%
-  counts as met).
-A company that fell because its business weakened fails these; a good business whose stock fell with its sector passes
-and is flagged 'price_down_business_up' (divergence()). earnings_radar() lists who reported lately and who reports next.
+  our own saved readings of the same fiscal year, up to 100 days back, when they are on the same per-share scale);
+- earnings_beats: reported EPS at or above consensus in each of the last two reported quarters (a miss of up to 2%, or
+  of up to one cent, counts as met).
+What each part stops: a business that stopped growing (the PayPal pattern) is stopped by the quality gates (PYPL fails
+four of them and passes both analyst gates). The analyst gates only add a check that the last two quarters and the last
+month of estimates are not getting worse. The two analyst gates count as ONE failed condition (fail_count): a missed
+quarter lowers the full-year consensus by itself, so both gates read the same event. An EPS series that swings far
+above and far below the consensus in consecutive quarters (investment gains, a tiny base) is not readable: both gates
+are missing, never failed. A good business whose stock fell while analysts raise estimates and the company beats is
+flagged 'price_down_business_up' (divergence()). earnings_radar() lists who reported lately and who reports next.
 
 Saved valuations (15.11.2026, the MSFT slip of 06.11.2026): saved_valuation() reads what the research folder remembers
 about a screened name (the newest dated valuation through valuation_record.latest_valuation, and research/rejected.jsonl
@@ -35,9 +40,10 @@ from . import lean_freeze, valuation_record
 
 GATES = {'rev_growth_ttm': 0.15, 'rev_growth_q': 0.15, 'margin_drop_pts': 1.0, 'share_growth': 0.03,
          'roe': 0.15, 'rev_cagr_3y': 0.10,
-         # business momentum (analyst data): the consensus may slip by up to 1%; a miss of up to 2% counts as met
-         'eps_revision_min': -0.01, 'surprise_min_pct': -2.0,
-         # information only, no gate: this far below the 52-week high with both business gates passing is flagged
+         # business momentum (analyst data): the consensus may slip by up to 1%; a miss of up to 2%, or of up to one
+         # cent a share, counts as met (2% of a small EPS is less than the cent EPS is reported in)
+         'eps_revision_min': -0.01, 'surprise_min_pct': -2.0, 'surprise_cent_tolerance': 0.01,
+         # information only, no gate: this far below the 52-week high with the business improving is flagged
          'divergence_below_high': 0.25}
 HISTORY_DAYS = 1650                             # facts kept: four completed fiscal years back from the as-of date
 MARGIN_JUMP_PTS = 10.0                          # a larger one-year margin change is flagged as a likely one-off (no gate)
@@ -46,6 +52,12 @@ RANK_KEYS = ('rev_growth_ttm', 'margin_change_pts', 'fcf_margin', 'eps_revision_
 RANK_FILL_MEDIAN = ('eps_revision_pct',)        # a passer without this number gets the median of the others
 REVISION_MONTH_DAYS = 30                        # Nasdaq's estimate-momentum page: the consensus now against one month ago
 REVISION_HISTORY_DAYS = 100                     # our own saved readings of the same fiscal year are read this far back
+REVISION_MIN_OWN_DAYS = 7                       # an own reading younger than this never stands in for a missing month-ago number
+SCALE_LIMIT = 1.8                               # a consensus this far from our saved reading: a split, not a revision
+RESTATED_EPS = 0.02                             # a reported quarter's EPS this far from what we saved: the per-share scale changed
+MOMENTUM_NO_VALUE = 999.0                       # the estimate-momentum page writes 999 where it has no consensus
+MOMENTUM_TABLE_TOLERANCE = 0.011                # its current consensus must match the forecast table's to the cent
+ERRATIC_SURPRISE_PCT = 25.0                     # two consecutive surprises beyond this, in opposite directions: EPS is not readable
 SURPRISE_STALE_DAYS = 200                       # the newest reported quarter older than this: the beats gate is missing
 RADAR_BACK_DAYS, RADAR_AHEAD_DAYS = 10, 14      # the earnings radar: calendar days before and after the as-of date
 RADAR_MIN_SURPRISE_PCT = 5.0                    # a screened name is listed as 'reported' from this EPS surprise up
@@ -688,10 +700,26 @@ def symbol_variants(symbol):
     return out
 
 
+def sibling_symbols(symbol, other_classes=()):
+    """Other share classes of the same company, tried when the screened class has no analyst record (Moog: MOG-B has
+    none, MOG.A has all three pages): the other classes the listing gave for the same SEC number, then for a symbol
+    with a class suffix its A/B sister and its root (MOG-B -> MOG-A, MOG). The estimates are per share of the same
+    company and the gates read percentages, so any class of it answers for the rest."""
+    s = norm_symbol(symbol)
+    out = [norm_symbol(o) for o in other_classes or ()]
+    if '-' in s:
+        root, cls = s.rsplit('-', 1)
+        if cls in ('A', 'B'):
+            out.append(root + '-' + ('B' if cls == 'A' else 'A'))
+        out.append(root)
+    return [x for x in dict.fromkeys(out) if x and x != s]
+
+
 def parse_estimates(surprise_json, forecast_json, momentum_json):
     """One company's analyst record from three Nasdaq pages (the raw JSON of each; None or {} when a page gave nothing):
     company/<S>/earnings-surprise, analyst/<S>/earnings-forecast and analyst/<S>/estimate-momentum (data by Zacks).
     Values come as numbers, numeric strings, 'N/A' or not at all: each is read with _fnum and a missing one is None.
+    The estimate-momentum page writes 999 where it has no consensus (MOMENTUM_NO_VALUE): read as missing, with a gap.
 
     Returns {'surprises': reported quarters, newest first [{fiscal_qtr_end 'YYYY-MM', date_reported, eps, consensus,
     surprise_pct}]; 'years': fiscal-year consensus rows, the current year first [{fiscal_year_end 'YYYY-MM', consensus,
@@ -722,7 +750,15 @@ def parse_estimates(surprise_json, forecast_json, momentum_json):
         gaps.append('no yearly rows on the earnings-forecast page')
     cc = _data(momentum_json).get('changeInConsensus')
     cc = cc if isinstance(cc, dict) else {}
-    mean = {k: _fnum((cc.get(k) or {}).get('yrMean')) if isinstance(cc.get(k), dict) else None for k in ('currentData', 'weekData', 'monthData')}
+    mean, no_value = {}, []
+    for k in ('currentData', 'weekData', 'monthData'):
+        v = _fnum(cc[k].get('yrMean')) if isinstance(cc.get(k), dict) else None
+        if v is not None and abs(abs(v) - MOMENTUM_NO_VALUE) < 1e-6:        # 999 = the page has no consensus for that day
+            no_value.append(k[:-4])
+            v = None
+        mean[k] = v
+    if no_value:
+        gaps.append('estimate-momentum gives %g (no value) for: %s' % (MOMENTUM_NO_VALUE, ', '.join(no_value)))
     momentum = None
     if any(v is not None for v in mean.values()):
         momentum = {'fiscal_year_end': _month(cc.get('fiscalYearEndText')), 'current': mean['currentData'],
@@ -736,37 +772,79 @@ def parse_estimates(surprise_json, forecast_json, momentum_json):
 
 
 def history_lines(est, as_of):
-    """Our own record of one reading of the consensus, one line per fiscal year: [{as_of, fiscal_year_end, consensus, n}].
-    as_of: the day the pages were read. The script appends the lines to _estimates_history/<SYMBOL>.jsonl once per such
-    day; eps_revision() reads them on later runs."""
-    return [{'as_of': as_of, 'fiscal_year_end': y['fiscal_year_end'], 'consensus': y['consensus'], 'n': y['n']}
-            for y in (est or {}).get('years') or [] if y.get('consensus') is not None]
+    """Our own record of one reading of the consensus, one line per fiscal year: [{as_of, fiscal_year_end, consensus, n,
+    ref_reported, ref_eps}]. as_of: the day the pages were read. ref_reported, ref_eps: the newest reported quarter and
+    its EPS as the page showed them that day; a later run that finds another EPS for the same quarter knows the
+    per-share scale changed (a split) and does not compare the two readings. The script appends the lines to
+    _estimates_history/<SYMBOL>.jsonl once per such day; eps_revision() reads them on later runs."""
+    est = est or {}
+    ref = next((q for q in est.get('surprises') or [] if q.get('date_reported') and q.get('eps') is not None), {})
+    return [{'as_of': as_of, 'fiscal_year_end': y['fiscal_year_end'], 'consensus': y['consensus'], 'n': y['n'],
+             'ref_reported': ref.get('date_reported'), 'ref_eps': ref.get('eps')}
+            for y in est.get('years') or [] if y.get('consensus') is not None]
 
 
-def eps_revision(est, history=(), as_of=None):
+def _scale_break(est, reading, now):
+    """Why one saved reading cannot be compared with today's consensus, or None. Our saved number is per share at the
+    share count of its day, and the feed restates its own numbers after a split: a 10-for-1 split would read as a 90%
+    cut. Two checks: the consensus moved by more than SCALE_LIMIT either way; or the EPS of the quarter we saved as a
+    reference is shown differently today (more than RESTATED_EPS)."""
+    then = _fnum(reading.get('consensus'))
+    if then and now and then > 0 and now > 0 and not 1 / SCALE_LIMIT < now / then < SCALE_LIMIT:
+        return 'consensus %g against %g saved on %s' % (now, then, reading.get('as_of'))
+    ref_eps = _fnum(reading.get('ref_eps'))
+    if ref_eps and reading.get('ref_reported'):
+        cur = next((q.get('eps') for q in est.get('surprises') or [] if q.get('date_reported') == reading['ref_reported']), None)
+        if cur and abs(cur / ref_eps - 1) > RESTATED_EPS:
+            return 'the EPS reported on %s reads %g, we saved %g on %s' % (reading['ref_reported'], cur, ref_eps, reading.get('as_of'))
+    return None
+
+
+def eps_revision(est, history=(), as_of=None, read_on=None):
     """The change in the current fiscal year's consensus EPS over the longest window we have.
     Nasdaq gives the consensus now against one month ago (REVISION_MONTH_DAYS). history: our own saved readings
-    (history_lines of earlier runs). When it holds a reading of the SAME fiscal year end that is older than Nasdaq's
-    month and at most REVISION_HISTORY_DAYS old, the oldest such reading is the starting point (also when Nasdaq gives
-    no month-ago number). Returns {fiscal_year_end, now, then, pct (a fraction), window_days, source ('nasdaq_month' |
-    'own_history'), state}. state 'ok'; 'not_positive' when either consensus is zero or negative (a loss, or a change of
-    sign: no usable percentage, pct None); 'no_data' when there is nothing to compare (pct None)."""
+    (history_lines of earlier runs). read_on: the day the pages were read (default as_of); the age of a saved reading is
+    measured from it, so a reading saved from these same pages is never compared with itself. When history holds a
+    reading of the SAME fiscal year end that is older than Nasdaq's month and at most REVISION_HISTORY_DAYS old, the
+    oldest such reading is the starting point; when Nasdaq gives no month-ago number, an own reading at least
+    REVISION_MIN_OWN_DAYS old stands in. A saved reading on another per-share scale (_scale_break) is skipped and named
+    in notes. The month pair is not used when the page's current consensus disagrees with the forecast table's for the
+    same fiscal year (a stale or broken page; notes say so).
+    Returns {fiscal_year_end, now, then, pct (a fraction), window_days, source ('nasdaq_month' | 'own_history'), state,
+    notes}. state 'ok'; 'not_positive' when either consensus is zero or negative (a loss, or a change of sign: no usable
+    percentage, pct None); 'no_data' when there is nothing to compare (pct None)."""
     est = est or {}
     mom, years = est.get('momentum') or {}, est.get('years') or []
     fy = mom.get('fiscal_year_end') or (years[0]['fiscal_year_end'] if years else None)
     row = next((y for y in years if y['fiscal_year_end'] == fy), None)
     table_now = row['consensus'] if row else None
-    out = {'fiscal_year_end': fy, 'now': None, 'then': None, 'pct': None, 'window_days': None, 'source': None, 'state': 'no_data'}
-    old = None
-    if as_of and fy and table_now is not None:
+    out = {'fiscal_year_end': fy, 'now': None, 'then': None, 'pct': None, 'window_days': None, 'source': None, 'state': 'no_data',
+           'notes': []}
+    month_pair = mom.get('current') is not None and mom.get('month_ago') is not None
+    if month_pair and table_now is not None and abs(mom['current'] - table_now) > MOMENTUM_TABLE_TOLERANCE:
+        out['notes'].append('estimate-momentum says the consensus is %g, the forecast table says %g: the month-ago number is not used'
+                            % (mom['current'], table_now))
+        month_pair = False
+    ref = read_on or as_of
+    own = []
+    if ref and fy and table_now is not None:
         for h in history or ():
             if h.get('fiscal_year_end') != fy or _fnum(h.get('consensus')) is None or not h.get('as_of'):
                 continue
-            age = _days(h['as_of'], as_of)
-            if 0 < age <= REVISION_HISTORY_DAYS and (old is None or age > old[0]):
-                old = (age, _fnum(h['consensus']))
-    month_pair = mom.get('current') is not None and mom.get('month_ago') is not None
-    if old and (old[0] > REVISION_MONTH_DAYS or not month_pair):
+            try:
+                age = _days(h['as_of'], ref)
+            except (TypeError, ValueError):
+                continue
+            if 0 < age <= REVISION_HISTORY_DAYS:
+                own.append((age, h))
+    old = None
+    for age, h in sorted(own, key=lambda x: -x[0]):                 # the oldest reading on today's per-share scale
+        why = _scale_break(est, h, table_now)
+        if why is None:
+            old = (age, _fnum(h['consensus']))
+            break
+        out['notes'].append('saved reading not compared (per-share scale changed: a split?): ' + why)
+    if old and (old[0] > REVISION_MONTH_DAYS or (not month_pair and old[0] >= REVISION_MIN_OWN_DAYS)):
         out.update(now=table_now, then=old[1], window_days=old[0], source='own_history')
     elif month_pair:
         out.update(now=mom['current'], then=mom['month_ago'], window_days=REVISION_MONTH_DAYS, source='nasdaq_month')
@@ -781,28 +859,84 @@ def eps_revision(est, history=(), as_of=None):
 
 RULE_REVISIONS = ('analysts are not cutting: EPS revisions up minus down over 4 weeks (current and next fiscal year) >= 0 '
                   'and the current-year consensus not more than 1% lower over the window')
-RULE_BEATS = 'reported EPS at or above consensus in each of the last two reported quarters (a miss of up to 2% counts as met)'
+RULE_BEATS = ('reported EPS at or above consensus in each of the last two reported quarters (a miss of up to 2%, or of up '
+              'to one cent a share, counts as met)')
+# why a business gate is missing (gate key 'why'); the Hebrew report words them in MISSING_HE
+NOTE = {'no_analyst_data': 'no analyst data',
+        'erratic': 'reported EPS swung more than %.0f%% above the consensus in one of the last two quarters and more than '
+                   '%.0f%% below it in the other (investment gains or a tiny base): not readable, so not failed'
+                   % (ERRATIC_SURPRISE_PCT, ERRATIC_SURPRISE_PCT),
+        'no_count': 'no count of raised and cut estimates',
+        'no_earlier': 'no earlier consensus to compare with',
+        'few_quarters': 'fewer than two reported quarters',
+        'no_consensus': 'a reported quarter without EPS or consensus',
+        'stale': 'the newest reported quarter (%s) is more than %d days old'}
 
 
-def business_gates(est, history=(), as_of=None):
+def _met(q):
+    """One reported quarter against its consensus: True (met: a surprise of -2% or better, or a miss of up to one cent
+    a share), False (missed), None (EPS or consensus unknown)."""
+    eps, cons, pct = q.get('eps'), q.get('consensus'), q.get('surprise_pct')
+    if pct is None and (eps is None or cons is None):
+        return None
+    if pct is not None and pct >= GATES['surprise_min_pct'] - EPS:
+        return True
+    return eps is not None and cons is not None and eps >= cons - GATES['surprise_cent_tolerance'] - EPS
+
+
+def business_gates(est, history=(), as_of=None, read_on=None):
     """The two business-momentum gates from one company's parsed analyst record (parse_estimates); est None = nothing was
-    fetched or the pages were empty: both gates are missing (pass None), and a row with a missing gate is 'incomplete',
-    never a passer, exactly like a missing fundamental.
+    fetched or the pages were empty: both gates are missing (pass None, 'why' says which reason), and a row with a
+    missing gate is 'incomplete', never a passer, exactly like a missing fundamental. read_on: the day the pages were
+    read (default as_of), see eps_revision().
 
-    eps_revisions: pass when (analysts who raised) - (analysts who cut) over the current and the next fiscal year is
-    >= 0 AND the consensus change of eps_revision() is >= -1%. value = that change as a fraction (eps_revision_pct).
-    A consensus that is zero or negative, or that changed sign, has no usable percentage: value None, and the up/down
-    count alone decides (note says so). No count, or no consensus to compare: missing.
-    earnings_beats: pass when the EPS surprise of each of the last two quarters reported on or before as_of is >= -2%
-    (a zero consensus: reported EPS >= consensus). value = the smaller of the two surprises, in percent. Fewer than
-    two reported quarters, or the newest one older than SURPRISE_STALE_DAYS: missing."""
+    eps_revisions has two legs: (analysts who raised) - (analysts who cut) over the current and the next fiscal year is
+    >= 0, AND the consensus change of eps_revision() is >= -1%. value = that change as a fraction (eps_revision_pct).
+    A leg that is known to fail fails the gate (failed_legs: 'count', 'consensus'); the gate is missing only when no
+    known leg fails and one is unknown. A consensus that is zero or negative, or that changed sign, has no usable
+    percentage: value None, and the up/down count alone decides (note says so).
+    earnings_beats: each of the last two quarters reported on or before as_of met its consensus (_met: a surprise of
+    -2% or better, or a miss of up to one cent a share). value = the smaller of the two surprises, in percent. A known
+    miss fails the gate; otherwise fewer than two reported quarters, or one without numbers: missing. The newest
+    quarter older than SURPRISE_STALE_DAYS: missing.
+    Erratic EPS: when the last two surprises are both beyond ERRATIC_SURPRISE_PCT and point in opposite directions, the
+    reported EPS is not tracking the business (marks on investments, a base of a few cents): BOTH gates are missing
+    with why 'erratic', never failed (the full-year consensus absorbs the same swings)."""
     rev = {'gate': 'eps_revisions', 'value': None, 'pass': None, 'rule': RULE_REVISIONS, 'up': None, 'down': None, 'net': None,
-           'window_days': None, 'source': None, 'fiscal_year_end': None, 'now': None, 'then': None, 'note': None}
-    beat = {'gate': 'earnings_beats', 'value': None, 'pass': None, 'rule': RULE_BEATS, 'quarters': [], 'note': None}
-    if not est:
-        rev['note'] = beat['note'] = 'no analyst data'
+           'window_days': None, 'source': None, 'fiscal_year_end': None, 'now': None, 'then': None, 'failed_legs': [],
+           'note': None, 'why': None}
+    beat = {'gate': 'earnings_beats', 'value': None, 'pass': None, 'rule': RULE_BEATS, 'quarters': [], 'note': None, 'why': None}
+
+    def unknown(g, why, *args):
+        g.update(why=why, note=NOTE[why] % args if args else NOTE[why])
+    if not est or not (est.get('surprises') or est.get('years') or est.get('momentum')):
+        unknown(rev, 'no_analyst_data')
+        unknown(beat, 'no_analyst_data')
         return [rev, beat]
-    w = eps_revision(est, history, as_of)
+    known = [q for q in est.get('surprises') or [] if not (as_of and q.get('date_reported') and q['date_reported'] > as_of)]
+    last2 = known[:2]
+    beat['quarters'] = last2
+    met = [_met(q) for q in last2]
+    pcts = [q['surprise_pct'] for q in last2 if q.get('surprise_pct') is not None]
+    newest = last2[0].get('date_reported') if last2 else None
+    erratic = len(pcts) == 2 and min(pcts) < -ERRATIC_SURPRISE_PCT and max(pcts) > ERRATIC_SURPRISE_PCT
+    if as_of and newest and _days(newest, as_of) > SURPRISE_STALE_DAYS:
+        unknown(beat, 'stale', newest, SURPRISE_STALE_DAYS)
+    elif erratic:
+        unknown(beat, 'erratic')
+        beat['value'] = min(pcts)
+    elif False in met:
+        beat.update({'pass': False, 'value': min(pcts) if pcts else None})
+    elif len(last2) < 2:
+        unknown(beat, 'few_quarters')
+    elif None in met:
+        unknown(beat, 'no_consensus')
+    else:
+        beat.update({'pass': True, 'value': min(pcts) if pcts else None})
+        if len(pcts) < 2:
+            beat['note'] = 'a zero consensus has no surprise percentage: reported EPS is compared with it directly'
+
+    w = eps_revision(est, history, as_of, read_on)
     years = est.get('years') or []
     first = next((i for i, y in enumerate(years) if y['fiscal_year_end'] == w['fiscal_year_end']), 0)
     counted = [y for y in years[first:first + 2] if y.get('up') is not None and y.get('down') is not None]
@@ -810,38 +944,23 @@ def business_gates(est, history=(), as_of=None):
         rev.update(up=sum(y['up'] for y in counted), down=sum(y['down'] for y in counted))
         rev['net'] = rev['up'] - rev['down']
     rev.update({k: w[k] for k in ('window_days', 'source', 'fiscal_year_end', 'now', 'then')}, value=w['pct'])
-    if rev['net'] is None:
-        rev['note'] = 'no count of raised and cut estimates'
+    if w['notes']:
+        rev['note'] = '; '.join(w['notes'])
+    legs = [name for name, bad in (('count', rev['net'] is not None and rev['net'] < 0),
+                                   ('consensus', w['state'] == 'ok' and w['pct'] < GATES['eps_revision_min'] - EPS)) if bad]
+    if erratic:
+        unknown(rev, 'erratic')
+    elif legs:
+        rev.update({'pass': False, 'failed_legs': legs})
+    elif rev['net'] is None:
+        unknown(rev, 'no_count')
     elif w['state'] == 'no_data':
-        rev['note'] = 'no earlier consensus to compare with'
+        rev.update(why='no_earlier', note='; '.join([NOTE['no_earlier']] + w['notes']))
     elif w['state'] == 'not_positive':
-        rev['pass'] = rev['net'] >= 0
+        rev['pass'] = True
         rev['note'] = 'consensus EPS zero or negative (or it changed sign): no usable percentage, the up/down count decides'
     else:
-        rev['pass'] = rev['net'] >= 0 and w['pct'] >= GATES['eps_revision_min'] - EPS
-    known = [q for q in est.get('surprises') or [] if not (as_of and q.get('date_reported') and q['date_reported'] > as_of)]
-    last2 = known[:2]
-    beat['quarters'] = last2
-    met = []
-    for q in last2:
-        if q.get('surprise_pct') is not None:
-            met.append(q['surprise_pct'] >= GATES['surprise_min_pct'] - EPS)
-        elif q.get('eps') is not None and q.get('consensus') is not None:
-            met.append(q['eps'] >= q['consensus'] - EPS)
-        else:
-            met.append(None)
-    newest = last2[0].get('date_reported') if last2 else None
-    if len(last2) < 2:
-        beat['note'] = 'fewer than two reported quarters'
-    elif None in met:
-        beat['note'] = 'a reported quarter without EPS or consensus'
-    elif as_of and newest and _days(newest, as_of) > SURPRISE_STALE_DAYS:
-        beat['note'] = 'the newest reported quarter (%s) is more than %d days old' % (newest, SURPRISE_STALE_DAYS)
-    else:
-        pcts = [q['surprise_pct'] for q in last2 if q.get('surprise_pct') is not None]
-        beat.update({'pass': all(met), 'value': min(pcts) if pcts else None})
-        if len(pcts) < 2:
-            beat['note'] = 'a zero consensus has no surprise percentage: reported EPS is compared with it directly'
+        rev['pass'] = True
     return [rev, beat]
 
 
@@ -853,11 +972,29 @@ def business_columns(business):
             'surprise_min_pct': (g.get('earnings_beats') or {}).get('value')}
 
 
-def divergence(info, business):
-    """The DELL pattern, as information (no status reads it): the price is 25% or more below its 52-week high and both
-    business gates pass. info: price_info(); business: business_gates()."""
-    return bool(info and business and info.get('below_high') is not None
-                and info['below_high'] <= -GATES['divergence_below_high'] + EPS and all(g['pass'] is True for g in business))
+def improving(business):
+    """True when the analyst data shows the business getting better, not only 'not worse': both gates pass, more
+    analysts raised than cut, the consensus is higher than at the start of the window, and reported EPS was at or above
+    the consensus in each of the last two quarters. A gate passes with no analyst move at all, with a consensus up to
+    1% lower and with misses of up to 2%; none of those is an improvement."""
+    g = {x['gate']: x for x in business or []}
+    rev, beat = g.get('eps_revisions'), g.get('earnings_beats')
+    if not rev or not beat or rev['pass'] is not True or beat['pass'] is not True:
+        return False
+    qs = beat.get('quarters') or []
+    at_or_above = [q['surprise_pct'] >= 0 if q.get('surprise_pct') is not None
+                   else q.get('eps') is not None and q.get('consensus') is not None and q['eps'] >= q['consensus'] for q in qs]
+    return (rev.get('net') or 0) > 0 and (rev.get('value') or 0) > 0 and len(qs) == 2 and all(at_or_above)
+
+
+def divergence(info, business, status=None):
+    """The DELL pattern, as information (no status reads it): the price is 25% or more below its 52-week high while the
+    business improves (improving(): analysts raise, the consensus is up, the last two quarters were at or above it).
+    info: price_info(); business: business_gates(); status: when given, only a 'pass' or 'near_miss' row is flagged."""
+    if status is not None and status not in ('pass', 'near_miss'):
+        return False
+    return bool(info and info.get('below_high') is not None
+                and info['below_high'] <= -GATES['divergence_below_high'] + EPS and improving(business))
 
 
 def failed(gates):
@@ -868,15 +1005,22 @@ def missing(gates):
     return [g for g in gates if g['pass'] is None]
 
 
+def fail_count(quality, business):
+    """Failed conditions of one row. Each quality gate counts; the two analyst gates count ONCE together: a missed
+    quarter lowers the full-year consensus by about the same cents and analysts log their cuts, so eps_revisions and
+    earnings_beats fail on the same event (the run of 24.11.2026: of the names that reported within 30 days, 33 of the
+    45 that missed by more than 2% also failed a revisions leg, against 56 of the 235 that did not miss)."""
+    return len(failed(quality)) + (1 if failed(business or []) else 0)
+
+
 def classify(quality, business):
-    """'pass' (no gate failed and none missing across quality + business), 'near_miss' (exactly one gate failed, none
-    missing), 'incomplete' (a number is missing and at most one gate failed), 'fail'. business None = not fetched because
-    quality already failed twice. Price is not an input: no status depends on it."""
-    q_fail = len(failed(quality))
+    """'pass' (no gate failed and none missing across quality + business), 'near_miss' (exactly one failed condition,
+    none missing; the two analyst gates are one condition, see fail_count), 'incomplete' (a number is missing and at
+    most one condition failed), 'fail'. business None = not fetched because quality already failed twice. Price is not
+    an input: no status depends on it."""
     if business is None:
-        return 'fail' if q_fail >= 2 else 'incomplete'
-    gates = quality + business
-    n_fail, n_missing = len(failed(gates)), len(missing(gates))
+        return 'fail' if len(failed(quality)) >= 2 else 'incomplete'
+    n_fail, n_missing = fail_count(quality, business), len(missing(quality + business))
     if n_fail >= 2:
         return 'fail'
     if n_missing:
@@ -987,11 +1131,14 @@ def earnings_radar(calendar, rows, book, as_of):
     """Two lists from the earnings calendar. calendar: parse_calendar rows of the days around as_of; rows: the screen's
     rows with their status; book: the thesis-book symbols.
     reported (the last RADAR_BACK_DAYS days, EPS published): universe companies whose status is pass or near_miss and
-    whose EPS surprise is +5% or more, plus every thesis-book company that reported, whatever the surprise.
+    whose EPS surprise is +5% or more, plus every thesis-book company that reported, whatever the surprise. A
+    thesis-book company on a past day of the calendar without an EPS number is listed too (eps None): the calendar has
+    the day and not yet the result.
     upcoming (the next RADAR_AHEAD_DAYS days, and today when EPS is not out yet): passers, near misses and thesis-book
     companies with their date. A company is matched by its screened symbol or another share class of it.
-    The quality numbers of a company that has just reported are still those of the quarter before (the new report is
-    not in the SEC data yet): the lists say who to look at, they do not rescore anyone."""
+    in_quality says whether the row's quality numbers already cover the reported quarter (the period the SEC data ends
+    at against the calendar's fiscal quarter; None when either is unknown). The lists say who to look at, they do not
+    rescore anyone."""
     by = {}
     for r in rows:
         by[r['symbol']] = r
@@ -1009,12 +1156,16 @@ def earnings_radar(calendar, rows, book, as_of):
         if (symbol, c['date']) in seen or not (in_book or listed):
             continue
         fails = (r or {}).get('failed') or []
-        item = {'date': c['date'], 'symbol': symbol, 'name': (r or {}).get('name') or c['name'], 'fiscal_quarter_end': c['fiscal_quarter_end'],
+        near = (r or {}).get('status') == 'near_miss'
+        period, quarter = (r or {}).get('period_end'), c['fiscal_quarter_end']
+        item = {'date': c['date'], 'symbol': symbol, 'name': (r or {}).get('name') or c['name'], 'fiscal_quarter_end': quarter,
                 'eps': c['eps'], 'eps_forecast': c['eps_forecast'], 'surprise_pct': c['surprise_pct'], 'n_estimates': c['n_estimates'],
                 'time': c['time'], 'status': (r or {}).get('status'), 'route': (r or {}).get('route'),
                 'in_universe': bool(r and r.get('in_universe')), 'in_book': in_book,
-                'failed_gate': fails[0]['gate'] if len(fails) == 1 else None, 'failed': fails[0] if len(fails) == 1 else None}
-        if c['eps'] is not None and 0 <= age <= RADAR_BACK_DAYS:
+                'failed_gate': fails[0]['gate'] if len(fails) == 1 else None, 'failed': fails[0] if len(fails) == 1 else None,
+                'failed_gates': [f['gate'] for f in fails] if near else [],
+                'in_quality': period[:7] >= quarter if period and quarter else None}
+        if 0 <= age <= RADAR_BACK_DAYS and (c['eps'] is not None or (in_book and age > 0)):
             if in_book or (c['surprise_pct'] is not None and c['surprise_pct'] >= RADAR_MIN_SURPRISE_PCT - EPS):
                 reported.append(item)
                 seen.add((symbol, c['date']))
@@ -1243,10 +1394,18 @@ GATE_HE = {'rev_growth_ttm': 'צמיחת הכנסות ב-12 חודשים', 'rev_
            'eps_revisions': 'אנליסטים לא מורידים תחזיות רווח', 'earnings_beats': 'עמידה בתחזית הרווח בשני הרבעונים האחרונים',
            'roe': 'תשואה על ההון 15% ומעלה', 'bvps_growth': 'הון עצמי למניה גדל'}
 PCT_GATES = ('rev_growth_ttm', 'rev_growth_q', 'share_change', 'roe', 'bvps_growth')
+BUSINESS_GATES = ('eps_revisions', 'earnings_beats')
+# a failed eps_revisions gate is named by the half that failed (failed_legs)
+LEG_HE = {'count': 'יותר אנליסטים הורידו את תחזית הרווח מאשר העלו', 'consensus': 'תחזית הרווח הממוצעת ירדה ביותר מ-1%'}
+# why a business gate is missing (gate key 'why')
+MISSING_HE = {'no_analyst_data': 'אין נתוני אנליסטים', 'erratic': 'לא קריא: הרווח למניה קפץ מעל התחזית ומתחתיה',
+              'no_count': 'אין ספירה של העלאות והורדות', 'no_earlier': 'אין תחזית קודמת להשוואה',
+              'few_quarters': 'פחות משני דוחות', 'no_consensus': 'דוח בלי תחזית להשוואה', 'stale': 'הדוח האחרון ישן מדי'}
 MARK = '◆'                                      # a row flagged 'price_down_business_up'
 STATUS_HE = {'pass': 'עברה', 'near_miss': 'כמעט', 'fail': 'נכשלה', 'incomplete': 'חסר נתון', 'not_found': 'לא נמצאה'}
 ROUTE_HE = {'standard': 'רגיל', 'financial': 'פיננסים', 'annual_only': 'שנתי בלבד', 'commodity': 'סחורות'}
 TIME_HE = {'time-pre-market': 'לפני המסחר', 'time-after-hours': 'אחרי המסחר'}
+SMALL_EPS = 1.0                                 # a consensus under one dollar a share: its percentage change is named as coarse
 
 
 def _pct(x, signed=False):
@@ -1262,7 +1421,10 @@ def _cap(x):
 
 
 def _signed(x, d=1):
-    return '—' if x is None else f'{x:+.{d}f}%'
+    """'+3.2%'; a number that rounds to zero prints '0.0%' with no sign."""
+    if x is None:
+        return '—'
+    return f'{0:.{d}f}%' if round(x, d) == 0 else f'{x:+.{d}f}%'
 
 
 def revision_he(g):
@@ -1271,7 +1433,7 @@ def revision_he(g):
         return 'אין נתון'
     bits = []
     if g.get('value') is not None:
-        bits.append(f"{g['value'] * 100:+.1f}% ב-{g['window_days']} יום")
+        bits.append(f"{_signed(g['value'] * 100)} ב-{g['window_days']} יום")
     elif g.get('now') is not None:
         bits.append('בלי אחוז (תחזית רווח אפס או שלילית)')
     if g.get('net') is not None:
@@ -1287,6 +1449,19 @@ def beats_he(g):
     return ' / '.join(_signed(q['surprise_pct']) if q.get('surprise_pct') is not None else
                       ('—' if q.get('eps') is None or q.get('consensus') is None else f"{q['eps']:.2f} מול {q['consensus']:.2f}")
                       for q in qs)
+
+
+def gate_name_he(g):
+    """A gate's name for the 'what failed' columns; a failed eps_revisions gate is named by the half that failed."""
+    if g['gate'] == 'eps_revisions' and g.get('pass') is False and g.get('failed_legs'):
+        return ' וגם '.join(LEG_HE[x] for x in g['failed_legs'])
+    return GATE_HE[g['gate']]
+
+
+def missing_he(g):
+    """A missing gate for the 'what is missing' columns: its name, and the reason when the analyst data gives one."""
+    why = MISSING_HE.get(g.get('why'))
+    return GATE_HE[g['gate']] + (f' ({why})' if why else '')
 
 
 def gate_value_he(g):
@@ -1418,10 +1593,28 @@ def _saved_warning(res):
     return L
 
 
+def _one_condition(f):
+    """True when the failed gates are one failed condition: one gate, or the two analyst gates together (fail_count)."""
+    return len(f) == 1 or (len(f) == 2 and all(g['gate'] in BUSINESS_GATES for g in f))
+
+
 def _fail_he(r):
-    """'נכשלה ב: <gate> (<number>)' for a near miss; '' when nothing or more than one gate failed."""
+    """'נכשלה ב: <gate> (<number>)' for a near miss (both analyst gates when the pair failed); '' when nothing failed or
+    more than one condition did."""
     f = r.get('failed') or []
-    return 'נכשלה ב: ' + GATE_HE[f[0]['gate']] + ' (' + gate_value_he(f[0]) + ')' if len(f) == 1 else ''
+    return 'נכשלה ב: ' + '; '.join(f'{gate_name_he(g)} ({gate_value_he(g)})' for g in f) if f and _one_condition(f) else ''
+
+
+def _missing_list_he(gates):
+    """The missing gates of one row in words; the two analyst gates missing for one reason are named once."""
+    biz = [g for g in gates if g['gate'] in BUSINESS_GATES]
+    out = [GATE_HE[g['gate']] for g in gates if g['gate'] not in BUSINESS_GATES]
+    if len(biz) == 2 and biz[0].get('why') == biz[1].get('why'):
+        why = MISSING_HE.get(biz[0].get('why'))
+        out.append('שני תנאי האנליסטים' + (f' ({why})' if why else ''))
+    else:
+        out += [missing_he(g) for g in biz]
+    return ', '.join(out)
 
 
 def _radar_status(x):
@@ -1429,8 +1622,9 @@ def _radar_status(x):
     if x.get('status') is None:
         return 'לא נסרקה'
     word = STATUS_HE[x['status']]
-    if x['status'] == 'near_miss' and x.get('failed_gate'):
-        word += ' (נכשל: ' + GATE_HE[x['failed_gate']] + ')'
+    gates = x.get('failed_gates') or ([x['failed_gate']] if x.get('failed_gate') else [])
+    if x['status'] == 'near_miss' and gates:
+        word += ' (נכשל: ' + '; '.join(GATE_HE[g] for g in gates) + ')'
     return word + ('' if x.get('in_universe') else ', מתחת לסף השווי')
 
 
@@ -1444,17 +1638,23 @@ def _radar_he(res):
     if radar is None:
         return []
     rep, up = radar.get('reported') or [], radar.get('upcoming') or []
+    yes_no = {True: 'כן', False: 'לא', None: '—'}
     L = ['', '## רדאר דוחות', '',
-         'מי דיווחה לאחרונה ומי מדווחת בקרוב, לפי לוח הדוחות של Nasdaq. שים לב: דוח שיצא בימים האחרונים עדיין לא נמצא בנתוני '
-         'ה-SEC, ולכן מספרי האיכות בטבלאות הם מהרבעון שלפניו. הרדאר אומר על מי להסתכל, הוא לא מחשב מחדש את התנאים.', '',
+         'מי דיווחה לאחרונה ומי מדווחת בקרוב, לפי לוח הדוחות של Nasdaq. הרדאר אומר על מי להסתכל, הוא לא מחשב מחדש את התנאים. '
+         'דוח חדש מגיע לנתוני ה-SEC רק כמה ימים אחרי הפרסום. העמודה "מספרי האיכות כוללים את הדוח" אומרת לכל חברה אם מספרי '
+         'האיכות בטבלאות כבר כוללים את הדוח הזה ("כן"), או שהם עדיין מהרבעון שלפניו ("לא").', '',
          f'### דיווחו ב-{RADAR_BACK_DAYS} הימים האחרונים ({len(rep)})', '',
          f'חברות שעברו או כמעט עברו את התנאים והפתיעו ברווח למניה ב-{RADAR_MIN_SURPRISE_PCT:.0f}% ומעלה, וכל חברה מספר התזות '
          'שדיווחה (בכל הפתעה).', '']
     if rep:
-        L += _table(['תאריך הדוח', 'סימול', 'חברה', 'רבעון עד', 'רווח למניה', 'תחזית', 'הפתעה', 'מצב בחיפוש', 'בספר התזות'],
+        L += _table(['תאריך הדוח', 'סימול', 'חברה', 'רבעון עד', 'רווח למניה', 'תחזית', 'הפתעה', 'מספרי האיכות כוללים את הדוח',
+                     'מצב בחיפוש', 'בספר התזות'],
                     [[_dmy(x['date']), x['symbol'], (x.get('name') or '')[:28], x.get('fiscal_quarter_end') or '—', _eps(x.get('eps')),
-                      _eps(x.get('eps_forecast')), _signed(x.get('surprise_pct')), _radar_status(x), 'כן' if x.get('in_book') else '—']
-                     for x in rep])
+                      _eps(x.get('eps_forecast')), _signed(x.get('surprise_pct')), yes_no[x.get('in_quality')], _radar_status(x),
+                      'כן' if x.get('in_book') else '—'] for x in rep])
+        if any(x.get('eps') is None for x in rep):
+            L += ['', 'חברה מספר התזות בלי רווח למניה בטבלה ("—"): התאריך שלה בלוח עבר, והתוצאה עדיין לא רשומה שם. '
+                  'לבדוק בהודעת החברה אם הדוח יצא או נדחה.']
     else:
         L += ['אין חברות כאלה.']
     L += ['', f'### מדווחות ב-{RADAR_AHEAD_DAYS} הימים הקרובים ({len(up)})', '',
@@ -1484,8 +1684,12 @@ def divergence_rows(lists):
     return out
 
 
+BIZ_COLUMNS_HE = ('"שינוי בתחזית הרווח": בכמה אחוזים השתנתה תחזית הרווח למניה לשנת הכספים הנוכחית, ובכמה ימים, וכמה אנליסטים '
+                  'העלו והורידו תחזית ב-4 השבועות האחרונים. "הפתעה ברווח": הרווח שדווח מול התחזית בשני הרבעונים האחרונים, החדש קודם.')
+
+
 def _divergence_he(res, top=DIVERGENCE_TOP):
-    """The short section at the top: listed names whose price fell while the business keeps improving (the DELL pattern).
+    """The short section at the top: listed names whose price fell while the business improves (the DELL pattern).
     The table holds up to `top` passers and `top` near misses; the rest, and the other lists, are named in one line each."""
     dv = res.get('divergence')
     if dv is None:
@@ -1495,9 +1699,10 @@ def _divergence_he(res, top=DIVERGENCE_TOP):
     def named(rows):
         return ', '.join(f"{r['symbol']} ({_pct((r.get('price_info') or {}).get('below_high'), True)})" for r in rows)
     L = [f'## המחיר ירד, העסק משתפר ({len(dv)})', '',
-         f'חברות מהרשימות שלמטה שהמניה שלהן נמצאת {limit:.0f}% ומעלה מתחת לשיא של 52 שבועות, ובכל זאת שני תנאי התנופה העסקית '
-         'עוברים אצלן: אנליסטים לא מורידים להן תחזיות רווח, והן עמדו בתחזית בשני הדוחות האחרונים. זה הדפוס של DELL: עסק טוב '
-         f'שהמניה שלו ירדה יחד עם הענף. הן מסומנות {MARK} גם בטבלאות. זה מידע, לא המלצה: צריך לבדוק למה המחיר ירד.', '']
+         f'חברות מהרשימות שלמטה שהמניה שלהן נמצאת {limit:.0f}% ומעלה מתחת לשיא של 52 שבועות, ובאותו זמן נתוני האנליסטים מראים '
+         'שיפור: יותר אנליסטים העלו את תחזית הרווח מאשר הורידו, התחזית הממוצעת עלתה, והרווח שדווח היה שווה לתחזית או מעליה בשני '
+         f'הדוחות האחרונים. זה הדפוס של DELL: עסק טוב שהמניה שלו ירדה יחד עם הענף. הן מסומנות {MARK} גם בטבלאות. '
+         'זה מידע, לא המלצה: צריך לבדוק למה המחיר ירד.', '']
     if not dv:
         return L + ['אין היום חברות כאלה ברשימות.', '']
     groups = [[r for r in dv if r.get('list') == key] for key in ('passers', 'near_misses')]
@@ -1509,7 +1714,8 @@ def _divergence_he(res, top=DIVERGENCE_TOP):
                     [[r['symbol'], r['name'][:28], r.get('list_he') or '—', _pct((r.get('price_info') or {}).get('below_high'), True)] + _biz(r)
                      + [_pct(r.get('rev_growth_ttm')), _fail_he(r).replace('נכשלה ב: ', '') or '—', saved_he(r.get('saved_valuation'))]
                      for r in shown])
-        L += ['', f'בטבלה: עד {top} מהעוברות (לפי הדירוג) ועד {top} מאלה שכמעט עברו (לפי צמיחת ההכנסות ב-12 החודשים האחרונים, '
+        L += ['', BIZ_COLUMNS_HE,
+              '', f'בטבלה: עד {top} מהעוברות (לפי הדירוג) ועד {top} מאלה שכמעט עברו (לפי צמיחת ההכנסות ב-12 החודשים האחרונים, '
               'הגבוהה קודם). בסוגריים בשורות שלמטה: המרחק מהשיא.']
     for label, rows in (('עוד מהעוברות', groups[0][top:]), ('עוד מאלה שכמעט עברו', groups[1][top:]),
                         ('ברשימות האחרות (פיננסים, זרות עם נתונים שנתיים)', other)):
@@ -1518,32 +1724,83 @@ def _divergence_he(res, top=DIVERGENCE_TOP):
     return L + ['']
 
 
+def _where_he(res, symbol):
+    """Where one symbol stands in this run, in a few words; '' when it is in no list."""
+    for r in res.get('passers') or []:
+        if r['symbol'] == symbol:
+            return 'עברה את כל התנאים'
+    for r in res.get('near_misses') or []:
+        if r['symbol'] == symbol:
+            return 'כמעט עברה (' + _fail_he(r) + ')'
+    for r in res.get('thesis_book') or []:
+        if r['symbol'] == symbol and r.get('status') in STATUS_HE:
+            return STATUS_HE[r['status']]
+    return ''
+
+
+def _paypal_he(res):
+    """What this run says about PayPal, the owner's example of a business that weakened; '' when it was not screened or
+    fails fewer than two quality gates."""
+    r = next((x for x in res.get('rows') or [] if x.get('symbol') == 'PYPL'), None)
+    n = len(failed(r.get('quality') or [])) if r else 0
+    if n < 2:
+        return ''
+    b = r.get('business')
+    both = ', אף שהיא עוברת את שני תנאי האנליסטים' if b and all(g['pass'] is True for g in b) else ''
+    return f' בהרצה הזאת PayPal נכשלת ב-{n} תנאי איכות{both}.'
+
+
+def _near_line(r):
+    """One row of the near-miss table. The number of a failed analyst gate is already in the two analyst columns."""
+    f = r['failed']
+    nums = list(dict.fromkeys('בעמודות האנליסטים' if g['gate'] in BUSINESS_GATES else gate_value_he(g) for g in f))
+    return [_sym(r), r['name'][:28], _cap(r['market_cap']), '; '.join(gate_name_he(g) for g in f), '; '.join(nums),
+            _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin'))] + _biz(r) + _price(r) + [
+            saved_he(r.get('saved_valuation'))]
+
+
 def render_he(res, top=40):
     """screen_he.md: the headline, the names whose price fell while the business improves, what the screen is and is not,
     the conditions, passers, near misses, the earnings radar, commodity names, financials, annual-only filers, thesis-book
     names, the saved valuations of the listed names, and the data gaps. Price columns are labelled information."""
     c, spy = res['counts'], res.get('spy') or {}
     warn = _saved_warning(res)
+    read = res.get('analyst_read') or {}
+    read_he = (_dmy(read['last']) if read.get('first') == read.get('last') else f"{_dmy(read.get('first'))} עד {_dmy(read['last'])}") \
+        if read.get('last') else ''
     L = [f"# חיפוש מניות: איכות העסק + תנופה עסקית ({res['as_of']})", '',
          f"נסרקו {c['companies']} חברות בשווי שוק מעל {res['min_cap'] / 1e9:.0f} מיליארד דולר. "
          f"עברו את כל התנאים: **{c['passers']}**. כמעט עברו (נכשלו בתנאי אחד בלבד): {c['near_misses']}. "
          f"תשואת ה-S&P 500 (SPY) ב-12 החודשים בלי החודש האחרון, למידע: {_pct(spy.get('ret_12_1'), True)}.", '']
+    if read.get('last') and (read['last'] != res['as_of'] or read.get('first') != res['as_of']):
+        L += [f"**שים לב:** נתוני האנליסטים נקראו ב-{read_he}, ולא בתאריך החיפוש ({_dmy(res['as_of'])}). תחזיות הרווח וספירת "
+              'האנליסטים הן של יום הקריאה; דוחות שפורסמו אחרי תאריך החיפוש לא נכנסו לתנאי העמידה בתחזית.', '']
     if warn:
         L += sum(([w, ''] for w in warn), [])
     L += _divergence_he(res)
+    dell = _where_he(res, 'DELL')
     L += ['## מה החיפוש אומר ומה לא', '',
-          '- הוא מסמן חברות שצומחות מהר, מרוויחות, מייצרות מזומן, לא מדללות, והעסק שלהן ממשיך להשתפר: אנליסטים לא מורידים להן '
-          'תחזיות רווח, והן עמדו בתחזית בשני הדוחות האחרונים. הוא רק מחליט לאן להפנות זמן מחקר.',
+          '- הוא מסמן חברות שצומחות מהר, מרוויחות, מייצרות מזומן ולא מדללות, ושנתוני האנליסטים שלהן לא מראים החמרה: '
+          'אנליסטים לא מורידים להן תחזיות רווח, והן עמדו בתחזית בשני הדוחות האחרונים. הוא רק מחליט לאן להפנות זמן מחקר.',
           '- **המחיר הוא מידע בלבד, לא תנאי** (מאז 25.11.2026). מניה שירדה הרבה, או שנמצאת מתחת לממוצע שלה, לא נפסלת בגלל זה: '
-          'תנאי המחיר הישנים זרקו את DELL (43% מתחת לשיא) רגע לפני הרבעון הכי טוב שלה. מה שפוסל חברה הוא עסק שנחלש, לא מחיר שירד.',
+          'תנאי המחיר הישנים זרקו את DELL (43% מתחת לשיא) רגע לפני הרבעון הכי טוב שלה.'
+          + (f' בהרצה הזאת DELL: {dell}.' if dell else ''),
+          '- מה כן פוסל חברה: עסק שהפסיק לצמוח נפסל בתנאי האיכות.' + _paypal_he(res)
+          + ' תנאי האנליסטים רק מוסיפים בדיקה ששני הרבעונים האחרונים והחודש האחרון של התחזיות לא מחמירים.',
           '- הוא **לא הערכת שווי ולא המלצת קנייה**: חברה שעוברת אותו יכולה להיות יקרה מדי ולהיכשל במבחן הקנייה.',
           '- לכל חברה ברשימות מוצגת ההערכה השמורה שלה (אם יש) מול המחיר של היום: חברה שההערכה השמורה שלה נכשלת במבחן הקנייה, '
           'או שנדחתה בבדיקה קודמת, מסומנת ולא נמחקת. היא לא מוצעת בלי הערכה חדשה. התנאים והדירוג לא קוראים את הסימון.',
           '- מקור נתוני העסק: קובץ ה-companyfacts של ה-SEC לכל חברה בנפרד (בקשה אחת לכל חברה מעל סף השווי, ועוד קובץ ההגשות '
           'לקוד הענף), ולא ה-XBRL frames (מושג אחד לכל החברות בתקופה אחת).',
-          '- מקור נתוני האנליסטים: דפי האנליסטים של Nasdaq (הנתונים של Zacks; ממשק ציבורי לא רשמי, שיכול להשתנות או להיות חסר '
-          f'לחברה). השינוי בתחזית נמדד על חלון של כחודש ({REVISION_MONTH_DAYS} יום), וספירת האנליסטים שהעלו או הורידו על 4 שבועות. '
-          f'בכל הרצה אנחנו שומרים את התחזית בעצמנו, וכשתצטבר היסטוריה ארוכה יותר החלון יגדל (עד {REVISION_HISTORY_DAYS} יום).',
+          '- מקור נתוני האנליסטים: דפי האנליסטים של Nasdaq (ממשק ציבורי לא רשמי, שיכול להשתנות או להיות חסר לחברה; '
+          'Nasdaq מציינת ש-Zacks היא ספק הנתונים שלה).' + (f' הדפים נקראו ב-{read_he}.' if read_he else '')
+          + f' השינוי בתחזית נמדד על תקופה של כחודש ({REVISION_MONTH_DAYS} יום), וספירת האנליסטים שהעלו או הורידו על 4 שבועות. '
+          'בכל הרצה אנחנו שומרים את התחזית בתיקייה פרטית (תחת runs/, לא ב-Git). אם התיקייה נשמרת בין הרצות, אחרי חודש התקופה '
+          f'מתארכת (עד {REVISION_HISTORY_DAYS} יום); אם לא, היא נשארת כחודש. התקופה כתובה ליד כל מספר, והיא יכולה להיות שונה '
+          'מחברה לחברה.',
+          '- הרווח למניה בדפי האנליסטים כולל לפעמים רווחי השקעות וסעיפים חד-פעמיים. כשהוא קופץ ביותר מ-'
+          f'{ERRATIC_SURPRISE_PCT:.0f}% מעל התחזית ברבעון אחד ומתחתיה ברבעון הסמוך, שני תנאי האנליסטים מסומנים "לא קריא": '
+          'החברה לא נכשלת בגללם ולא עוברת בזכותם, והיא מופיעה ברשימת "חסר להן נתון".',
           '- הוא **לא נבדק על העבר** (לא נעשה מבחן היסטורי), ולכן אין לו שיעור הצלחה מוכח.',
           '- הנתונים מדוחות ה-SEC כפי שדווחו (בלי התאמות לאירועים חד-פעמיים); חברה שרכשה חברה אחרת תיראה צומחת מהר יותר ממה שהיא באמת.',
           '- חברות סחורות (נפט וזיקוק, מכרות, פלדה, דשנים, ספנות, צינורות גז) מוצגות בטבלה נפרדת ולא ברשימת העוברות: '
@@ -1555,24 +1812,26 @@ def render_he(res, top=40):
           f"{GATES['share_growth'] * 100:.0f}% בשנה.",
           f"- צמיחה עקבית: ההכנסות לא ירדו באף אחת משלוש שנות הכספים האחרונות שהסתיימו, וגדלו בממוצע {GATES['rev_cagr_3y'] * 100:.0f}% "
           'בשנה ומעלה לאורכן. שנה טובה אחת לא מספיקה.',
-          '- תנופה עסקית, תנאי 1, תחזיות הרווח לא יורדות: ב-4 השבועות האחרונים מספר האנליסטים שהעלו את תחזית הרווח למניה (לשנת הכספים '
-          'הנוכחית ולבאה) לא קטן ממספר אלה שהורידו, וגם התחזית הממוצעת לשנה הנוכחית לא ירדה ביותר מ-'
+          '- תנופה עסקית, תנאי 1, תחזיות הרווח לא יורדות: ב-4 השבועות האחרונים מספר האנליסטים שהעלו את תחזית הרווח למניה (לשנת '
+          'הכספים הנוכחית ולבאה) לא קטן ממספר אלה שהורידו. בנוסף, התחזית הממוצעת לשנה הנוכחית לא ירדה ביותר מ-'
           f"{-GATES['eps_revision_min'] * 100:.0f}%. כשהתחזית היא הפסד או אפס אין אחוז שינוי, ואז קובעת רק הספירה.",
           '- תנופה עסקית, תנאי 2, עמידה בתחזית: הרווח למניה שדווח היה שווה לתחזית או מעליה בכל אחד משני הרבעונים האחרונים '
-          f"(פספוס של עד {-GATES['surprise_min_pct']:.0f}% נחשב עמידה).",
+          f"(פספוס של עד {-GATES['surprise_min_pct']:.0f}%, או של עד סנט אחד למניה, נחשב עמידה).",
+          '- שני תנאי התנופה העסקית נספרים יחד כתנאי אחד: רבעון שפספס את התחזית מוריד מעצמו גם את התחזית השנתית, ולכן זה אותו '
+          'אירוע. חברה שעברה את כל תנאי האיכות ונכשלה רק בהם מופיעה ב"כמעט עברו", עם שתי הסיבות.',
           '- מחיר (מידע בלבד, לא תנאי): תשואת 12 חודשים בלי החודש האחרון והמרחק מהשיא של 52 שבועות מוצגים בטבלאות. '
-          f"מניה שנמצאת {GATES['divergence_below_high'] * 100:.0f}% ומעלה מתחת לשיא, ושני תנאי התנופה העסקית עוברים אצלה, מסומנת {MARK}.",
+          f"מניה שנמצאת {GATES['divergence_below_high'] * 100:.0f}% ומעלה מתחת לשיא, ונתוני האנליסטים שלה מראים שיפור (ההסבר בראש הדוח), "
+          f'מסומנת {MARK}.',
           '- חברה שנכשלת בתנאי אחד בלבד מופיעה ברשימת "כמעט עברו" עם הסיבה. חברה שחסר לה נתון לא נספרת כעוברת.', '',
           f"## חברות שעברו את כל התנאים ({c['passers']})", '',
-          'הדירוג: סכום פשוט של ארבעה דירוגי אחוזון (צמיחה, שינוי שוליים, שולי תזרים חופשי, שינוי בתחזית הרווח), בלי משקלות. '
-          'חברה בלי אחוז שינוי בתחזית (תחזית רווח אפס או שלילית) מקבלת ברכיב הזה את החציון של האחרות.', '']
+          'הדירוג: כל חברה מקבלת ארבעה ציונים מ-0 עד 100, כל אחד לפי המקום שלה בין העוברות: צמיחה, שינוי שוליים, שולי תזרים חופשי '
+          'ושינוי בתחזית הרווח. ציון הדירוג הוא הסכום שלהם, בלי משקלות. '
+          'חברה בלי אחוז שינוי בתחזית (תחזית רווח אפס או שלילית) מקבלת ברכיב הזה את הערך האמצעי של האחרות.', '']
     ps = res['passers']
     L += _table(['#'] + STD_HEAD + ['רבעון אחרון עד', 'ציון דירוג', 'הערכה שמורה'],
                 [[i + 1] + _std_line(r) + [_period(r), f"{r['rank_score']:.0f}", saved_he(r.get('saved_valuation'))]
                  for i, r in enumerate(ps[:top])])
-    L += ['', '"שינוי בתחזית הרווח": בכמה אחוזים השתנתה תחזית הרווח למניה לשנת הכספים הנוכחית במספר הימים שכתוב לידה, וכמה אנליסטים '
-          'העלו והורידו תחזית ב-4 השבועות האחרונים. "הפתעה ברווח": הרווח שדווח מול התחזית בשני הרבעונים האחרונים, החדש קודם. '
-          'העמודות המסומנות "מידע" הן מחיר: הן לא משפיעות על שום תנאי ולא על הדירוג.']
+    L += ['', BIZ_COLUMNS_HE + ' העמודות המסומנות "מידע" הן מחיר: הן לא משפיעות על שום תנאי ולא על הדירוג.']
     if any(r.get('margin_jump') for r in ps):
         L += ['', '* קפיצה חריגה בשולי הרווח (יותר מ-10 נקודות, או מעבר מהפסד לרווח): לרוב הוצאה חד-פעמית בשנה הקודמת ולא שיפור בעסק. לבדוק: '
               + ', '.join(r['symbol'] for r in ps if r.get('margin_jump'))]
@@ -1586,18 +1845,21 @@ def render_he(res, top=40):
         L += ['', 'חברות עם אותו ציון דירוג שוות בדירוג; הסדר ביניהן אלפביתי בלבד.']
     if len(ps) > top:
         L += ['', 'עוד עוברות (הפירוט המלא ב-screen.json): ' + ', '.join(r['symbol'] for r in ps[top:])]
-    L += ['', 'רכיבי הדירוג (אחוזון 0-100 לכל רכיב):', '']
+    L += ['', 'רכיבי הדירוג (ציון 0-100 לכל רכיב):', '']
     L += _table(['סימול', 'צמיחה', 'שינוי שוליים', 'שולי תזרים', 'שינוי בתחזית הרווח', 'סכום'],
                 [[r['symbol']] + [f"{r['rank_parts'][k]:.0f}" + ('~' if k in (r.get('rank_filled') or []) else '') for k in RANK_KEYS]
                  + [f"{r['rank_score']:.0f}"] for r in ps[:top]])
     if any(r.get('rank_filled') for r in ps[:top]):
-        L += ['', '~ אין לחברה אחוז שינוי בתחזית; ברכיב הזה היא קיבלה את החציון של האחרות.']
-    L += ['', f"## כמעט עברו: נכשלו בתנאי אחד בלבד ({c['near_misses']})", '']
+        L += ['', '~ אין לחברה אחוז שינוי בתחזית; ברכיב הזה היא קיבלה את הערך האמצעי של האחרות.']
+    small = [(r['symbol'], g) for r in ps[:top] for g in [_bgate(r, 'eps_revisions')]
+             if g and g.get('value') is not None and g.get('then') is not None and abs(g['then']) < SMALL_EPS]
+    L += ['', 'הרכיב "שינוי בתחזית הרווח" חופף בחלקו להפתעה ברבעון האחרון: רבעון טוב מעלה מעצמו את התחזית השנתית.'
+          + (' כשתחזית הרווח קטנה מדולר למניה, שינוי של כמה סנטים נראה כאחוז גדול. כך אצל: '
+             + ', '.join(f"{sym} (מ-{g['then']:.2f}$ ל-{g['now']:.2f}$)" for sym, g in small) + '.' if small else '')]
+    L += ['', f"## כמעט עברו: נכשלו בתנאי אחד בלבד ({c['near_misses']})", '',
+          'שני תנאי התנופה העסקית (תחזיות הרווח ועמידה בתחזית) נספרים כתנאי אחד, ולכן יכולות להופיע בשורה שתי סיבות.', '']
     L += _table(['סימול', 'חברה', 'שווי שוק', 'התנאי שנכשל', 'המספר', 'צמיחה 12ח׳', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול'] + BIZ_HEAD + PRICE_HEAD
-                + ['הערכה שמורה'],
-                [[_sym(r), r['name'][:28], _cap(r['market_cap']), GATE_HE[r['failed'][0]['gate']], gate_value_he(r['failed'][0]),
-                  _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin'))] + _biz(r) + _price(r)
-                 + [saved_he(r.get('saved_valuation'))] for r in res['near_misses']])
+                + ['הערכה שמורה'], [_near_line(r) for r in res['near_misses']])
     L += _radar_he(res)
     cm = res.get('commodity') or []
     L += ['', f"## חברות סחורות מחזוריות: הצמיחה הולכת אחרי המחירים ({len(cm)} מתוך {c.get('route_commodity', len(cm))})", '',
@@ -1622,7 +1884,7 @@ def render_he(res, top=40):
     fn = res.get('financial_near_misses') or []
     if fn:
         L += ['', f'פיננסים שנכשלו בתנאי אחד בלבד ({len(fn)}): '
-              + '; '.join(f"{_sym(r)} ({GATE_HE[r['failed'][0]['gate']]}: {gate_value_he(r['failed'][0])})" for r in fn)]
+              + '; '.join(f"{_sym(r)} ({'; '.join(gate_name_he(g) + ': ' + gate_value_he(g) for g in r['failed'])})" for r in fn)]
     L += ['', f"## חברות זרות עם נתונים שנתיים בלבד ({len(res['annual_only'])})", '',
           'חברות שמדווחות ל-SEC רק דוח שנתי (20-F / 40-F): **נתונים שנתיים בלבד**, בלי תנאי הרבעון, ולכן הנתון יכול להיות ישן עד שנה. '
           'מוצגות אלה שעברו או נכשלו בתנאי אחד.', '']
@@ -1640,8 +1902,8 @@ def render_he(res, top=40):
                   _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_growth_q')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')),
                   '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}", _pct(r.get('fcf_margin')),
                   _pct(r.get('share_change'), True)] + _biz(r) + _price(r) + [
-                  '; '.join([GATE_HE[g['gate']] + ' (' + gate_value_he(g) + ')' for g in r.get('failed', [])] +
-                            ['חסר: ' + GATE_HE[g['gate']] for g in r.get('missing', [])] + ([r['note']] if r.get('note') else [])) or '—',
+                  '; '.join([gate_name_he(g) + ' (' + gate_value_he(g) + ')' for g in r.get('failed', [])] +
+                            (['חסר: ' + _missing_list_he(r['missing'])] if r.get('missing') else []) + ([r['note']] if r.get('note') else [])) or '—',
                   saved_he(r.get('saved_valuation'))]
                  for r in res['thesis_book']])
     sr = saved_rows(res)
@@ -1663,18 +1925,24 @@ def render_he(res, top=40):
         L += ['אין לאף חברה ברשימות הערכה שמורה.']
     un = res.get('unread') or []
     if un:
-        L += ['', f'## לא נכשלו בשום תנאי, אבל חסר להן נתון ({len(un)})', '',
-              'לא נספרו כעוברות. כדאי לבדוק ידנית את הנתון החסר לפני שמוותרים עליהן.', '']
-        L += _table(['סימול', 'חברה', 'שווי שוק', 'מה חסר'],
+        L += ['', f'## חסר להן נתון ({len(un)})', '',
+              'חברות שלא נכשלו ביותר מתנאי אחד, אבל חסר להן נתון, ולכן לא נספרו כעוברות. כדאי לבדוק ידנית את הנתון החסר לפני '
+              'שמוותרים עליהן. "לא קריא": הרווח למניה בדפי האנליסטים קפץ ביותר מ-'
+              f'{ERRATIC_SURPRISE_PCT:.0f}% מעל התחזית ברבעון אחד ומתחתיה ברבעון הסמוך (לרוב רווחי השקעות, או רווח של סנטים '
+              'בודדים), ולכן שני תנאי האנליסטים לא נקראו. זה לא כישלון של העסק.', '']
+        L += _table(['סימול', 'חברה', 'שווי שוק', 'מה נכשל', 'מה חסר', 'הפתעה ברווח, 2 רבעונים'],
                     [[r['symbol'], r['name'][:28], _cap(r['market_cap']),
-                      ', '.join(GATE_HE[g['gate']] for g in r.get('missing', [])) or (r.get('note') or '—')] for r in un])
+                      '; '.join(f'{gate_name_he(g)} ({gate_value_he(g)})' for g in r.get('failed') or []) or '—',
+                      _missing_list_he(r.get('missing') or []) or (r.get('note') or '—'), _biz(r)[1]] for r in un])
     L += ['', '## מספרים בכל שלב', '']
     L += _table(['שלב', 'מספר'], [[k, v] for k, v in res['counts_he']])
     if res.get('gaps_he'):
         L += ['', '## פערי נתונים', ''] + ['- ' + g for g in res['gaps_he']]
     L += ['', 'מקורות: [SEC XBRL companyfacts](https://data.sec.gov/api/xbrl/companyfacts/) לכל חברה בנפרד (לא XBRL frames) '
           'וקובץ ההגשות שלה ([submissions](https://data.sec.gov/submissions/)), [רשימת המניות של Nasdaq](https://www.nasdaq.com/market-activity/stocks/screener), '
-          'דפי האנליסטים של Nasdaq לכל חברה (תחזיות רווח, שינויי תחזית והפתעות רווח; נתוני Zacks) '
+          '[דפי האנליסטים של Nasdaq](https://www.nasdaq.com/market-activity/stocks/dell/earnings) לכל חברה (תחזיות רווח, שינויי תחזית '
+          'והפתעות רווח; הקישור הוא לדף של DELL כדוגמה. Nasdaq מציינת ש-Zacks Investment Research היא ספק הנתונים שלה; '
+          'בתשובות עצמן הייחוס לא מופיע) '
           'ו[לוח הדוחות של Nasdaq](https://www.nasdaq.com/market-activity/earnings), '
           'מחירים יומיים מ-Yahoo Finance (מתואמים לפיצולים; התשואה מתואמת גם לדיבידנדים; למידע בלבד).', '']
     return '\n'.join(L)

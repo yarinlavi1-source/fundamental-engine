@@ -349,8 +349,23 @@ def est(**kw):
     return qm.parse_estimates(kw.get('s', surprise_json()), kw.get('f', forecast_json()), kw.get('m', momentum_json()))
 
 
+def est_at(current, month, up=2, down=0, **kw):
+    """A parsed record whose forecast table and estimate-momentum page agree on the current consensus, as the live pages
+    do (the month-ago number is not used when they disagree). up, down: the current fiscal year's count."""
+    f = forecast_json((('Jan 2027', current, 10, up, down), ('Jan 2028', 29.59, 9, 2, 0), ('Jan 2029', 31.25, 3, 0, 5)))
+    return est(f=f, m=momentum_json(current=current, month=month), **kw)
+
+
+MISSES = ((1.0, '2.0', '-50', '11/10/2026'), (1.0, '0.9', '11', '8/11/2026'))        # the newest quarter missed by half
+
+
 def good_business():
     return qm.business_gates(est(), as_of=AS_OF)
+
+
+def cut_business(**kw):
+    """Analysts are cutting: the consensus fell 4.5% in a month (4 raised, 0 cut: only the consensus leg fails)."""
+    return qm.business_gates(est_at(24.0, 25.13, **kw), as_of=AS_OF)
 
 
 class Trend(unittest.TestCase):
@@ -409,10 +424,31 @@ class Trend(unittest.TestCase):
         self.assertTrue(qm.divergence(info, good_business()))
         self.assertTrue(qm.divergence(dict(info, below_high=-0.25), good_business()))           # the boundary counts
         self.assertFalse(qm.divergence(dict(info, below_high=-0.2499), good_business()))
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         self.assertFalse(qm.divergence(info, cut))                  # the price fell and analysts are cutting: no flag
         self.assertFalse(qm.divergence(info, qm.business_gates(None)))
         self.assertFalse(qm.divergence(None, good_business()))
+
+    def test_divergence_flag_needs_an_improvement_not_only_gates_that_pass(self):
+        """A gate passes with no analyst move, a consensus up to 1% lower and misses of up to 2%: none of these is
+        'the business improves' (review of 25.11.2026: 15 of 69 flagged names were like that)."""
+        info = {'rel_strength': -0.4, 'vs_ma200': -0.2, 'ma200_rising': False, 'below_high': -0.43}
+
+        def biz(current=25.3, month=25.13, up=2, down=0, rows=None):
+            f = forecast_json((('Jan 2027', current, 10, up, down), ('Jan 2028', 29.59, 9, up, down)))
+            return qm.business_gates(est(f=f, m=momentum_json(current=current, month=month), **({'s': surprise_json(rows)} if rows else {})),
+                                     as_of=AS_OF)
+        self.assertTrue(qm.improving(biz()))
+        for name, b in (('no analyst moved', biz(up=0)), ('as many cut as raised', biz(up=3, down=3)),
+                        ('consensus flat', biz(current=25.13)), ('consensus 0.9% lower', biz(current=24.9)),
+                        ('a miss of 1.9%', biz(rows=((9.81, '10.0', '-1.9', '11/10/2026'), (6.76, '4.72', '43.22', '8/11/2026')))),
+                        ('a loss: no percentage', biz(current=-2.72, month=-2.92))):
+            self.assertTrue(all(g['pass'] for g in b), name)        # both gates pass
+            self.assertFalse(qm.improving(b), name)                 # and the business is not shown to improve
+            self.assertFalse(qm.divergence(info, b), name)
+        self.assertTrue(qm.improving(biz(rows=((1.0, '1.0', '0.0', '11/10/2026'), (0.05, '0', 'N/A', '8/11/2026')))))   # met, and above a zero consensus
+        for status, want in (('pass', True), ('near_miss', True), ('fail', False), ('incomplete', False), (None, True)):
+            self.assertEqual(qm.divergence(info, good_business(), status), want, status)    # the mark never lands on a failed row
 
 
 class Estimates(unittest.TestCase):
@@ -464,6 +500,51 @@ class Estimates(unittest.TestCase):
         self.assertEqual(qm.symbol_variants('brk/b'), ['BRK.B', 'BRK-B'])              # a slash is never sent
         self.assertEqual(qm.symbol_variants('DELL'), ['DELL'])
 
+    def test_sibling_classes_of_the_same_company(self):
+        self.assertEqual(qm.sibling_symbols('MOG-B'), ['MOG-A', 'MOG'])                 # the A/B sister, then the root
+        self.assertEqual(qm.sibling_symbols('HEI.A', ['HEI']), ['HEI', 'HEI-B'])        # the listed other class first
+        self.assertEqual(qm.sibling_symbols('RUSHB', ['RUSHA']), ['RUSHA'])             # no suffix: only what the listing gave
+        self.assertEqual(qm.sibling_symbols('DELL'), [])
+        self.assertEqual(qm.sibling_symbols('GOOGL', ['GOOG', 'GOOGL']), ['GOOG'])
+
+    def test_999_on_the_estimate_momentum_page_means_no_value(self):
+        """Live pages of 25.11.2026. HTHT: the current consensus is 999 and the forecast table is empty. ANT (an IPO of
+        2026): month ago and week ago are 999. Read as numbers they gave +38,323% and -99.85%."""
+        htht = {'data': {'changeInConsensus': {'monthData': {'period': '1 Month \n Ago', 'qtrMean': 0.66, 'yrMean': 2.6},
+                                               'weekData': {'period': '1 Week \n Ago', 'qtrMean': 0.66, 'yrMean': 2.49},
+                                               'currentData': {'period': 'Current', 'qtrMean': 999.0, 'yrMean': 999.0},
+                                               'fiscalYearEndText': 'Fiscal Year End Dec 2026'}}}
+        e = qm.parse_estimates(surprise_json(((0.89, '0.75', '18.67', '11/10/2026'), (0.7, '0.65', '7.69', '8/11/2026'))), {'data': None}, htht)
+        self.assertEqual(e['momentum'], {'fiscal_year_end': '2026-12', 'current': None, 'week_ago': 2.49, 'month_ago': 2.6})
+        self.assertIn('estimate-momentum gives 999 (no value) for: current', e['gaps'])
+        rev = qm.business_gates(e, as_of=AS_OF)[0]
+        self.assertEqual((rev['pass'], rev['value'], rev['now']), (None, None, None))   # missing, and no invented percentage
+        ant = momentum_json(current=1.53, month=999.0, week='999.0', fy='Fiscal Year End Dec 2026')
+        e = qm.parse_estimates(surprise_json(), forecast_json((('Dec 2026', 1.53, 4, 0, 0), ('Dec 2027', 1.9, 4, 0, 0))), ant)
+        self.assertEqual((e['momentum']['current'], e['momentum']['month_ago'], e['momentum']['week_ago']), (1.53, None, None))
+        rev = qm.business_gates(e, as_of=AS_OF)[0]
+        self.assertEqual((rev['pass'], rev['value'], rev['why']), (None, None, 'no_earlier'))        # was: failed at -99.85%
+        self.assertEqual(qm.classify(qm.quality_gates(metrics(fcf=-1.)), qm.business_gates(e, as_of=AS_OF)), 'incomplete')
+        every = qm.parse_estimates({}, {}, momentum_json(current=999.0, month=999.0, week=999.0))  # HEI.A: all three
+        self.assertIsNone(every['momentum'])
+        self.assertEqual(qm.parse_estimates({}, {}, momentum_json(current=-999, month=998.99))['momentum']['month_ago'], 998.99)   # only 999 itself
+        big = qm.parse_estimates({}, forecast_json((('Dec 2026', 999.0, 3, 0, 0),)), {})['years'][0]
+        self.assertEqual(big['consensus'], 999.0)                                       # the forecast table has no such sentinel
+
+    def test_month_ago_number_is_not_used_when_the_page_disagrees_with_the_forecast_table(self):
+        """In the pages read on 25.11.2026 the estimate-momentum page's current consensus matched the forecast table's for
+        the same fiscal year to the cent in all 379 records that had both. A page that disagrees is stale or broken."""
+        e = est(m=momentum_json(current=24.0, month=25.13))         # the table says 25.3
+        w = qm.eps_revision(e, [], AS_OF)
+        self.assertEqual((w['state'], w['pct']), ('no_data', None))
+        self.assertIn('the forecast table says 25.3', w['notes'][0])
+        rev = qm.business_gates(e, as_of=AS_OF)[0]
+        self.assertEqual((rev['pass'], rev['why']), (None, 'no_earlier'))
+        self.assertIn('the month-ago number is not used', rev['note'])
+        self.assertEqual(qm.eps_revision(est(m=momentum_json(current=25.31, month=25.13)), [], AS_OF)['state'], 'ok')   # a cent apart is the same number
+        other_year = est(m=momentum_json(fy='Fiscal Year End Jan 2026'))                # a year the table does not hold: nothing to check
+        self.assertEqual(qm.eps_revision(other_year, [], AS_OF)['state'], 'ok')
+
 
 class BusinessGates(unittest.TestCase):
     def gates(self, e, **kw):
@@ -496,17 +577,74 @@ class BusinessGates(unittest.TestCase):
 
     def test_revisions_fail_when_the_consensus_fell_more_than_one_percent(self):
         for current, ok in ((99.0, True), (98.99, False), (101.0, True)):               # -1.0% is the boundary
-            rev = self.gates(est(m=momentum_json(current=current, month=100.0)))['eps_revisions']
-            self.assertEqual(rev['pass'], ok, current)
-        self.assertAlmostEqual(self.gates(est(m=momentum_json(current=98.99, month=100.0)))['eps_revisions']['value'], -0.0101)
+            rev = self.gates(est_at(current, 100.0))['eps_revisions']
+            self.assertEqual((rev['pass'], rev['failed_legs']), (ok, [] if ok else ['consensus']), current)
+        self.assertAlmostEqual(self.gates(est_at(98.99, 100.0))['eps_revisions']['value'], -0.0101)
+        both = self.gates(est_at(98.0, 100.0, up=0, down=5))['eps_revisions']
+        self.assertEqual((both['pass'], both['failed_legs']), (False, ['count', 'consensus']))
+        self.assertEqual(self.gates(est_at(101.0, 100.0, up=0, down=5))['eps_revisions']['failed_legs'], ['count'])
 
     def test_beats_fail_on_a_miss_larger_than_two_percent_in_either_quarter(self):
-        def beats(a, b):
-            return self.gates(est(s=surprise_json(((1.0, '1.0', a, '11/10/2026'), (1.0, '1.0', b, '8/11/2026'), (1.0, '1.0', '-50', '5/12/2026')))))['earnings_beats']
+        def beats(a, b):                            # consensus 10.00 a share; the reported EPS is that surprise away from it
+            rows = [(round(10 * (1 + float(x) / 100), 4), '10.0', x, d) for x, d in ((a, '11/10/2026'), (b, '8/11/2026'), ('-50', '5/12/2026'))]
+            return self.gates(est(s=surprise_json(rows)))['earnings_beats']
         self.assertEqual((beats('5.0', '-2.0')['pass'], beats('5.0', '-2.0')['value']), (True, -2.0))     # a miss of 2% counts as met
         self.assertEqual((beats('5.0', '-2.01')['pass'], beats('5.0', '-2.01')['value']), (False, -2.01))
         self.assertFalse(beats('-3', '10')['pass'])
         self.assertTrue(beats('0', '0')['pass'])                                       # the third, older quarter is not read
+
+    def test_a_miss_of_one_cent_counts_as_met(self):
+        """2% of a small EPS is less than the cent EPS is reported in: CAVA 0.11 against 0.12 (-8.3%), EDU 0.42 against
+        0.43 (-2.3%) and LYG 0.13 against 0.14 (-7.1%) failed on one cent (live, 25.11.2026)."""
+        def beats(eps, cons, pct):
+            return self.gates(est(s=surprise_json(((eps, cons, pct, '11/10/2026'), (1.0, '0.9', '11.1', '8/11/2026')))))['earnings_beats']
+        for eps, cons, pct in ((0.11, '0.12', '-8.33'), (0.42, '0.43', '-2.33'), (0.13, '0.14', '-7.14'), (-0.01, '0', 'N/A')):
+            self.assertTrue(beats(eps, cons, pct)['pass'], (eps, cons))
+        self.assertEqual(beats(0.11, '0.12', '-8.33')['value'], -8.33)                  # the number shown stays the feed's
+        for eps, cons, pct in ((0.10, '0.12', '-16.67'), (2.12, '2.94', '-27.89'), (-0.02, '0', 'N/A')):
+            self.assertFalse(beats(eps, cons, pct)['pass'], (eps, cons))                # two cents or more is a miss
+        self.assertEqual(qm.GATES['surprise_cent_tolerance'], 0.01)
+
+    def test_a_leg_known_to_fail_fails_the_gate_even_when_the_other_leg_is_unknown(self):
+        """A gate is an AND of legs: one known failure decides it. PEN, live 25.11.2026: the newest quarter has no
+        consensus and the one before missed by 23.48%; it was 'missing', so the row was 'incomplete', not failed."""
+        pen = est(s=surprise_json(((1.07, 'N/A', 'N/A', '10/29/2026'), (0.88, '1.15', '-23.48', '7/30/2026'), (0.82, '1.11', '-26.13', '5/6/2026'))))
+        beat = self.gates(pen)['earnings_beats']
+        self.assertEqual((beat['pass'], beat['value']), (False, -23.48))
+        one = est(s=surprise_json(((0.88, '1.15', '-23.48', '11/10/2026'),)))           # one reported quarter, and it missed
+        self.assertFalse(self.gates(one)['earnings_beats']['pass'])
+        unknown = est(s=surprise_json(((1.07, 'N/A', 'N/A', '10/29/2026'), (1.2, '1.15', '4.35', '7/30/2026'))))
+        self.assertEqual((self.gates(unknown)['earnings_beats']['pass'], self.gates(unknown)['earnings_beats']['why']), (None, 'no_consensus'))
+        cuts = forecast_json((('Jan 2027', 25.3, 10, 0, 18), ('Jan 2028', 29.59, 9, 0, 0)))
+        rev = self.gates(est(f=cuts, m={}))['eps_revisions']                            # 18 cut, none raised, no month-ago number
+        self.assertEqual((rev['pass'], rev['failed_legs'], rev['value']), (False, ['count'], None))
+        na = forecast_json((('Jan 2027', 80.0, 10, 'N/A', 'N/A'), ('Jan 2028', 90.0, 9, None, None)))
+        rev = self.gates(est(f=na, m=momentum_json(current=80.0, month=100.0)))['eps_revisions']     # -20% in a month, no count
+        self.assertEqual((rev['pass'], rev['failed_legs']), (False, ['consensus']))
+        self.assertEqual(qm.classify(qm.quality_gates(metrics()), list(self.gates(est(f=na, m=momentum_json(current=80.0, month=100.0))).values())),
+                         'near_miss')
+
+    def test_eps_that_swings_far_above_and_below_the_consensus_is_not_readable(self):
+        """GOOGL, live 25.11.2026: 2.12 against 2.94 (-27.89%) after 9.11 against 2.88 (+216.32%), the year's consensus
+        20.60 -> 19.77 (the cut equals the miss), 5 raised and 21 cut, while SEC operating income grew 30% and revenue
+        25%. The swings are marks on investments inside EPS. Both gates failed and the row vanished; now both are
+        missing with a reason, and the row is listed as incomplete."""
+        swing = ((2.12, '2.94', '-27.89', '10/28/2026'), (9.11, '2.88', '216.32', '7/22/2026'), (5.11, '2.64', '93.56', '4/29/2026'))
+        f = forecast_json((('Dec 2026', 19.77, 17, 0, 13), ('Dec 2027', 14.93, 17, 5, 8)))
+        e = est(s=surprise_json(swing), f=f, m=momentum_json(current=19.77, month=20.6, fy='Fiscal Year End Dec 2026'))
+        g = self.gates(e)
+        self.assertEqual([(x['pass'], x['why']) for x in g.values()], [(None, 'erratic'), (None, 'erratic')])
+        self.assertAlmostEqual(g['eps_revisions']['value'], 19.77 / 20.6 - 1)           # the numbers stay visible
+        self.assertEqual((g['eps_revisions']['net'], g['earnings_beats']['value']), (-16, -27.89))
+        self.assertIn('not readable', g['earnings_beats']['note'])
+        self.assertEqual(qm.classify(qm.quality_gates(metrics()), list(g.values())), 'incomplete')
+        self.assertFalse(qm.improving(list(g.values())))
+        for rows in (((2.12, '2.94', '-27.89', '10/28/2026'), (3.6, '2.88', '25.0', '7/22/2026')),        # +25.0% is not beyond 25%
+                     ((2.12, '2.94', '-27.89', '10/28/2026'), (2.0, '2.88', '-30.56', '7/22/2026')),     # two misses: a real failure
+                     ((4.0, '2.94', '36.05', '10/28/2026'), (9.11, '2.88', '216.32', '7/22/2026'))):     # two beats: a real pass
+            b = self.gates(est(s=surprise_json(rows), f=f, m=momentum_json(current=19.77, month=20.6, fy='Fiscal Year End Dec 2026')))
+            self.assertIsNot(b['earnings_beats']['pass'], None, rows)
+            self.assertIsNot(b['eps_revisions']['pass'], None, rows)
 
     def test_missing_data_is_never_a_pass(self):
         g = self.gates(None)
@@ -521,7 +659,7 @@ class BusinessGates(unittest.TestCase):
 
     def test_negative_or_sign_changing_consensus_has_no_percentage_and_the_count_decides(self):
         for current, month in ((-2.72, -2.92), (0.05, -0.10), (-0.05, 0.10), (0.0, 0.4)):
-            rev = self.gates(est(m=momentum_json(current=current, month=month)))['eps_revisions']
+            rev = self.gates(est_at(current, month))['eps_revisions']
             self.assertIsNone(rev['value'], (current, month))
             self.assertTrue(rev['pass'], (current, month))                              # 4 raised, 0 cut
             self.assertIn('no usable percentage', rev['note'])
@@ -543,18 +681,19 @@ class BusinessGates(unittest.TestCase):
         self.assertFalse(self.gates(late, as_of='2026-11-25')['earnings_beats']['pass'])
 
     def test_our_own_history_lengthens_the_window(self):
-        def h(day, consensus, fy='2027-01'):
-            return {'as_of': day, 'fiscal_year_end': fy, 'consensus': consensus, 'n': 10}
+        def h(day, consensus, fy='2027-01', **ref):
+            return dict({'as_of': day, 'fiscal_year_end': fy, 'consensus': consensus, 'n': 10}, **ref)
         e = est()
-        self.assertEqual(qm.history_lines(e, AS_OF), [h(AS_OF, 25.3), {'as_of': AS_OF, 'fiscal_year_end': '2028-01', 'consensus': 29.59, 'n': 9},
-                                                      {'as_of': AS_OF, 'fiscal_year_end': '2029-01', 'consensus': 31.25, 'n': 3}])
+        ref = {'ref_reported': '2026-11-10', 'ref_eps': 9.16}       # the newest reported quarter as the page showed it
+        self.assertEqual(qm.history_lines(e, AS_OF), [h(AS_OF, 25.3, **ref), dict(h(AS_OF, 29.59, '2028-01', **ref), n=9),
+                                                      dict(h(AS_OF, 31.25, '2029-01', **ref), n=3)])
         w = qm.eps_revision(e, [h('2026-09-16', 20.0), h('2026-10-01', 22.0), h('2026-11-01', 25.0)], AS_OF)
         self.assertEqual((w['source'], w['window_days'], w['then'], w['now']), ('own_history', 60, 20.0, 25.3))     # the oldest within 100 days
         self.assertAlmostEqual(w['pct'], 25.3 / 20.0 - 1)
         recent = qm.eps_revision(e, [h('2026-11-01', 30.0)], AS_OF)                     # 14 days: Nasdaq's month is longer
         self.assertEqual((recent['source'], recent['window_days'], recent['then']), ('nasdaq_month', 30, 25.13))
         for rows in ([h('2026-07-01', 20.0)], [h('2026-09-16', 20.0, fy='2028-01')], [h(AS_OF, 20.0)], [h('2026-12-01', 20.0)],
-                     [{'as_of': '2026-09-16', 'fiscal_year_end': '2027-01', 'consensus': 'N/A'}]):
+                     [{'as_of': '2026-09-16', 'fiscal_year_end': '2027-01', 'consensus': 'N/A'}], [h('not a date', 20.0)]):
             self.assertEqual(qm.eps_revision(e, rows, AS_OF)['source'], 'nasdaq_month', rows)        # too old, another year, today, later, no number
         no_month = est(m={})
         self.assertEqual(qm.eps_revision(no_month, [], AS_OF)['state'], 'no_data')
@@ -564,6 +703,51 @@ class BusinessGates(unittest.TestCase):
         self.assertEqual((g['eps_revisions']['pass'], g['eps_revisions']['window_days']), (False, 60))   # -2.7% over 60 days: cut
         self.assertIn('60 יום', qm.revision_he(g['eps_revisions']))
 
+    def test_a_saved_reading_is_never_compared_with_itself(self):
+        """History lines are dated by the day the pages were read; their age is measured from that day too (read_on),
+        not from --as-of. Before, a rerun over pages read 45 days earlier found its own first reading '45 days old'
+        and passed at 0.0%; and a reading one day old stood in for a missing month-ago number."""
+        def h(day, consensus):
+            return {'as_of': day, 'fiscal_year_end': '2027-01', 'consensus': consensus, 'n': 10}
+        e = est_at(24.0, 25.13)                                     # Nasdaq's month: -4.5%
+        own = qm.history_lines(e, '2026-10-01')                     # what the first run saved from these same pages
+        first = qm.business_gates(e, [], AS_OF, '2026-10-01')[0]
+        again = qm.business_gates(e, own, AS_OF, '2026-10-01')[0]
+        self.assertEqual((first['pass'], first['source']), (False, 'nasdaq_month'))
+        self.assertEqual((again['pass'], again['source'], again['value']), (first['pass'], 'nasdaq_month', first['value']))
+        self.assertEqual(qm.eps_revision(e, own, AS_OF)['source'], 'own_history')       # read today, that line is 45 days old
+        no_month = est(m={})
+        for day, source in (('2026-11-14', None), ('2026-11-09', None), ('2026-11-08', 'own_history')):   # 1, 6 and 7 days old
+            w = qm.eps_revision(no_month, [h(day, 25.3)], AS_OF)
+            self.assertEqual(w['source'], source, day)
+        self.assertEqual(qm.REVISION_MIN_OWN_DAYS, 7)
+
+    def test_a_saved_reading_on_another_per_share_scale_is_not_compared(self):
+        """Our saved consensus is per share at the old share count; the feed restates its own numbers after a split.
+        A 10-for-1 split read as a 90% cut, a reverse split as a 900% raise that would top the rank."""
+        def h(day, consensus, **ref):
+            return dict({'as_of': day, 'fiscal_year_end': '2027-01', 'consensus': consensus, 'n': 10}, **ref)
+        e = est()                                                   # consensus 25.3, Nasdaq's month +0.7%, 4 raised
+        for saved in (253.0, 2.53):                                 # 10-for-1, 1-for-10
+            g = qm.business_gates(e, [h('2026-10-05', saved)], AS_OF)[0]
+            self.assertEqual((g['pass'], g['source'], g['window_days']), (True, 'nasdaq_month', 30), saved)
+            self.assertAlmostEqual(g['value'], 25.3 / 25.13 - 1)
+            self.assertIn('per-share scale changed', g['note'])
+        # a 3-for-2 split is inside the 1.8x limit; the quarter we saved as a reference shows it: 10.14 then, 6.76 today
+        three_for_two = h('2026-10-05', 37.95, ref_reported='2026-08-11', ref_eps=10.14)
+        g = qm.business_gates(e, [three_for_two], AS_OF)[0]
+        self.assertEqual((g['pass'], g['source']), (True, 'nasdaq_month'))
+        self.assertIn('2026-08-11', g['note'])
+        same_scale = h('2026-10-05', 26.0, ref_reported='2026-08-11', ref_eps=6.76)
+        self.assertEqual(qm.business_gates(e, [same_scale], AS_OF)[0]['source'], 'own_history')    # 41 days, same scale: used
+        # a split after the oldest reading: the oldest reading on today's scale is the starting point
+        w = qm.eps_revision(e, [h('2026-09-16', 250.0), h('2026-10-05', 25.0)], AS_OF)
+        self.assertEqual((w['source'], w['window_days'], w['then']), ('own_history', 41, 25.0))
+        self.assertEqual(len(w['notes']), 1)
+        # no month-ago number and only a split-scale reading: nothing to compare, the gate is missing
+        g = qm.business_gates(est(m={}), [h('2026-10-05', 253.0)], AS_OF)[0]
+        self.assertEqual((g['pass'], g['why']), (None, 'no_earlier'))
+
 
 class Classify(unittest.TestCase):
     def test_pass_near_miss_fail(self):
@@ -572,23 +756,36 @@ class Classify(unittest.TestCase):
         self.assertEqual(qm.classify(qm.quality_gates(metrics(share_change=0.05, fcf=-1.)), good_business()), 'fail')
 
     def test_one_business_failure_is_a_near_miss_two_gates_is_a_fail(self):
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         self.assertEqual(qm.classify(qm.quality_gates(metrics()), cut), 'near_miss')
-        self.assertEqual(qm.classify(qm.quality_gates(metrics(fcf=-1.)), cut), 'fail')
-        both = qm.business_gates(est(s=surprise_json(((1.0, '2.0', '-50', '11/10/2026'), (1.0, '0.9', '11', '8/11/2026'))),
-                                     m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
-        self.assertEqual(qm.classify(qm.quality_gates(metrics()), both), 'fail')        # the PayPal pattern: cuts and a miss
+        self.assertEqual(qm.classify(qm.quality_gates(metrics(fcf=-1.)), cut), 'fail')  # a quality gate and an analyst gate: two conditions
+
+    def test_the_two_analyst_gates_count_as_one_failed_condition(self):
+        """One missed quarter fails both analyst gates: the full-year consensus holds the reported quarters, so a miss
+        lowers it by the same cents and analysts log cuts. MELI, live 25.11.2026: 8.83 against 9.41 on 04.11, the year
+        38.09 -> 36.74, 1 raised and 7 cut. Counted twice, a company with clean quality gates was 'fail' and appeared
+        in no list (JPM, PFG, VCTR)."""
+        missed = ((8.83, '9.41', '-6.16', '11/4/2026'), (9.19, '8.69', '5.75', '8/5/2026'))
+        f = forecast_json((('Dec 2026', 36.74, 6, 1, 3), ('Dec 2027', 51.25, 6, 0, 4)))
+        both = qm.business_gates(est(s=surprise_json(missed), f=f, m=momentum_json(current=36.74, month=38.09, fy='Fiscal Year End Dec 2026')),
+                                 as_of=AS_OF)
+        self.assertEqual([g['pass'] for g in both], [False, False])
+        clean, one_bad = qm.quality_gates(metrics()), qm.quality_gates(metrics(margin_change_pts=-2.))
+        self.assertEqual((qm.fail_count(clean, both), qm.classify(clean, both)), (1, 'near_miss'))
+        self.assertEqual((qm.fail_count(one_bad, both), qm.classify(one_bad, both)), (2, 'fail'))   # MELI itself: margins fell too
+        self.assertEqual((qm.fail_count(clean, good_business()), qm.fail_count(clean, None), qm.fail_count(one_bad, cut_business())), (0, 0, 2))
+        half = [dict(both[0]), dict(both[1], **{'pass': None})]                         # one analyst gate failed, the other unknown
+        self.assertEqual(qm.classify(clean, half), 'incomplete')
+        self.assertEqual(qm.classify(one_bad, half), 'fail')
 
     def test_one_trend_failure_is_a_near_miss_two_gates_is_a_fail(self):
         """Lesson L10 (research/lessons.jsonl) names this test: a search for names that 'fell a lot' returned broken
         companies that were not recovering. The name is kept so the lesson still points at a test. Since 25.11.2026 the
-        guard is not the price trend: a company whose business weakened fails the business gates, however far it fell,
-        and a fall alone neither picks a name nor drops it."""
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
-        broken = qm.business_gates(est(s=surprise_json(((1.0, '2.0', '-50', '11/10/2026'), (1.0, '0.9', '11', '8/11/2026'))),
-                                       m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        guard is not the price trend: a business that stopped growing fails the quality gates, analysts cutting is one
+        more failed condition, and a fall alone neither picks a name nor drops it."""
         for closes in (fallen(0.6), bars(0.002)):
-            one, two = screened('ONE', closes=closes, business=cut), screened('TWO', closes=closes, business=broken)
+            one = screened('ONE', closes=closes, business=cut_business())
+            two = screened('TWO', closes=closes, business=cut_business(), fcf={'pass': False, 'value': -1.})
             self.assertEqual((one['status'], one['divergence']), ('near_miss', False))
             self.assertEqual((two['status'], two['divergence']), ('fail', False))
         self.assertEqual(screened('GOOD', closes=fallen(0.6))['status'], 'pass')       # the fall itself decides nothing
@@ -713,8 +910,8 @@ def screened(symbol='S', closes=None, business=None, **metric_changes):
     r.update(qm.business_columns(r['business']))
     r.update(qm.price_columns(r, r['market_cap']))
     gates = r['quality'] + r['business']
-    r.update(status=qm.classify(r['quality'], r['business']), failed=qm.failed(gates), missing=qm.missing(gates),
-             divergence=qm.divergence(r['price_info'], r['business']))
+    r.update(status=qm.classify(r['quality'], r['business']), failed=qm.failed(gates), missing=qm.missing(gates))
+    r['divergence'] = qm.divergence(r['price_info'], r['business'], r['status'])
     return r
 
 
@@ -729,14 +926,14 @@ class PriceIsInformation(unittest.TestCase):
         self.assertEqual((up['status'], up['divergence']), ('pass', False))
 
     def test_the_status_is_the_same_for_any_price_path(self):
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         for kw, want in (({}, 'pass'), ({'business': cut}, 'near_miss'), ({'business': qm.business_gates(None)}, 'incomplete'),
                          ({'fcf': {'pass': False, 'value': -1.}}, 'near_miss'), ({'fcf': {'pass': False}, 'business': cut}, 'fail')):
             statuses = {screened('X', closes=c, **kw)['status'] for c in (bars(0.002), bars(-0.002), fallen(0.6), bars(0.))}
             self.assertEqual(statuses, {want}, kw)
 
     def test_a_falling_price_with_analysts_cutting_is_not_flagged(self):
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         r = screened('WEAK', closes=fallen(0.6), business=cut)
         self.assertEqual((r['status'], r['divergence']), ('near_miss', False))
         self.assertEqual(r['failed'][0]['gate'], 'eps_revisions')
@@ -770,9 +967,10 @@ class Radar(unittest.TestCase):
             self.assertEqual(qm.parse_calendar('2026-11-21', empty), [])
 
     def test_reported_and_upcoming_lists(self):
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         rows = [screened('PASS'), screened('NEAR', business=cut), screened('SMALL'), screened('BOOK', fcf={'pass': False}, business=cut),
-                screened('FAIL', fcf={'pass': False}, business=cut), screened('GOOGL')]
+                screened('FAIL', fcf={'pass': False}, business=cut), screened('GOOGL'),
+                screened('PAIR', business=cut_business(s=surprise_json(MISSES)))]
         rows[2]['in_universe'] = False                              # below the market value floor, not in the book
         rows[5]['other_classes'] = ['GOOG']
         days = [('2026-11-10', cal(0, 'PASS', '$1.10', '$1.00', '10')),           # +10%: listed
@@ -787,30 +985,61 @@ class Radar(unittest.TestCase):
                 ('2026-11-20', cal(0, 'GOOG', None)),                              # the other share class of a passer
                 ('2026-11-27', cal(0, 'BOOK', None)), ('2026-11-27', cal(0, 'FAIL', None)),
                 ('2026-11-29', cal(0, 'PASS', None)),                              # 14 days ahead: inside
-                ('2026-11-30', cal(0, 'PASS', None))]                              # 15 days ahead: outside
+                ('2026-11-30', cal(0, 'PASS', None)),                              # 15 days ahead: outside
+                ('2026-11-28', cal(0, 'PAIR', None))]                              # a near miss on both analyst gates
         calendar = sum((qm.parse_calendar(d, [r]) for d, r in days), [])
         radar = qm.earnings_radar(calendar, rows, ['BOOK', 'GONE'], AS_OF)
         self.assertEqual([(x['date'], x['symbol']) for x in radar['reported']],
                          [('2026-11-12', 'GONE'), ('2026-11-11', 'BOOK'), ('2026-11-10', 'PASS'), ('2026-11-10', 'NEAR')])
         near = radar['reported'][3]
-        self.assertEqual((near['status'], near['failed_gate'], near['surprise_pct'], near['in_book']), ('near_miss', 'eps_revisions', 5.0, False))
+        self.assertEqual((near['status'], near['failed_gate'], near['failed_gates'], near['surprise_pct'], near['in_book']),
+                         ('near_miss', 'eps_revisions', ['eps_revisions'], 5.0, False))
         self.assertEqual((radar['reported'][0]['status'], radar['reported'][0]['in_book']), (None, True))
         self.assertEqual((radar['reported'][1]['status'], radar['reported'][1]['surprise_pct']), ('fail', -10.0))
         self.assertEqual([(x['date'], x['symbol']) for x in radar['upcoming']],
-                         [('2026-11-15', 'NEAR'), ('2026-11-20', 'GOOGL'), ('2026-11-27', 'BOOK'), ('2026-11-29', 'PASS')])
+                         [('2026-11-15', 'NEAR'), ('2026-11-20', 'GOOGL'), ('2026-11-27', 'BOOK'), ('2026-11-28', 'PAIR'), ('2026-11-29', 'PASS')])
+        pair = radar['upcoming'][3]
+        self.assertEqual((pair['status'], pair['failed_gate'], pair['failed_gates']), ('near_miss', None, ['eps_revisions', 'earnings_beats']))
         self.assertEqual(qm.earnings_radar([], rows, ['BOOK'], AS_OF), {'reported': [], 'upcoming': []})
+
+    def test_a_thesis_book_company_on_a_past_day_without_eps_is_still_listed(self):
+        """The calendar read on 25.11.2026 had five past-day rows with EPS 'N/A'. For a thesis-book company such a row
+        matched neither list and was dropped without a word; the rule is 'every thesis-book company that reported'."""
+        rows = [screened('BOOK'), screened('PASS')]
+        days = [('2026-11-12', cal(0, 'BOOK', 'N/A', '$1.00', 'N/A')), ('2026-11-12', cal(0, 'PASS', 'N/A', '$1.00', 'N/A')),
+                ('2026-11-15', cal(0, 'BOOK', 'N/A', '$1.00', 'N/A'))]             # today without EPS: still upcoming
+        radar = qm.earnings_radar(sum((qm.parse_calendar(d, [r]) for d, r in days), []), rows, ['BOOK'], AS_OF)
+        self.assertEqual([(x['date'], x['symbol'], x['eps'], x['surprise_pct']) for x in radar['reported']], [('2026-11-12', 'BOOK', None, None)])
+        self.assertEqual([(x['date'], x['symbol']) for x in radar['upcoming']], [('2026-11-15', 'BOOK')])
+        text = '\n'.join(qm._radar_he({'radar': radar}))
+        self.assertIn('| 12.11.2026 | BOOK | BOOK Corp | 2026-10 | — | 1.00$ | — |', text)
+        self.assertIn('התאריך שלה בלוח עבר, והתוצאה עדיין לא רשומה שם', text)
+
+    def test_radar_says_whether_the_quality_numbers_already_hold_the_report(self):
+        """WWD and PANW reported on 18.11.2026 and their SEC numbers already ended at the reported quarter; the report
+        said for every row that they did not."""
+        rows = [screened('IN'), screened('OUT')]                    # the SEC numbers of both end 2026-09-30
+        days = [('2026-11-10', cal(0, 'IN', '$1.10', '$1.00', '10', fiscalQuarterEnding='Sep/2026')),
+                ('2026-11-10', cal(0, 'OUT', '$1.10', '$1.00', '10', fiscalQuarterEnding='Oct/2026')),
+                ('2026-11-10', cal(0, 'GONE', '$1.10', '$1.00', '10'))]
+        radar = qm.earnings_radar(sum((qm.parse_calendar(d, [r]) for d, r in days), []), rows, ['GONE'], AS_OF)
+        self.assertEqual({x['symbol']: x['in_quality'] for x in radar['reported']}, {'IN': True, 'OUT': False, 'GONE': None})
+        text = '\n'.join(qm._radar_he({'radar': radar}))
+        self.assertIn('| +10.0% | כן | עברה | — |', text)
+        self.assertIn('| +10.0% | לא | עברה | — |', text)
+        self.assertNotIn('עדיין לא נמצא בנתוני', text)                 # no blanket claim that the report is missing from the SEC data
 
 
 class Report(unittest.TestCase):
     def res(self):
         r = screened('S')
         spy = qm.trend_measures(bars(0.0005))
-        cut = qm.business_gates(est(m=momentum_json(current=24.0, month=25.13)), as_of=AS_OF)
+        cut = cut_business()
         miss = dict(r, symbol='M', status='near_miss', failed=[dict(gate(r['quality'], 'share_change'), value=0.05)])
         slow = dict(r, symbol='D', status='near_miss', failed=[dict(gate(r['quality'], 'durability'), value=0.04, worst_year=-0.02)])
         weak = screened('W', business=cut)
         down = screened('DN', closes=fallen(0.43), **{'durability': {'pass': False, 'value': 0.035, 'worst_year': -0.136}})
-        loss = dict(screened('L', business=qm.business_gates(est(m=momentum_json(current=-2.72, month=-2.92)), as_of=AS_OF)))
+        loss = dict(screened('L', business=qm.business_gates(est_at(-2.72, -2.92), as_of=AS_OF)))
         oil = dict(r, symbol='O', route='commodity', sic='1311', status='pass')
         bank = dict(r, symbol='B', status='near_miss', failed=[qm.financial_gates({'rev_growth_ttm': 0.1, 'roe': 0.13, 'bvps_growth': 0.1})[1]])
         gap = dict(screened('U', business=qm.business_gates(None)))
@@ -837,28 +1066,80 @@ class Report(unittest.TestCase):
     def test_version_2_sections_and_columns(self):
         text = qm.render_he(self.res())
         for needle in ('# חיפוש מניות: איכות העסק + תנופה עסקית', '**המחיר הוא מידע בלבד, לא תנאי** (מאז 25.11.2026)', 'DELL',
-                       'דפי האנליסטים של Nasdaq (הנתונים של Zacks; ממשק ציבורי לא רשמי', 'חלון של כחודש (30 יום)', 'עד 100 יום',
+                       'דפי האנליסטים של Nasdaq (ממשק ציבורי לא רשמי', 'Nasdaq מציינת ש-Zacks היא ספק הנתונים שלה',
+                       'תקופה של כחודש (30 יום)', 'עד 100 יום', 'אם לא, היא נשארת כחודש', 'יכולה להיות שונה מחברה לחברה',
                        'תנופה עסקית, תנאי 1, תחזיות הרווח לא יורדות', 'לא ירדה ביותר מ-1%', 'תנופה עסקית, תנאי 2, עמידה בתחזית',
-                       'פספוס של עד 2% נחשב עמידה', 'מחיר (מידע בלבד, לא תנאי)',
+                       'פספוס של עד 2%, או של עד סנט אחד למניה, נחשב עמידה', 'נספרים יחד כתנאי אחד', 'מחיר (מידע בלבד, לא תנאי)',
                        '| שינוי בתחזית הרווח | הפתעה ברווח, 2 רבעונים | תשואה 12-1 (מידע) | מרחק מהשיא (מידע) |',
                        '+0.7% ב-30 יום; 4 העלו, 0 הורידו', '+39.9% / +43.2%',
-                       'אנליסטים לא מורידים תחזיות רווח', '-4.5% ב-30 יום; 4 העלו, 0 הורידו',          # the near miss on revisions
+                       # the near miss on revisions is named by the half that failed, and its number is not printed twice
+                       '| W | W Corp | 9B$ | תחזית הרווח הממוצעת ירדה ביותר מ-1% | בעמודות האנליסטים |', '-4.5% ב-30 יום; 4 העלו, 0 הורידו',
                        'בלי אחוז (תחזית רווח אפס או שלילית); 4 העלו, 0 הורידו', '~ אין לחברה אחוז שינוי בתחזית',
-                       'שינוי בתחזית הרווח), בלי משקלות', 'מקבלת ברכיב הזה את החציון של האחרות',
+                       'ציון הדירוג הוא הסכום שלהם, בלי משקלות', 'מקבלת ברכיב הזה את הערך האמצעי של האחרות',
                        '## המחיר ירד, העסק משתפר (1)', '| DN ◆ |', 'מסומנת ◆',
                        '## רדאר דוחות', '### דיווחו ב-10 הימים האחרונים (1)', '### מדווחות ב-14 הימים הקרובים (1)',
-                       '| 10.11.2026 | S | S Corp | 2026-10 | 1.10$ | 1.00$ | +10.0% | עברה | כן |',
+                       '| 10.11.2026 | S | S Corp | 2026-10 | 1.10$ | 1.00$ | +10.0% | לא | עברה | כן |',
                        '| 20.11.2026 | אחרי המסחר | DN | DN Corp | 2026-10 | 2.50$ | 8 | כמעט (נכשל: צמיחה עקבית בשלוש השנים האחרונות) | — |',
-                       'ושני תנאי התנופה העסקית', 'חסר: אנליסטים לא מורידים תחזיות רווח', 'לוח הדוחות של Nasdaq', 'לא נבדק על העבר'):
+                       'ושני תנאי התנופה העסקית', 'חסר: שני תנאי האנליסטים (אין נתוני אנליסטים)', 'לוח הדוחות של Nasdaq', 'לא נבדק על העבר',
+                       '[דפי האנליסטים של Nasdaq](https://www.nasdaq.com/market-activity/stocks/dell/earnings)',
+                       'עסק שהפסיק לצמוח נפסל בתנאי האיכות'):
             self.assertIn(needle, text)
-        for gone in ('מחיר מעל ממוצע 200 יום', 'לא יותר מ-25% מתחת לשיא', 'עוצמה מול המדד', 'ושלושת תנאי המגמה', 'במגמת עלייה'):
+        for gone in ('מחיר מעל ממוצע 200 יום', 'לא יותר מ-25% מתחת לשיא', 'עוצמה מול המדד', 'ושלושת תנאי המגמה', 'במגמת עלייה',
+                     'החציון', 'אחוזון', 'חלון', 'ממשיך להשתפר', '-0.0%', 'נתוני האנליסטים נקראו ב-'):
             self.assertNotIn(gone, text)
         top = text.split('## מה החיפוש אומר ומה לא')[0]                 # the divergence section sits above the explanations
         self.assertIn('| DN | DN Corp | כמעט | -43% |', top)
         self.assertIn('צמיחה עקבית בשלוש השנים האחרונות (+3.5% בשנה, השנה החלשה -13.6%)', top)
+        self.assertIn('כמה אנליסטים העלו והורידו תחזית ב-4 השבועות האחרונים', top)       # the columns are explained under the first table
+        self.assertIn('התחזית הממוצעת עלתה', top)                       # what 'the business improves' means here
         self.assertNotIn('| S |', top)
-        unread = text.split('## לא נכשלו בשום תנאי, אבל חסר להן נתון')[1].split('##')[0]
-        self.assertIn('אנליסטים לא מורידים תחזיות רווח, עמידה בתחזית הרווח בשני הרבעונים האחרונים', unread)
+        unread = text.split('## חסר להן נתון')[1].split('##')[0]
+        self.assertIn('| U | U Corp | 9B$ | — | שני תנאי האנליסטים (אין נתוני אנליסטים) |', unread)
+
+    def test_near_miss_on_both_analyst_gates_shows_both_reasons(self):
+        res = self.res()
+        pair = screened('PR', business=cut_business(s=surprise_json(MISSES)))
+        self.assertEqual((pair['status'], [g['gate'] for g in pair['failed']]), ('near_miss', ['eps_revisions', 'earnings_beats']))
+        res['near_misses'] = [pair]
+        text = qm.render_he(res)
+        self.assertIn('| PR | PR Corp | 9B$ | תחזית הרווח הממוצעת ירדה ביותר מ-1%; עמידה בתחזית הרווח בשני הרבעונים האחרונים | בעמודות האנליסטים | 16% |', text)
+        self.assertIn('-4.5% ב-30 יום; 4 העלו, 0 הורידו | -50.0% / +11.0% |', text)
+        self.assertIn('ולכן יכולות להופיע בשורה שתי סיבות', text)
+        self.assertEqual(qm._fail_he(pair), 'נכשלה ב: תחזית הרווח הממוצעת ירדה ביותר מ-1% (-4.5% ב-30 יום; 4 העלו, 0 הורידו); '
+                                            'עמידה בתחזית הרווח בשני הרבעונים האחרונים (-50.0% / +11.0%)')
+
+    def test_unread_list_names_what_failed_and_why_the_analyst_data_is_missing(self):
+        swing = ((2.12, '2.94', '-27.89', '10/28/2026'), (9.11, '2.88', '216.32', '7/22/2026'))
+        erratic = qm.business_gates(est_at(19.77, 20.6, up=0, down=13, s=surprise_json(swing)), as_of=AS_OF)
+        res = self.res()
+        res['unread'] = [screened('SW', business=erratic), screened('NF', business=qm.business_gates(None), fcf={'pass': False, 'value': -2e9})]
+        unread = qm.render_he(res).split('## חסר להן נתון (2)')[1].split('##')[0]
+        self.assertIn('| SW | SW Corp | 9B$ | — | שני תנאי האנליסטים (לא קריא: הרווח למניה קפץ מעל התחזית ומתחתיה) | -27.9% / +216.3% |', unread)
+        self.assertIn('| NF | NF Corp | 9B$ | תזרים מזומנים חופשי חיובי (-2.00 מיליארד) | שני תנאי האנליסטים (אין נתוני אנליסטים) |', unread)
+        self.assertIn('זה לא כישלון של העסק', unread)
+
+    def test_small_details_of_the_wording(self):
+        self.assertEqual((qm._signed(-0.04), qm._signed(0.04), qm._signed(-0.05), qm._signed(None)), ('0.0%', '0.0%', '-0.1%', '—'))
+        flat = qm.business_gates(est_at(25.129, 25.13), as_of=AS_OF)[0]                 # UNH printed '-0.0%'
+        self.assertEqual(qm.revision_he(flat), '0.0% ב-30 יום; 4 העלו, 0 הורידו')
+        res = self.res()
+        res['analyst_read'] = {'first': AS_OF, 'last': AS_OF}
+        same_day = qm.render_he(res)
+        self.assertIn('הדפים נקראו ב-15.11.2026.', same_day)
+        self.assertNotIn('**שים לב:** נתוני האנליסטים נקראו', same_day)
+        res['analyst_read'] = {'first': '2026-11-16', 'last': '2026-11-16'}             # read the day after the as-of date
+        late = qm.render_he(res)
+        self.assertIn('**שים לב:** נתוני האנליסטים נקראו ב-16.11.2026, ולא בתאריך החיפוש (15.11.2026)', late)
+        res['near_misses'] = res['near_misses'] + [dict(res['near_misses'][3], symbol='DELL')]
+        self.assertIn('בהרצה הזאת DELL: כמעט עברה (נכשלה ב: צמיחה עקבית בשלוש השנים האחרונות (+3.5% בשנה, השנה החלשה -13.6%)).', qm.render_he(res))
+        paypal = screened('PYPL', rev_growth_ttm={'pass': False, 'value': 0.044}, rev_growth_q={'pass': False, 'value': 0.02})
+        self.assertEqual((paypal['status'], [g['pass'] for g in paypal['business']]), ('fail', [True, True]))
+        res['rows'] = [paypal]
+        self.assertIn('עסק שהפסיק לצמוח נפסל בתנאי האיכות. בהרצה הזאת PayPal נכשלת ב-2 תנאי איכות, אף שהיא עוברת את שני תנאי האנליסטים. '
+                      'תנאי האנליסטים רק מוסיפים בדיקה', qm.render_he(res))
+        small = dict(screened('TINY', business=qm.business_gates(est_at(0.96, 0.69), as_of=AS_OF)))
+        res['passers'] = qm.rank([small, screened('S')])
+        self.assertIn('כך אצל: TINY (מ-0.69$ ל-0.96$).', qm.render_he(res))              # +39% on a base of cents is named
 
     def test_divergence_section_is_capped_and_names_the_rest(self):
         def flagged(sym, growth, **kw):
@@ -1025,10 +1306,11 @@ def load_screen():
     return screen
 
 
-def run_offline(screen, tmp, names, estimates=None, calendar=None, research=None, as_of=AS_OF):
+def run_offline(screen, tmp, names, estimates=None, calendar=None, research=None, as_of=AS_OF, series_by=None, spy=True):
     """The script end to end without a network: every raw file it would fetch is written first and --reuse reads them.
     names: {symbol: (cik, daily closes)}; estimates: {symbol: (surprise, forecast, momentum) page JSONs} (default: the
-    passing record; None = the pages gave nothing); calendar: {day: raw rows}. Any fetch fails the test.
+    passing record; None = the pages gave nothing); calendar: {day: raw rows}; series_by: {symbol: extracted series}
+    (default: every quality gate passes); spy=False: the SPY price file holds an error. Any fetch fails the test.
     Returns (screen.json, screen_he.md, the output folder)."""
     out = os.path.join(tmp, 'screens', as_of)
     research = research or os.path.join(tmp, 'research')
@@ -1040,7 +1322,7 @@ def run_offline(screen, tmp, names, estimates=None, calendar=None, research=None
            {'fields': ['cik', 'name', 'ticker', 'exchange'], 'data': [[c, s, s, 'Nasdaq'] for s, (c, b) in names.items()]})
     for s, (c, b) in names.items():
         _write(os.path.join(out, 'facts', f'CIK{c:010d}.json'), {
-            'cik': c, 'v': screen.FACTS_V, 'as_of': as_of, 'series': series(REV, OP, CFO, CAPEX), 'errors': [],
+            'cik': c, 'v': screen.FACTS_V, 'as_of': as_of, 'series': (series_by or {}).get(s, series(REV, OP, CFO, CAPEX)), 'errors': [],
             'sub': {'sic': '7372', 'sic_description': 'services-prepackaged software', 'fiscal_year_end': '1231', 'name': s,
                     'latest_periodic': {'form': '10-Q', 'filed': '2026-10-30', 'period': '2026-09-30'}}})
         pages = (estimates or {}).get(s, (surprise_json(), forecast_json(), momentum_json()))
@@ -1053,6 +1335,9 @@ def run_offline(screen, tmp, names, estimates=None, calendar=None, research=None
         b = [round(x, 4) for x in b]
         _write(os.path.join(out, 'prices', s + '.json'),
                {'symbol': s, 'dates': _dates(len(b)), 'adjclose': b, 'close': b, 'high': b, 'error': None, 'currency': 'USD'})
+    if not spy:
+        _write(os.path.join(out, 'prices', 'SPY.json'), {'symbol': 'SPY', 'dates': [], 'adjclose': [], 'close': [], 'high': [],
+                                                         'error': 'no bars (status 404)'})
     for day in qm.calendar_days(as_of):
         _write(os.path.join(out, 'calendar', day + '.json'), {'date': day, 'rows': (calendar or {}).get(day, []), 'error': None})
     with mock.patch.dict(os.environ, {'SEC_USER_AGENT': 'unit-test test@example.invalid'}), redirect_stdout(StringIO()), \
@@ -1092,24 +1377,33 @@ class ScreenMarksSavedValuations(unittest.TestCase):
         self.assertIn('## הערכות שמורות מול מחיר החיפוש (3)', text)
 
 
+SWING = ((2.12, '2.94', '-27.89', '10/28/2026'), (9.11, '2.88', '216.32', '7/22/2026'))        # the GOOGL pattern
+
+
 class ScreenVersion2(unittest.TestCase):
     """The script end to end, offline: price changes no status, analyst data does, and the new lists are written."""
 
     NAMES = {'UPCO': (1, bars(0.002)), 'DROPCO': (2, fallen(0.6)), 'CUTCO': (3, bars(0.002)), 'MISSCO': (4, fallen(0.6)),
-             'NODATA': (5, bars(0.002)), 'LOSSCO': (6, bars(0.001))}
+             'NODATA': (5, bars(0.002)), 'LOSSCO': (6, bars(0.001)), 'BOTHCO': (7, fallen(0.6)), 'SWINGCO': (8, bars(0.002))}
+    WEAK = (surprise_json(((1.0, '2.0', '-50', '11/10/2026'), (1.0, '1.5', '-33.3', '8/11/2026'))),
+            forecast_json((('Jan 2027', 20.0, 10, 0, 6), ('Jan 2028', 24.0, 9, 0, 3))), momentum_json(current=20.0, month=25.13))
     ESTIMATES = {'CUTCO': (surprise_json(), forecast_json((('Jan 2027', 24.0, 10, 0, 6), ('Jan 2028', 28.0, 9, 1, 3))),
                            momentum_json(current=24.0, month=25.13)),                          # analysts are cutting
-                 'MISSCO': (surprise_json(((1.0, '2.0', '-50', '11/10/2026'), (1.0, '1.5', '-33.3', '8/11/2026'))), forecast_json(),
-                            momentum_json(current=20.0, month=25.13)),                         # cuts and misses: the business weakened
+                 'MISSCO': WEAK,                                                               # cuts, misses and dilution
+                 'BOTHCO': WEAK,                                                               # cuts and misses, clean quality
+                 'SWINGCO': (surprise_json(SWING), forecast_json((('Dec 2026', 19.77, 17, 0, 13), ('Dec 2027', 14.93, 17, 5, 8))),
+                             momentum_json(current=19.77, month=20.6, fy='Fiscal Year End Dec 2026')),
                  'NODATA': None,
                  'LOSSCO': (surprise_json(), forecast_json((('Dec 2026', -2.72, 6, 4, 0), ('Dec 2027', -1.5, 6, 4, 1))),
                             momentum_json(current=-2.72, month=-2.92, fy='Fiscal Year End Dec 2026'))}
+    SERIES = {'MISSCO': series(REV, OP, CFO, CAPEX, shares=(100, 106))}                         # diluted shares up 6%: one quality gate fails
     CALENDAR = {'2026-11-10': [cal(0, 'DROPCO', '$9.16', '$6.55', '39.85'), cal(0, 'MISSCO', '$1.00', '$2.00', '-50'),
                                cal(0, 'UPCO', '$1.02', '$1.00', '2.0')],
                 '2026-11-18': [cal(0, 'CUTCO', None, '$6.00'), cal(0, 'OTHER', None, '$1.00')]}
 
     def run_screen(self, tmp, **kw):
-        return run_offline(load_screen(), tmp, self.NAMES, kw.pop('estimates', self.ESTIMATES), self.CALENDAR, **kw)
+        return run_offline(load_screen(), tmp, kw.pop('names', self.NAMES), kw.pop('estimates', self.ESTIMATES), self.CALENDAR,
+                           series_by=kw.pop('series_by', self.SERIES), **kw)
 
     def test_price_changes_no_status_and_the_business_gates_do(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1118,9 +1412,11 @@ class ScreenVersion2(unittest.TestCase):
             with open(os.path.join(history, 'DROPCO.jsonl'), encoding='utf-8') as f:
                 lines = [json.loads(x) for x in f]
             self.assertFalse(os.path.exists(os.path.join(history, 'NODATA.jsonl')))             # nothing to record
+            self.assertEqual([x for x in os.listdir(os.path.join(out, 'estimates')) if x.endswith('.tmp')], [])
         by = {r['symbol']: r for r in res['rows']}
         self.assertEqual({s: r['status'] for s, r in by.items()},
-                         {'UPCO': 'pass', 'DROPCO': 'pass', 'LOSSCO': 'pass', 'CUTCO': 'near_miss', 'MISSCO': 'fail', 'NODATA': 'incomplete'})
+                         {'UPCO': 'pass', 'DROPCO': 'pass', 'LOSSCO': 'pass', 'CUTCO': 'near_miss', 'BOTHCO': 'near_miss', 'MISSCO': 'fail',
+                          'NODATA': 'incomplete', 'SWINGCO': 'incomplete'})
         drop = by['DROPCO']
         self.assertAlmostEqual(drop['price_info']['below_high'], -0.6, places=3)                # 60% below its high, and a passer
         self.assertLess(drop['price_info']['vs_ma200'], 0)
@@ -1134,29 +1430,41 @@ class ScreenVersion2(unittest.TestCase):
         self.assertEqual([r['symbol'] for r in res['passers']], ['DROPCO', 'LOSSCO', 'UPCO'])   # tied on every part: alphabetical
         self.assertEqual(by['LOSSCO']['eps_revision_pct'], None)
         self.assertEqual(next(r for r in res['passers'] if r['symbol'] == 'LOSSCO')['rank_filled'], ['eps_revision_pct'])
-        self.assertEqual([(r['symbol'], r['failed'][0]['gate']) for r in res['near_misses']], [('CUTCO', 'eps_revisions')])
-        self.assertEqual({g['gate'] for g in by['MISSCO']['failed']}, {'eps_revisions', 'earnings_beats'})
-        self.assertFalse(by['MISSCO']['divergence'])                                            # it fell because the business weakened
-        self.assertEqual([r['symbol'] for r in res['unread']], ['NODATA'])
+        self.assertEqual({r['symbol']: [g['gate'] for g in r['failed']] for r in res['near_misses']},
+                         {'CUTCO': ['eps_revisions'], 'BOTHCO': ['eps_revisions', 'earnings_beats']})     # one missed quarter: one condition
+        self.assertEqual([g['gate'] for g in by['MISSCO']['failed']], ['share_change', 'eps_revisions', 'earnings_beats'])
+        self.assertNotIn('MISSCO', text.split('## החברות שכבר בספר התזות')[0])                   # two failed conditions: in no list
+        self.assertFalse(by['MISSCO']['divergence'] or by['BOTHCO']['divergence'])              # the price fell and the analyst data is worse
+        self.assertEqual([r['symbol'] for r in res['unread']], ['NODATA', 'SWINGCO'])
         self.assertEqual([g['gate'] for g in by['NODATA']['missing']], ['eps_revisions', 'earnings_beats'])
-        self.assertEqual([x['symbol'] for x in res['gaps']['estimates']], ['NODATA'])
+        self.assertEqual([(g['pass'], g['why']) for g in by['SWINGCO']['business']], [(None, 'erratic'), (None, 'erratic')])
+        self.assertEqual([x['symbol'] for x in res['gaps']['estimates']], ['NODATA', 'SWINGCO'])
         self.assertEqual([r['symbol'] for r in res['divergence']], ['DROPCO'])
-        self.assertEqual((res['counts']['divergence'], res['counts']['business_fetched'], res['counts']['analyst_data_gaps']), (1, 6, 1))
+        c = res['counts']
+        self.assertEqual((c['divergence'], c['business_fetched'], c['analyst_data_gaps'], c['analyst_data_not_readable'],
+                          c['no_gate_failed_but_incomplete'], c['near_misses']), (1, 8, 2, 1, 2, 2))
+        self.assertEqual(res['analyst_read'], {'first': AS_OF, 'last': AS_OF})
         self.assertEqual([(x['date'], x['symbol'], x['surprise_pct']) for x in res['radar']['reported']], [('2026-11-10', 'DROPCO', 39.85)])
         self.assertEqual([(x['date'], x['symbol'], x['failed_gate']) for x in res['radar']['upcoming']], [('2026-11-18', 'CUTCO', 'eps_revisions')])
         self.assertEqual((res['method']['version'], res['method']['rank_keys'][-1]), (2, 'eps_revision_pct'))
         self.assertNotIn('max_below_high', res['method']['gates'])
         self.assertIn('never a gate', res['method']['price'])
         self.assertIn('Zacks', res['method']['business_gates']['source'])
+        self.assertIn('ONE failed condition', res['method']['business_gates']['counted_as'])
         self.assertIn('not backtested', res['method']['not'])
-        self.assertEqual(lines, [{'as_of': AS_OF, 'fiscal_year_end': fy, 'consensus': c, 'n': n}
+        self.assertEqual(lines, [{'as_of': AS_OF, 'fiscal_year_end': fy, 'consensus': c, 'n': n, 'ref_reported': '2026-11-10', 'ref_eps': 9.16}
                                  for fy, c, n in (('2027-01', 25.3, 10), ('2028-01', 29.59, 9), ('2029-01', 31.25, 3))])
         for needle in ('## המחיר ירד, העסק משתפר (1)', '| DROPCO | DROPCO Inc. Common Stock | עברה | -60% |', '| 1 | DROPCO ◆ |',
-                       '| CUTCO | CUTCO Inc. Common Stock | 9B$ | אנליסטים לא מורידים תחזיות רווח | -4.5% ב-30 יום; 1 העלו, 9 הורידו |',
+                       '| CUTCO | CUTCO Inc. Common Stock | 9B$ | יותר אנליסטים הורידו את תחזית הרווח מאשר העלו וגם תחזית הרווח הממוצעת '
+                       'ירדה ביותר מ-1% | בעמודות האנליסטים |', '-4.5% ב-30 יום; 1 העלו, 9 הורידו',
+                       '| BOTHCO | BOTHCO Inc. Common Stock | 9B$ | יותר אנליסטים הורידו את תחזית הרווח מאשר העלו וגם תחזית הרווח הממוצעת '
+                       'ירדה ביותר מ-1%; עמידה בתחזית הרווח בשני הרבעונים האחרונים | בעמודות האנליסטים |',
                        '### דיווחו ב-10 הימים האחרונים (1)', '| 10.11.2026 | DROPCO |', '### מדווחות ב-14 הימים הקרובים (1)',
                        '| 18.11.2026 | אחרי המסחר | CUTCO |', '| NODATA |', 'חברות בלי נתוני אנליסטים מלאים בדפי Nasdaq',
-                       '| המחיר ירד, העסק משתפר | 1 |'):
+                       '| SWINGCO | SWINGCO Inc. Common Stock | 9B$ | — | שני תנאי האנליסטים (לא קריא: הרווח למניה קפץ מעל התחזית ומתחתיה) |',
+                       'הדפים נקראו ב-15.11.2026.', '| המחיר ירד, העסק משתפר | 1 |'):
             self.assertIn(needle, text)
+        self.assertNotIn('BOTHCO ◆', text)
 
     def test_a_second_run_reads_our_own_history_and_adds_one_line_per_day(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -1167,7 +1475,7 @@ class ScreenVersion2(unittest.TestCase):
             with open(os.path.join(history, 'UPCO.jsonl'), 'w', encoding='utf-8') as f:
                 f.write(''.join(json.dumps(x) + '\n' for x in old) + 'not json\n')
             res, text, _ = self.run_screen(tmp)
-            self.run_screen(tmp)                                                                # the same day again adds nothing
+            again, _, _ = self.run_screen(tmp)                                                  # the same day again adds nothing
             with open(os.path.join(history, 'UPCO.jsonl'), encoding='utf-8') as f:
                 lines = f.read().splitlines()
             with open(os.path.join(history, 'DROPCO.jsonl'), encoding='utf-8') as f:
@@ -1178,23 +1486,72 @@ class ScreenVersion2(unittest.TestCase):
         self.assertEqual(up['status'], 'near_miss')
         self.assertIn('-2.7% ב-60 יום; 4 העלו, 0 הורידו', text)
         self.assertEqual(len(lines), 3 + 3)                                                     # two old, the broken line, three new
+        self.assertEqual({r['symbol']: r['status'] for r in again['rows']}, {r['symbol']: r['status'] for r in res['rows']})
 
     def test_history_is_dated_by_the_day_the_pages_were_read(self):
+        """Saved pages read before the as-of date: the history line carries their day, the report names it, and a second
+        run over the same pages gives the same statuses (with pages 45 days old it used to find its own line, call it
+        '45 days old' and pass at 0.0%)."""
         screen = load_screen()
+        cutting = {'CUTCO': (surprise_json(), forecast_json((('Jan 2027', 24.0, 10, 5, 0), ('Jan 2028', 28.0, 9, 0, 0))),
+                             momentum_json(current=24.0, month=25.13))}                         # -4.5% in Nasdaq's month, 5 raised
         with tempfile.TemporaryDirectory() as tmp:
-            real_load = screen._load
+            real_load, read = screen._load, {'day': '2026-10-20'}
 
-            def older(path):                                        # the saved pages were read 26 days before the as-of date
+            def older(path):                                        # the saved pages were read before the as-of date
                 rec = real_load(path)
                 if os.sep + 'estimates' + os.sep in path:
-                    rec['retrieved_at_utc'] = '2026-10-20T12:00:00+00:00'
+                    rec['retrieved_at_utc'] = read['day'] + 'T12:00:00+00:00'
                 return rec
             with mock.patch.object(screen, '_load', side_effect=older):
-                res, _, _ = run_offline(screen, tmp, {'UPCO': self.NAMES['UPCO']})
+                res, text, _ = run_offline(screen, tmp, {'UPCO': self.NAMES['UPCO']})
+                read['day'] = '2026-10-01'                          # 45 days: older than Nasdaq's month
+                first, _, _ = run_offline(screen, tmp, {'CUTCO': self.NAMES['CUTCO']}, cutting)
+                second, _, _ = run_offline(screen, tmp, {'CUTCO': self.NAMES['CUTCO']}, cutting)
             with open(os.path.join(tmp, 'screens', '_estimates_history', 'UPCO.jsonl'), encoding='utf-8') as f:
                 lines = [json.loads(x) for x in f]
+            with open(os.path.join(tmp, 'screens', '_estimates_history', 'CUTCO.jsonl'), encoding='utf-8') as f:
+                self.assertEqual({json.loads(x)['as_of'] for x in f}, {'2026-10-01'})
         self.assertEqual(res['rows'][0]['status'], 'pass')
         self.assertEqual({x['as_of'] for x in lines}, {'2026-10-20'})                           # never the later as-of date
+        self.assertEqual(res['analyst_read'], {'first': '2026-10-20', 'last': '2026-10-20'})
+        self.assertIn('**שים לב:** נתוני האנליסטים נקראו ב-20.10.2026, ולא בתאריך החיפוש (15.11.2026)', text)
+        self.assertIn('דפי האנליסטים נקראו ב-20.10.2026, לא בתאריך החיפוש (15.11.2026)', text)
+        for run in (first, second):
+            rev = run['rows'][0]['business'][0]
+            self.assertEqual((run['rows'][0]['status'], rev['source'], rev['pass']), ('near_miss', 'nasdaq_month', False))
+
+    def test_a_thesis_book_company_without_sec_quarters_still_gets_analyst_data_and_prices(self):
+        """TSM, NU and SPCX had no usable SEC series (basis None), so no analyst pages and no prices were read for them
+        and every column of the thesis-book table was empty, although Nasdaq had the data."""
+        names = {'UPCO': (1, bars(0.002)), 'BOOKCO': (2, bars(0.001))}
+        with tempfile.TemporaryDirectory() as tmp:
+            research = os.path.join(tmp, 'research')
+            os.makedirs(os.path.join(research, 'companies', 'BOOKCO'))
+            res, text, _ = run_offline(load_screen(), tmp, names, research=research, series_by={'BOOKCO': {}})
+        book = next(r for r in res['rows'] if r['symbol'] == 'BOOKCO')
+        self.assertEqual((book['basis'], book['status']), (None, 'incomplete'))                 # quality stays missing: never a passer
+        self.assertEqual([g['pass'] for g in book['business']], [True, True])
+        self.assertIsNotNone(book['price_info'])
+        self.assertEqual(res['counts']['business_fetched'], 2)
+        self.assertEqual([r['symbol'] for r in res['unread']], [])                              # shown in the thesis-book table only
+        line = next(ln for ln in text.splitlines() if ln.startswith('| BOOKCO |'))
+        self.assertIn('+0.7% ב-30 יום; 4 העלו, 0 הורידו | +39.9% / +43.2% |', line)
+        self.assertNotIn('no exchange rate', json.dumps(book['gaps']))
+
+    def test_a_missing_spy_file_does_not_stop_the_screen(self):
+        """Price decides nothing, so a Yahoo outage on SPY leaves the relative-strength column empty and nothing else."""
+        with tempfile.TemporaryDirectory() as tmp:
+            res, text, _ = self.run_screen(tmp, spy=False)
+            base, _, _ = run_offline(load_screen(), os.path.join(tmp, 'with_spy'), self.NAMES, self.ESTIMATES, self.CALENDAR, series_by=self.SERIES)
+        self.assertEqual({r['symbol']: r['status'] for r in res['rows']}, {r['symbol']: r['status'] for r in base['rows']})
+        self.assertEqual(res['last_trading_day'], '2026-11-13')                                 # the most common last bar
+        drop = next(r for r in res['rows'] if r['symbol'] == 'DROPCO')
+        self.assertEqual((drop['price_info']['rel_strength'], drop['divergence']), (None, True))
+        self.assertAlmostEqual(drop['price_info']['below_high'], -0.6, places=3)
+        self.assertIsNone(res['spy'])
+        self.assertIn('מחירי SPY לא נקראו', text)
+        self.assertIn('למידע: —', text)
 
 
 class Fetching(unittest.TestCase):
@@ -1215,8 +1572,8 @@ class Fetching(unittest.TestCase):
         """answers: {text found in the URL: body dict | Exception | int status}; the first match answers."""
         calls = []
 
-        def fetch(url, headers, attempts=3):
-            calls.append((url, dict(headers), attempts))
+        def fetch(url, headers, attempts=3, timeout=60):
+            calls.append((url, dict(headers), attempts, timeout))
             for part, ans in answers.items():
                 if part in url:
                     if isinstance(ans, Exception):
@@ -1235,9 +1592,9 @@ class Fetching(unittest.TestCase):
         self.assertEqual([c[0] for c in calls], ['https://api.nasdaq.com/api/company/DELL/earnings-surprise',
                                                 'https://api.nasdaq.com/api/analyst/DELL/earnings-forecast',
                                                 'https://api.nasdaq.com/api/analyst/DELL/estimate-momentum'])
-        for _, headers, attempts in calls:
-            self.assertEqual((headers['Origin'], headers['Referer'], headers['Accept'], attempts),
-                             ('https://www.nasdaq.com', 'https://www.nasdaq.com/', 'application/json', 2))      # one retry
+        for _, headers, attempts, timeout in calls:
+            self.assertEqual((headers['Origin'], headers['Referer'], headers['Accept'], attempts, timeout),
+                             ('https://www.nasdaq.com', 'https://www.nasdaq.com/', 'application/json', 2, 15))  # one retry, a short wait
             self.assertTrue(headers['User-Agent'].startswith('Mozilla'))
             self.assertNotIn('@', ' '.join(headers.values()))                               # no contact detail goes to Nasdaq
         self.assertEqual((rec['queried_as'], rec['errors'], again['raw']), ('DELL', [], rec['raw']))
@@ -1260,6 +1617,26 @@ class Fetching(unittest.TestCase):
         e = qm.parse_estimates(rec['raw']['surprise'], rec['raw']['forecast'], rec['raw']['momentum'])
         self.assertTrue(all(g['pass'] is None for g in qm.business_gates(e, as_of=AS_OF)))
 
+    def test_share_class_without_a_record_is_read_from_its_sister_class(self):
+        """Moog, live 25.11.2026: MOG-B answers 'Symbol not exists', MOG.B 'No record found' on every page, and MOG.A
+        has all three pages (revision +9.0%, smaller surprise +24.8%). The estimates are per share of the same company."""
+        no_symbol = {'data': None, 'status': {'rCode': 400, 'bCodeMessage': [{'code': 1001, 'errorMessage': 'Symbol not exists.'}]}}
+        no_record = {'data': None, 'status': {'rCode': 200, 'bCodeMessage': [{'code': 1002, 'errorMessage': 'No record found.'}]}}
+        calls, patch = self.fake({'/MOG-B/': no_symbol, '/MOG.B/': no_record, '/MOG-A/': no_symbol, 'MOG.A/earnings-surprise': surprise_json(),
+                                  'MOG.A/earnings-forecast': forecast_json(), 'MOG.A/estimate-momentum': momentum_json()})
+        with patch:
+            rec = self.screen.get_estimates('MOG-B', self.out, False, self.throttle, qm.sibling_symbols('MOG-B'))
+        self.assertEqual(len(calls), 1 + 3 + 1 + 3)                 # the root MOG is not asked: the sister answered
+        self.assertEqual((rec['queried_as'], rec['read_from'], rec['symbol']), ('MOG.A', 'MOG-A', 'MOG-B'))
+        e = qm.parse_estimates(rec['raw']['surprise'], rec['raw']['forecast'], rec['raw']['momentum'])
+        self.assertTrue(all(g['pass'] for g in qm.business_gates(e, as_of=AS_OF)))
+        self.assertEqual(os.listdir(os.path.join(self.out, 'estimates')), ['MOG-B.json'])       # saved under the screened symbol
+        calls, patch = self.fake({'/BRK-B/': no_symbol, '/BRK.B/': no_record, '/BRK-A/': no_symbol, '/BRK.A/': no_record, '/BRK/': no_symbol})
+        with patch:
+            rec = self.screen.get_estimates('BRK-B', self.out, False, self.throttle, qm.sibling_symbols('BRK-B'))
+        self.assertEqual((rec['queried_as'], rec['read_from']), ('BRK.B', None))                # no class has a record: a true gap
+        self.assertEqual(len(calls), 1 + 3 + 1 + 3 + 1)
+
     def test_unknown_symbol_and_network_error_are_gaps_not_crashes(self):
         calls, patch = self.fake({'/ZZZZ/': 404})
         with patch:
@@ -1271,8 +1648,75 @@ class Fetching(unittest.TestCase):
             rec = self.screen.get_estimates('NETERR', self.out, False, self.throttle)
         self.assertTrue(rec['fetch_failed'])
         self.assertIsNone(rec['raw']['forecast'])
-        self.assertIsNotNone(rec['raw']['momentum'])
+        self.assertEqual(len(calls), 2)                             # the third page is not asked after a network failure
         self.assertFalse(os.path.exists(os.path.join(self.out, 'estimates', 'NETERR.json')))        # not saved: the next run tries again
+        e = qm.parse_estimates(rec['raw'].get('surprise'), rec['raw'].get('forecast'), rec['raw'].get('momentum'))
+        self.assertIsNone(qm.business_gates(e, as_of=AS_OF)[0]['pass'])
+
+    def test_nasdaq_is_not_asked_again_after_it_stopped_answering(self):
+        calls, patch = self.fake({'api.nasdaq.com': RuntimeError('timed out')})
+        breaker = self.screen.Breaker(2)
+        with patch:
+            recs = [self.screen.get_estimates(s, self.out, False, self.throttle, (), breaker) for s in ('AAA', 'BBB', 'CCC', 'DDD')]
+        self.assertEqual(len(calls), 2)                             # one page each for the first two; then the breaker is open
+        self.assertEqual((breaker.open, breaker.skipped), (True, 2))
+        self.assertTrue(all(r['fetch_failed'] for r in recs))
+        self.assertIn('not asked', recs[3]['errors'][0])
+        self.assertEqual(os.listdir(os.path.join(self.out, 'estimates')), [])                   # nothing saved: a later --reuse run asks again
+        ok = self.screen.Breaker(2)
+        calls, patch = self.fake({'/BAD/': RuntimeError('reset'), 'earnings-surprise': surprise_json(), 'earnings-forecast': forecast_json(),
+                                  'estimate-momentum': momentum_json()})
+        with patch:
+            for s in ('BAD', 'GOOD', 'BAD', 'GOOD'):
+                self.screen.get_estimates(s + str(len(calls)), self.out, False, self.throttle, (), ok)
+        self.assertFalse(ok.open)                                   # a company that answers resets the count
+
+    def test_reuse_fetches_again_a_saved_file_that_cannot_be_read(self):
+        """A run killed mid-write left half a file; --reuse then raised JSONDecodeError inside the thread pool and the
+        whole run stopped before screen.json. A file of another shape raised KeyError('raw')."""
+        pages = {'earnings-surprise': surprise_json(), 'earnings-forecast': forecast_json(), 'estimate-momentum': momentum_json(),
+                 'date=2026-11-24': {'data': {'rows': [cal(0, 'DELL', '$9.16', '$6.55', '39.85')]}, 'status': {'rCode': 200}}}
+        for broken in ('{"symbol": "UPCO", "raw": {"surpr', '{"symbol": "UPCO", "errors": []}', '[1, 2]', ''):
+            for path in (os.path.join(self.out, 'estimates', 'UPCO.json'), os.path.join(self.out, 'calendar', '2026-11-24.json')):
+                with open(path, 'w', encoding='utf-8') as f:
+                    f.write(broken)
+            calls, patch = self.fake(pages)
+            with patch:
+                rec = self.screen.get_estimates('UPCO', self.out, True, self.throttle)
+                day = self.screen.get_calendar('2026-11-24', self.out, True, self.throttle)
+            self.assertEqual((len(calls), rec['queried_as'], len(day['rows'])), (4, 'UPCO', 1), broken)
+            self.assertIsNotNone(rec['raw']['surprise'])
+        calls, patch = self.fake(pages)
+        with patch:                                                 # now both files are good: nothing is fetched
+            self.screen.get_estimates('UPCO', self.out, True, self.throttle)
+            self.screen.get_calendar('2026-11-24', self.out, True, self.throttle)
+        self.assertEqual(calls, [])
+        self.assertEqual(sorted(os.listdir(os.path.join(self.out, 'estimates'))), ['UPCO.json'])    # no temporary file is left
+
+    def test_fetch_tries_again_after_a_read_timeout(self):
+        """A read timeout is an OSError, not a URLError: it used to leave fetch on the first attempt."""
+        import collect_universe
+
+        class Answer:
+            headers = {}
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+            def read(self):
+                return b'{"ok": true}'
+        with mock.patch.object(collect_universe, 'urlopen', side_effect=[TimeoutError('timed out'), Answer()]) as net, \
+                mock.patch.object(collect_universe.time, 'sleep'):
+            self.assertEqual(collect_universe.fetch('https://example.invalid/x', {}, attempts=2, timeout=15), (200, b'{"ok": true}'))
+        self.assertEqual([c.kwargs['timeout'] for c in net.call_args_list], [15, 15])
+        with mock.patch.object(collect_universe, 'urlopen', side_effect=TimeoutError('timed out')), \
+                mock.patch.object(collect_universe.time, 'sleep'), self.assertRaises(RuntimeError):
+            collect_universe.fetch('https://example.invalid/x', {}, attempts=2)
+        with mock.patch.object(collect_universe, 'urlopen', side_effect=TimeoutError('timed out')), mock.patch.object(collect_universe.time, 'sleep'):
+            self.assertEqual(self.screen._nasdaq_page('https://example.invalid/x', self.throttle), ('network', None, 'RuntimeError'))
 
     def test_calendar_day(self):
         day = {'data': {'asOf': 'Tue, Nov 24, 2026', 'rows': [cal(0, 'DELL', '$9.16', '$6.55', '39.85')]}, 'status': {'rCode': 200}}

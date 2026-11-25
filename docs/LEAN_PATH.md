@@ -204,21 +204,32 @@ Rules that hold on every step:
    - Version 2 (25.11.2026): **price is information, never a gate.** A stock far below its high or under its average
      is not dropped. The gates are the quality gates (SEC filings) plus two business-momentum gates from analyst data:
      analysts are not cutting EPS estimates (4-week revisions up minus down >= 0, consensus not more than 1% lower),
-     and reported EPS met the consensus in each of the last two quarters (a miss of up to 2% counts as met). A company
-     without analyst data is "חסר נתון", never a passer.
+     and reported EPS met the consensus in each of the last two quarters (a miss of up to 2%, or of up to one cent a
+     share, counts as met). The two analyst gates count as one failed condition: a missed quarter lowers the full-year
+     consensus by itself. A company without analyst data is "חסר נתון", never a passer.
+   - What stops what: a business that stopped growing (the PayPal pattern) is stopped by the quality gates. The
+     analyst gates only check that the last two quarters and the last month of estimates are not getting worse.
+   - "לא קריא" in the list "חסר להן נתון": reported EPS swung more than 25% above the consensus in one quarter and
+     below it in the other (investment gains inside EPS, as at GOOGL, or a base of a few cents). The analyst gates are
+     not read for such a name; check it by hand before giving it up.
    - Sources: SEC companyfacts per company (not XBRL frames), the Nasdaq listing feed, the Nasdaq analyst pages per
-     company (data by Zacks; an unofficial public API) and its earnings calendar, Yahoo daily closes (information).
+     company (an unofficial public API; Nasdaq names Zacks as its vendor) and its earnings calendar, Yahoo daily closes
+     (information).
    - The revision window is about one month (Nasdaq). Each run also appends the consensus to
-     `runs/screens/_estimates_history/<SYMBOL>.jsonl`; once our own readings are older than a month the window grows
-     (up to 100 days). Run the screen on the as-of day: the analyst pages are a snapshot and cannot be rebuilt later.
-   - Read first the section "המחיר ירד, העסק משתפר" (25% or more below the high while both business gates pass: the
+     `runs/screens/_estimates_history/<SYMBOL>.jsonl`. That folder is under runs/, not in Git: only while it is kept
+     between runs does the window grow once our own readings are older than a month (up to 100 days; the window is
+     printed beside each number and can differ between companies). Run the screen on the as-of day: the analyst pages
+     are a snapshot and cannot be rebuilt later; the report says so when they were read on another day.
+   - Read first the section "המחיר ירד, העסק משתפר" (a passer or near miss 25% or more below its high whose analyst
+     data shows an improvement: more analysts raised than cut, the consensus is up, both quarters at or above it; the
      DELL pattern) and "רדאר דוחות" (who reported in the last 10 days with a surprise of +5% or more, who reports in
-     the next 14). A company that has just reported still shows the quarter before in its quality numbers.
+     the next 14; its column says whether the quality numbers already hold the new report).
    - Every passer, near miss and thesis-book name carries its saved valuation ("הערכה שמורה"). The rejected list is
      `research/rejected.jsonl`.
 2. **Triage, in the order of the 15.11 rule:** the business gates already cover beats and revisions, so check guidance
    (raised or held) from the company's own release, then price sanity and world view. For a name whose price fell, say
-   why it fell before proposing it. Never propose a name whose saved valuation reads "לא עוברת".
+   why it fell before proposing it. For a near miss on the analyst gates, read whether the miss was in the business or
+   in a one-off line of EPS. Never propose a name whose saved valuation reads "לא עוברת".
 3. **The best 1-2 go to a deep check,** which is (a), and then to the buy test in both lenses.
 
 ## What the tools do not do

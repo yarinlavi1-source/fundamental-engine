@@ -78,6 +78,16 @@ pipeline further down this file is a cross-check that runs only when the owner a
     - the tracker scoring frozen forecasts only;
     - portfolio_health and due;
     - the screen marking names whose saved valuation fails the buy test.
+  - 25.11.2026: two owner rules and screen v2 (`docs/CHANGELOG.md`, Unreleased; CLAUDE.md sections dated 25.11.2026).
+    - Every valuation ends with a calibration pass: analogs, option-implied bands, industry outlook, our own biases,
+      then odds per scenario and the most-likely price with ranges (`docs/LEAN_PATH.md` step 7b; worked examples
+      `research/companies/DELL/2026-11-25` and `research/companies/HOOD/2026-11-25`).
+    - The screen no longer gates on price. Quality gates and one business-momentum condition (analyst revisions and
+      the last two quarters against consensus, from the Nasdaq analyst pages) decide; price is information, with the
+      flag 'המחיר ירד, העסק משתפר' and an earnings radar.
+    - Open: the screen saves each run's consensus under `runs/screens/_estimates_history/`, which is lost with the
+      container, so the revision is measured over one month. If that folder is ever kept, rows would be measured over
+      30 to 100 days against the same -1% bar: decide then (gate on the month, show the longer change as information).
   - The current book is `research/THESES_he.md`, `research/FORECAST_TRACKER_he.md`, `docs/LEAN_PATH.md` and the "lean
     path" section of `docs/MODULE_CONTRACTS.md`.
   - The heavy engine's state up to 02.11.2026 is listed under "Heavy pipeline" below.
@@ -177,7 +187,7 @@ a REIT, a biotech, a conglomerate or a build-out company.
 
 ## The whole cycle (discover -> research -> calibrate -> propose), 20.10.2026
 
-Older search path: the search in use is the 15.11.2026 quality + trend screen (`docs/LEAN_PATH.md` (d)), and this
+Older search path: the search in use is the 25.11.2026 quality + business-momentum screen (`docs/LEAN_PATH.md` (d)), and this
 cycle runs only when the owner asks for it by name. Data comes from the collection scripts (SEC, with a contact e-mail in
 SEC_USER_AGENT, never stored) and from the session's connectors saved into the channels folder
 (`fundamental_engine.channels.plan` names each call and file). The portfolio file is read-only and stays outside Git.

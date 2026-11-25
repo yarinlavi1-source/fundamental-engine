@@ -422,31 +422,40 @@ and in five years; the thesis; key points from the reports; risks; what would ch
 each report or material fact and move the old value to its history line. Company research only: no positions, costs or
 advice about his holdings in research/ (those stay in runs/portfolio_*, gitignored).
 
-## User preference: how to choose which stocks get a deep check (15.11.2026, replaces the 06.11 funnel)
+## User preference: how to choose which stocks get a deep check (25.11.2026, replaces the 15.11 screen rule)
 
-The owner rejected the 13.11 search: it looked for names that fell 20% or more from their highs and returned broken companies
-(INTU, NFLX, ADBE style) that had already collapsed and were not recovering. Never screen on "fell a lot"; a fall is a
-question to answer, not a reason to look. Deep checks stay limited to 1-2 names at a time. The search is
-`python scripts/quality_momentum_screen.py <out_dir> --as-of D` (SEC companyfacts per company, the Nasdaq listing feed, Yahoo daily
-prices; output screen.json and screen_he.md under runs/screens/, gitignored), then a short triage, in this order:
-1. Quality (hard gates from the latest filings): revenue growing about 15% a year or more (latest year and latest quarter
-   year on year), operating profit positive and the operating margin not falling, free cash flow positive, share count not
-   rising more than about 3% a year, market value above about $5B. Banks and insurers are read on their own measures (ROE,
-   book value growth), never forced through these gates.
-2. Trend: 12-month return (skipping the last month) above the S&P 500's, price above a rising 200-day average, and not more
-   than about 25% below the 52-week high. A name failing this is a falling knife for the screen, whatever its value looks like.
-3. Estimates (triage, from attributed sources): beat in the last two quarters, guidance raised or held, consensus rising.
-4. Price sanity: the growth the price requires is not above the company's own guidance or record, and the multiple is not at
-   the top of its own 5-year range without a growth step-up that explains it. The screen marks every name whose saved valuation
-   (research/) or rejected check (research/rejected.jsonl) fails the buy test at its price ('הערכה שמורה'): never propose a name whose saved valuation fails the buy test (the MSFT slip of 06.11.2026).
-5. World view (labelled judgement): where the industry is heading over 5 years, and whether the price already holds the theme.
-6. The best 1-2 go to the deep check and then to the normal buy test (both lenses). The screen never values a company and is
-   not a buy signal: a name that passes it can still fail the buy test on price.
-Honest limits: the screen is not backtested here (the owner stopped universe tests); the engine's own 2016-2025 test found
-that momentum near a high is a timing signal, not a source of selection, and that "cheap versus computed value" had no
-ranking power, so the screen only decides where research time goes. A near miss on one gate is listed with its reason, not
-dropped silently. AI-linked names are not excluded; the correlation is a sizing question. Supporting signals (insider
-clusters, new 13F positions of quality investors) and social media (ideas and a hype gauge only) stay secondary.
+The owner's corrections. 13.11: never screen on "fell a lot" (it returned INTU, NFLX, ADBE style broken companies). 25.11
+(after the screen missed DELL): the price never disqualifies a company either. A price far below its high or under its
+average is information; what must be kept out is a business that is no longer good and no longer believed in (the PayPal
+pattern), and that is read from business data. His goal for the search: strong companies for the long term whose business
+justifies a high return, not more trades. Deep checks stay limited to 1-2 names at a time. The search is
+`python scripts/quality_momentum_screen.py <out_dir> --as-of D` (SEC companyfacts, the Nasdaq listing feed and analyst
+pages, Yahoo daily prices; output screen.json and screen_he.md under runs/screens/, gitignored), then a short triage:
+1. Quality (hard gates from the latest filings; these stop the PayPal pattern): revenue growing about 15% a year or more
+   (latest year and latest quarter year on year), growth that held over three years, operating profit positive and the
+   operating margin not falling, free cash flow positive, share count not rising more than about 3% a year, market value
+   above about $5B. Banks and insurers are read on their own measures (ROE, book value growth).
+2. Business momentum (one condition, from the analyst pages): analysts are not cutting the year's EPS estimate, and reported
+   EPS met the consensus in each of the last two quarters (a miss of up to 2% or one cent counts as met). Erratic EPS
+   (investment gains, a base of a few cents) is "not readable", never a failure. Missing analyst data leaves the row
+   incomplete; it is listed, not dropped.
+3. Price is shown, never a gate: relative strength, the 200-day average and the distance from the 52-week high. A name 25%
+   or more below its high whose business is improving (more estimates raised than cut, the consensus up, both quarters at
+   or above consensus) is flagged 'המחיר ירד, העסק משתפר': these are the first names to read.
+4. The earnings radar (reported in the last 10 days, reporting in the next 14) says which candidates have fresh numbers.
+5. Long-term triage by Claude (labelled judgement): how many years the growth and the margins have held, the room left to
+   grow, what protects the business, where the industry is heading over 5 years, and supporting signs (insider buying, new
+   positions of quality investors). Social media is an idea source and a hype warning only.
+6. Price sanity: the screen marks every name whose saved valuation (research/) or rejected check (research/rejected.jsonl)
+   fails the buy test at its price ('הערכה שמורה'): never propose a name whose saved valuation fails the buy test (the
+   MSFT slip of 06.11.2026).
+7. The best 1-2 go to the deep check and then to the normal buy test (both lenses, with the calibration pass). The screen
+   never values a company and is not a buy signal: a name that passes it can still fail the buy test on price.
+Honest limits: the screen is not backtested here (the owner stopped universe tests) and "cheap versus computed value" had
+no ranking power in the engine's own 2016-2025 test, so the screen only decides where research time goes. The analyst
+numbers are the vendor's (Zacks, through Nasdaq) and are a snapshot of the day they were read; the revision is measured
+over one month. A near miss on one condition is listed with its reason. AI-linked names are not excluded; the correlation
+is a sizing question.
 
 ## User preference: technical analysis belongs to the drawing session (13.11.2026)
 

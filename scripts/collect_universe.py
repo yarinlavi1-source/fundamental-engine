@@ -28,11 +28,13 @@ NASDAQ = 'https://api.nasdaq.com/api/screener/stocks?tableonly=true&limit=10000&
 TICKERS = 'https://www.sec.gov/files/company_tickers_exchange.json'
 
 
-def fetch(url, headers, attempts=3):
+def fetch(url, headers, attempts=3, timeout=60):
+    """(status, body). A 404 is returned; any other HTTP error, a network error or a read timeout is tried again
+    (`attempts` in all) and then raised as RuntimeError."""
     last = None
     for i in range(attempts):
         try:
-            with urlopen(Request(url, headers=headers), timeout=60) as r:
+            with urlopen(Request(url, headers=headers), timeout=timeout) as r:
                 body = r.read()
                 if r.headers.get('Content-Encoding') == 'gzip':
                     body = gzip.decompress(body)
@@ -41,9 +43,10 @@ def fetch(url, headers, attempts=3):
             if e.code == 404:
                 return 404, b''
             last = e
-        except URLError as e:
+        except (URLError, OSError) as e:                            # OSError: a read timeout or a reset while reading
             last = e
-        time.sleep(1.5 * (i + 1))
+        if i + 1 < attempts:
+            time.sleep(1.5 * (i + 1))
     raise RuntimeError(f'{url}: {last}')
 
 
